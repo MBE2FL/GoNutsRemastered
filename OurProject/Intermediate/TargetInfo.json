@@ -1,0 +1,14 @@
+{
+	"Targets": [
+		{
+			"Name": "OurProject",
+			"Path": "C:\\Users\\acdc1\\Documents\\GoNutsRemastered\\OurProject\\Source\\OurProject.Target.cs",
+			"Type": "Game"
+		},
+		{
+			"Name": "OurProjectEditor",
+			"Path": "C:\\Users\\acdc1\\Documents\\GoNutsRemastered\\OurProject\\Source\\OurProjectEditor.Target.cs",
+			"Type": "Editor"
+		}
+	]
+}

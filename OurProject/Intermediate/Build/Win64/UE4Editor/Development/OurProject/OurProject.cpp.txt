@@ -1,2 +1,0 @@
-C:\Users\acdc1\Documents\GoNutsRemastered\OurProject\Intermediate\Build\Win64\UE4Editor\Development\OurProject\Definitions.OurProject.h
-C:\Users\acdc1\Documents\GoNutsRemastered\OurProject\Source\OurProject\OurProject.h

@@ -1,3 +1,0 @@
-C:\Users\acdc1\Documents\GoNutsRemastered\OurProject\Intermediate\Build\Win64\UE4Editor\Development\OurProject\Definitions.OurProject.h
-C:\Program Files\Epic Games\UE_4.25\Engine\Source\Runtime\CoreUObject\Public\UObject/GeneratedCppIncludes.h
-C:\Program Files\Epic Games\UE_4.25\Engine\Source\Runtime\CoreUObject\Public\UObject/MetaData.h

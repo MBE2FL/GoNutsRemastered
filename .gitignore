@@ -77,8 +77,6 @@ DerivedDataCache/*
 *.log
 *.pdb
 *.dmp
-GoNutsRemastered/Saved/Config/CrashReportClient/
-GoNutsRemastered/Saved/Crashes/
 *.vcxproj.user
 *.suppressed.exp
 *.lib.response
@@ -86,4 +84,3 @@ GoNutsRemastered/Saved/Crashes/
 *.dll.response
 *.pdb.*
 *.exe.*
-*.bin

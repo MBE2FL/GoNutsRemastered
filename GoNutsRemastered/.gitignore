@@ -67,7 +67,7 @@ Build/*/**
 Saved/*
 
 # Compiled source files for the engine to use
-GoNutsRemasteredIntermediate/*
+Intermediate/*
 Plugins/*/Intermediate/*
 
 # Cache files for the editor to use
@@ -77,8 +77,6 @@ DerivedDataCache/*
 *.log
 *.pdb
 *.dmp
-GoNutsRemastered/Saved/Config/CrashReportClient/
-GoNutsRemastered/Saved/Crashes/
 *.vcxproj.user
 *.suppressed.exp
 *.lib.response
@@ -86,3 +84,4 @@ GoNutsRemastered/Saved/Crashes/
 *.dll.response
 *.pdb.*
 *.exe.*
+#Saved/AutoScreenshot.png

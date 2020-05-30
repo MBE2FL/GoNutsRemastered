@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <None Include="..\..\GoNutsRemastered.uproject" />
+    <Filter Include="Source">
+      <UniqueIdentifier>{983EC40F-3CE0-42B2-B7AB-E5A35E9442BA}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Source\GoNutsRemastered.Target.cs">
+      <Filter>Source</Filter>
+    </None>
+    <None Include="..\..\Source\GoNutsRemasteredEditor.Target.cs">
+      <Filter>Source</Filter>
+    </None>
+    <Filter Include="Config">
+      <UniqueIdentifier>{43D94109-095F-410C-A689-0780DC9A9025}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Config\DefaultEditor.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultEditorPerProjectUserSettings.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultEngine.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultGame.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultInput.ini">
+      <Filter>Config</Filter>
+    </None>
+    <Filter Include="Source\GoNutsRemastered">
+      <UniqueIdentifier>{ED3DE19B-2C33-4F6D-8517-2252898B5DDF}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\GoNutsRemastered\Egg.cpp">
+      <Filter>Source\GoNutsRemastered</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\GoNutsRemastered\Egg.h">
+      <Filter>Source\GoNutsRemastered</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\GoNutsRemastered\EggEffect.cpp">
+      <Filter>Source\GoNutsRemastered</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\GoNutsRemastered\EggEffect.h">
+      <Filter>Source\GoNutsRemastered</Filter>
+    </ClInclude>
+    <None Include="..\..\Source\GoNutsRemastered\GoNutsRemastered.Build.cs">
+      <Filter>Source\GoNutsRemastered</Filter>
+    </None>
+    <ClCompile Include="..\..\Source\GoNutsRemastered\GoNutsRemastered.cpp">
+      <Filter>Source\GoNutsRemastered</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\GoNutsRemastered\GoNutsRemastered.h">
+      <Filter>Source\GoNutsRemastered</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

@@ -72,3 +72,18 @@ Plugins/*/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+
+#Custom
+*.log
+*.pdb
+*.dmp
+GoNutsRemastered/Saved/Config/CrashReportClient/
+GoNutsRemastered/Saved/Crashes/
+*.vcxproj.user
+*.suppressed.exp
+*.lib.response
+*.exp
+*.dll.response
+*.pdb.*
+*.exe.*
+*.bin

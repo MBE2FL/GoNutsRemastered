@@ -1,0 +1,16 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UE4Editor-GoNutsRemastered.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"C:\Users\Maxke\Desktop\Summer Incubator\GoNutsRemastered\Intermediate\Build\Win64\GoNutsRemasteredEditor\Development\Engine\SharedPCH.Engine.ShadowErrors.h.obj"
+"C:\Users\Maxke\Desktop\Summer Incubator\GoNutsRemastered\Intermediate\Build\Win64\UE4Editor\Development\GoNutsRemastered\Egg.cpp.obj"
+"C:\Users\Maxke\Desktop\Summer Incubator\GoNutsRemastered\Intermediate\Build\Win64\UE4Editor\Development\GoNutsRemastered\GoNutsRemastered.cpp.obj"
+"C:\Users\Maxke\Desktop\Summer Incubator\GoNutsRemastered\Intermediate\Build\Win64\UE4Editor\Development\GoNutsRemastered\Egg.gen.cpp.obj"
+"C:\Users\Maxke\Desktop\Summer Incubator\GoNutsRemastered\Intermediate\Build\Win64\UE4Editor\Development\GoNutsRemastered\GoNutsRemastered.init.gen.cpp.obj"
+"C:\Users\Maxke\Desktop\Summer Incubator\GoNutsRemastered\Intermediate\Build\Win64\UE4Editor\Development\GoNutsRemastered\Default.rc2.res"
+/OUT:"C:\Users\Maxke\Desktop\Summer Incubator\GoNutsRemastered\Intermediate\Build\Win64\UE4Editor\Development\GoNutsRemastered\UE4Editor-GoNutsRemastered.lib"
+/INCLUDE:IMPLEMENT_MODULE_GoNutsRemastered

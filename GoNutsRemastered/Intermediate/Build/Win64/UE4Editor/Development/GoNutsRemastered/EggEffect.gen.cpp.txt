@@ -1,5 +1,0 @@
-C:\Users\Admin\Desktop\Go Nuts remastered\GoNutsRemastered\Intermediate\Build\Win64\UE4Editor\Development\GoNutsRemastered\Definitions.GoNutsRemastered.h
-Z:\UnrealEngine\UE_4.25\Engine\Source\Runtime\CoreUObject\Public\UObject/GeneratedCppIncludes.h
-Z:\UnrealEngine\UE_4.25\Engine\Source\Runtime\CoreUObject\Public\UObject/MetaData.h
-C:\Users\Admin\Desktop\Go Nuts remastered\GoNutsRemastered\Source\GoNutsRemastered/EggEffect.h
-C:\Users\Admin\Desktop\Go Nuts remastered\GoNutsRemastered\Intermediate\Build\Win64\UE4Editor\Inc\GoNutsRemastered\EggEffect.generated.h

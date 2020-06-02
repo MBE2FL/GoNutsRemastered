@@ -2,12 +2,12 @@
 	"Targets": [
 		{
 			"Name": "GoNutsRemastered",
-			"Path": "C:\\Users\\Maxke\\Desktop\\Summer Incubator\\GoNutsRemastered\\Source\\GoNutsRemastered.Target.cs",
+			"Path": "C:\\Users\\Admin\\Desktop\\Go Nuts remastered\\GoNutsRemastered\\Source\\GoNutsRemastered.Target.cs",
 			"Type": "Game"
 		},
 		{
 			"Name": "GoNutsRemasteredEditor",
-			"Path": "C:\\Users\\Maxke\\Desktop\\Summer Incubator\\GoNutsRemastered\\Source\\GoNutsRemasteredEditor.Target.cs",
+			"Path": "C:\\Users\\Admin\\Desktop\\Go Nuts remastered\\GoNutsRemastered\\Source\\GoNutsRemasteredEditor.Target.cs",
 			"Type": "Editor"
 		}
 	]

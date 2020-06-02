@@ -1,10 +1,10 @@
-C:\Users\Maxke\Desktop\Summer Incubator\GoNutsRemastered\Intermediate\Build\Win64\UE4Editor\Development\GoNutsRemastered\Definitions.GoNutsRemastered.h
-C:\Users\Maxke\Desktop\Summer Incubator\GoNutsRemastered\Source\GoNutsRemastered\EggEffect.h
-C:\Users\Maxke\Desktop\Summer Incubator\GoNutsRemastered\Intermediate\Build\Win64\UE4Editor\Inc\GoNutsRemastered\EggEffect.generated.h
-C:\Program Files\Epic Games\UE_4.25\Engine\Source\Runtime\Engine\Classes\Particles/ParticleSystemComponent.h
-C:\Program Files\Epic Games\UE_4.25\Engine\Source\Runtime\Engine\Classes\Particles/ParticleSystem.h
-C:\Program Files\Epic Games\UE_4.25\Engine\Source\Runtime\Engine\Classes\Particles/ParticlePerfStats.h
-C:\Program Files\Epic Games\UE_4.25\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\ParticleSystem.generated.h
-C:\Program Files\Epic Games\UE_4.25\Engine\Source\Runtime\Engine\Classes\Particles/Emitter.h
-C:\Program Files\Epic Games\UE_4.25\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\Emitter.generated.h
-C:\Program Files\Epic Games\UE_4.25\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\ParticleSystemComponent.generated.h
+C:\Users\Admin\Desktop\Go Nuts remastered\GoNutsRemastered\Intermediate\Build\Win64\UE4Editor\Development\GoNutsRemastered\Definitions.GoNutsRemastered.h
+C:\Users\Admin\Desktop\Go Nuts remastered\GoNutsRemastered\Source\GoNutsRemastered\EggEffect.h
+C:\Users\Admin\Desktop\Go Nuts remastered\GoNutsRemastered\Intermediate\Build\Win64\UE4Editor\Inc\GoNutsRemastered\EggEffect.generated.h
+Z:\UnrealEngine\UE_4.25\Engine\Source\Runtime\Engine\Classes\Particles/ParticleSystemComponent.h
+Z:\UnrealEngine\UE_4.25\Engine\Source\Runtime\Engine\Classes\Particles/ParticleSystem.h
+Z:\UnrealEngine\UE_4.25\Engine\Source\Runtime\Engine\Classes\Particles/ParticlePerfStats.h
+Z:\UnrealEngine\UE_4.25\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\ParticleSystem.generated.h
+Z:\UnrealEngine\UE_4.25\Engine\Source\Runtime\Engine\Classes\Particles/Emitter.h
+Z:\UnrealEngine\UE_4.25\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\Emitter.generated.h
+Z:\UnrealEngine\UE_4.25\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\ParticleSystemComponent.generated.h

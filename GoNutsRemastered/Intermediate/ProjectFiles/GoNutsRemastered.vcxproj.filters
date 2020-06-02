@@ -3,7 +3,7 @@
   <ItemGroup>
     <None Include="..\..\GoNutsRemastered.uproject" />
     <Filter Include="Source">
-      <UniqueIdentifier>{983EC40F-3CE0-42B2-B7AB-E5A35E9442BA}</UniqueIdentifier>
+      <UniqueIdentifier>{38B6F580-B732-48F6-8241-B900A80EC5CD}</UniqueIdentifier>
     </Filter>
     <None Include="..\..\Source\GoNutsRemastered.Target.cs">
       <Filter>Source</Filter>
@@ -11,8 +11,9 @@
     <None Include="..\..\Source\GoNutsRemasteredEditor.Target.cs">
       <Filter>Source</Filter>
     </None>
+    <None Include="..\..\.gitignore" />
     <Filter Include="Config">
-      <UniqueIdentifier>{43D94109-095F-410C-A689-0780DC9A9025}</UniqueIdentifier>
+      <UniqueIdentifier>{20E1B802-5D4C-4CF8-A66B-FFDBEF70E89D}</UniqueIdentifier>
     </Filter>
     <None Include="..\..\Config\DefaultEditor.ini">
       <Filter>Config</Filter>
@@ -30,7 +31,7 @@
       <Filter>Config</Filter>
     </None>
     <Filter Include="Source\GoNutsRemastered">
-      <UniqueIdentifier>{ED3DE19B-2C33-4F6D-8517-2252898B5DDF}</UniqueIdentifier>
+      <UniqueIdentifier>{CBC85440-B6FA-4434-9BA8-C6E40BA6CEE7}</UniqueIdentifier>
     </Filter>
     <ClCompile Include="..\..\Source\GoNutsRemastered\Egg.cpp">
       <Filter>Source\GoNutsRemastered</Filter>
@@ -42,6 +43,12 @@
       <Filter>Source\GoNutsRemastered</Filter>
     </ClCompile>
     <ClInclude Include="..\..\Source\GoNutsRemastered\EggEffect.h">
+      <Filter>Source\GoNutsRemastered</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\GoNutsRemastered\GlideTrigger.cpp">
+      <Filter>Source\GoNutsRemastered</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\GoNutsRemastered\GlideTrigger.h">
       <Filter>Source\GoNutsRemastered</Filter>
     </ClInclude>
     <None Include="..\..\Source\GoNutsRemastered\GoNutsRemastered.Build.cs">

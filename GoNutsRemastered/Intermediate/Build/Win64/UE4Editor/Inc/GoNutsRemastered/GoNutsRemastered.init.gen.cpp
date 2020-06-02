@@ -27,8 +27,8 @@ void EmptyLinkFunctionForGeneratedCodeGoNutsRemastered_init() {}
 				SingletonFuncArray,
 				UE_ARRAY_COUNT(SingletonFuncArray),
 				PKG_CompiledIn | 0x00000000,
-				0x1CA53A9B,
-				0x3C5F9EAC,
+				0xF7A5B9DC,
+				0xF7CB10F9,
 				METADATA_PARAMS(nullptr, 0)
 			};
 			UE4CodeGen_Private::ConstructUPackage(ReturnPackage, PackageParams);

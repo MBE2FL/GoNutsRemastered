@@ -1,2 +1,2 @@
-C:\Users\Maxke\Desktop\Summer Incubator\GoNutsRemastered\Intermediate\Build\Win64\UE4Editor\Development\GoNutsRemastered\Definitions.GoNutsRemastered.h
-C:\Users\Maxke\Desktop\Summer Incubator\GoNutsRemastered\Source\GoNutsRemastered\GoNutsRemastered.h
+C:\Users\Admin\Desktop\Go Nuts remastered\GoNutsRemastered\Intermediate\Build\Win64\UE4Editor\Development\GoNutsRemastered\Definitions.GoNutsRemastered.h
+C:\Users\Admin\Desktop\Go Nuts remastered\GoNutsRemastered\Source\GoNutsRemastered\GoNutsRemastered.h

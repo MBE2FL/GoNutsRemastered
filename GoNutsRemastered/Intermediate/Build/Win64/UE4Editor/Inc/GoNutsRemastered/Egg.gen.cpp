@@ -333,7 +333,7 @@ void EmptyLinkFunctionForGeneratedCodeEgg() {}
 		{ "ToolTip", "UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = \"Egg|Effect Settings\", meta = (AllowPrivateAccess = true))\nAEggEffect* _eggEffect;" },
 	};
 #endif
-	const UE4CodeGen_Private::FClassPropertyParams Z_Construct_UClass_AEgg_Statics::NewProp__eggEffectType = { "_eggEffectType", nullptr, (EPropertyFlags)0x0044000000010001, UE4CodeGen_Private::EPropertyGenFlags::Class, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(AEgg, _eggEffectType), Z_Construct_UClass_AEggEffect_NoRegister, Z_Construct_UClass_UClass, METADATA_PARAMS(Z_Construct_UClass_AEgg_Statics::NewProp__eggEffectType_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_AEgg_Statics::NewProp__eggEffectType_MetaData)) };
+	const UE4CodeGen_Private::FClassPropertyParams Z_Construct_UClass_AEgg_Statics::NewProp__eggEffectType = { "_eggEffectType", nullptr, (EPropertyFlags)0x0044000000000001, UE4CodeGen_Private::EPropertyGenFlags::Class, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(AEgg, _eggEffectType), Z_Construct_UClass_AEggEffect_NoRegister, Z_Construct_UClass_UClass, METADATA_PARAMS(Z_Construct_UClass_AEgg_Statics::NewProp__eggEffectType_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_AEgg_Statics::NewProp__eggEffectType_MetaData)) };
 #if WITH_METADATA
 	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UClass_AEgg_Statics::NewProp__impactParticleComponent_MetaData[] = {
 		{ "Category", "Egg|Impact Settings" },
@@ -398,7 +398,7 @@ void EmptyLinkFunctionForGeneratedCodeEgg() {}
 		}
 		return OuterClass;
 	}
-	IMPLEMENT_CLASS(AEgg, 943747761);
+	IMPLEMENT_CLASS(AEgg, 2631322514);
 	template<> GONUTSREMASTERED_API UClass* StaticClass<AEgg>()
 	{
 		return AEgg::StaticClass();

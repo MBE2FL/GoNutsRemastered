@@ -65,11 +65,6 @@ void EmptyLinkFunctionForGeneratedCodeEggEffect() {}
 		*(bool*)Z_Param__Result=P_THIS->isPlayerWithinRange(Z_Param_range,Z_Param_Out_dist,Z_Param_calcRealDist);
 		P_NATIVE_END;
 	}
-	static FName NAME_AEggEffect_activateEffect = FName(TEXT("activateEffect"));
-	void AEggEffect::activateEffect()
-	{
-		ProcessEvent(FindFunctionChecked(NAME_AEggEffect_activateEffect),NULL);
-	}
 	static FName NAME_AEggEffect_onEggEffectBegin = FName(TEXT("onEggEffectBegin"));
 	void AEggEffect::onEggEffectBegin()
 	{
@@ -82,31 +77,6 @@ void EmptyLinkFunctionForGeneratedCodeEggEffect() {}
 			{ "isPlayerWithinRange", &AEggEffect::execisPlayerWithinRange },
 		};
 		FNativeFunctionRegistrar::RegisterFunctions(Class, Funcs, UE_ARRAY_COUNT(Funcs));
-	}
-	struct Z_Construct_UFunction_AEggEffect_activateEffect_Statics
-	{
-#if WITH_METADATA
-		static const UE4CodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
-#endif
-		static const UE4CodeGen_Private::FFunctionParams FuncParams;
-	};
-#if WITH_METADATA
-	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_AEggEffect_activateEffect_Statics::Function_MetaDataParams[] = {
-		{ "Category", "Egg Effect|Effect Settings" },
-		{ "Comment", "//UFUNCTION(BlueprintCallable)\n//FEggEffectEvent& onEggEffect() { return _eggEvent; };\n" },
-		{ "ModuleRelativePath", "EggEffect.h" },
-		{ "ToolTip", "UFUNCTION(BlueprintCallable)\nFEggEffectEvent& onEggEffect() { return _eggEvent; };" },
-	};
-#endif
-	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_AEggEffect_activateEffect_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_AEggEffect, nullptr, "activateEffect", nullptr, nullptr, 0, nullptr, 0, RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x0C020800, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_AEggEffect_activateEffect_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_AEggEffect_activateEffect_Statics::Function_MetaDataParams)) };
-	UFunction* Z_Construct_UFunction_AEggEffect_activateEffect()
-	{
-		static UFunction* ReturnFunction = nullptr;
-		if (!ReturnFunction)
-		{
-			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_AEggEffect_activateEffect_Statics::FuncParams);
-		}
-		return ReturnFunction;
 	}
 	struct Z_Construct_UFunction_AEggEffect_isPlayerWithinRange_Statics
 	{
@@ -227,7 +197,6 @@ void EmptyLinkFunctionForGeneratedCodeEggEffect() {}
 		(UObject* (*)())Z_Construct_UPackage__Script_GoNutsRemastered,
 	};
 	const FClassFunctionLinkInfo Z_Construct_UClass_AEggEffect_Statics::FuncInfo[] = {
-		{ &Z_Construct_UFunction_AEggEffect_activateEffect, "activateEffect" }, // 3006903640
 		{ &Z_Construct_UFunction_AEggEffect_isPlayerWithinRange, "isPlayerWithinRange" }, // 3405918561
 		{ &Z_Construct_UFunction_AEggEffect_onEggEffectBegin, "onEggEffectBegin" }, // 2052956862
 	};
@@ -241,23 +210,19 @@ void EmptyLinkFunctionForGeneratedCodeEggEffect() {}
 #endif
 #if WITH_METADATA
 	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UClass_AEggEffect_Statics::NewProp__playerPawn_MetaData[] = {
-		{ "AllowPrivateAccess", "TRUE" },
 		{ "Category", "Egg Effect|General Settings" },
-		{ "Comment", "//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = \"Egg Effect|General Settings\", meta = (AllowPrivateAccess = true))\n//APlayerController* _playerController;\n" },
 		{ "ModuleRelativePath", "EggEffect.h" },
-		{ "ToolTip", "UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = \"Egg Effect|General Settings\", meta = (AllowPrivateAccess = true))\nAPlayerController* _playerController;" },
 	};
 #endif
-	const UE4CodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AEggEffect_Statics::NewProp__playerPawn = { "_playerPawn", nullptr, (EPropertyFlags)0x0040000000000005, UE4CodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(AEggEffect, _playerPawn), Z_Construct_UClass_APawn_NoRegister, METADATA_PARAMS(Z_Construct_UClass_AEggEffect_Statics::NewProp__playerPawn_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_AEggEffect_Statics::NewProp__playerPawn_MetaData)) };
+	const UE4CodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AEggEffect_Statics::NewProp__playerPawn = { "_playerPawn", nullptr, (EPropertyFlags)0x0020080000000005, UE4CodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(AEggEffect, _playerPawn), Z_Construct_UClass_APawn_NoRegister, METADATA_PARAMS(Z_Construct_UClass_AEggEffect_Statics::NewProp__playerPawn_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_AEggEffect_Statics::NewProp__playerPawn_MetaData)) };
 #if WITH_METADATA
 	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UClass_AEggEffect_Statics::NewProp__effectParticleComp_MetaData[] = {
-		{ "AllowPrivateAccess", "TRUE" },
 		{ "Category", "Egg Effect|Effect Settings" },
 		{ "EditInline", "true" },
 		{ "ModuleRelativePath", "EggEffect.h" },
 	};
 #endif
-	const UE4CodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AEggEffect_Statics::NewProp__effectParticleComp = { "_effectParticleComp", nullptr, (EPropertyFlags)0x004000000008000d, UE4CodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(AEggEffect, _effectParticleComp), Z_Construct_UClass_UParticleSystemComponent_NoRegister, METADATA_PARAMS(Z_Construct_UClass_AEggEffect_Statics::NewProp__effectParticleComp_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_AEggEffect_Statics::NewProp__effectParticleComp_MetaData)) };
+	const UE4CodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AEggEffect_Statics::NewProp__effectParticleComp = { "_effectParticleComp", nullptr, (EPropertyFlags)0x002008000008000d, UE4CodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(AEggEffect, _effectParticleComp), Z_Construct_UClass_UParticleSystemComponent_NoRegister, METADATA_PARAMS(Z_Construct_UClass_AEggEffect_Statics::NewProp__effectParticleComp_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_AEggEffect_Statics::NewProp__effectParticleComp_MetaData)) };
 #if WITH_METADATA
 	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UClass_AEggEffect_Statics::NewProp__eggEffectSig_MetaData[] = {
 		{ "Category", "Egg Effect|Effect Settings" },
@@ -299,7 +264,7 @@ void EmptyLinkFunctionForGeneratedCodeEggEffect() {}
 		}
 		return OuterClass;
 	}
-	IMPLEMENT_CLASS(AEggEffect, 1519375420);
+	IMPLEMENT_CLASS(AEggEffect, 3434236525);
 	template<> GONUTSREMASTERED_API UClass* StaticClass<AEggEffect>()
 	{
 		return AEggEffect::StaticClass();

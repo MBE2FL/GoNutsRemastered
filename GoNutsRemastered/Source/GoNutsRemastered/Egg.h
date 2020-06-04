@@ -60,6 +60,6 @@ private:
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Egg|Effect Settings", meta = (AllowPrivateAccess = true))
 	//AEggEffect* _eggEffect;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Egg|Effect Settings")
+	UPROPERTY(EditAnywhere, Category = "Egg|Effect Settings")
 	TSubclassOf<AEggEffect> _eggEffectType;
 };

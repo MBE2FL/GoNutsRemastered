@@ -34,10 +34,6 @@ public:
 	//FEggEffectEvent& onEggEffect() { return _eggEvent; };
 
 
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Egg Effect|Effect Settings")
-	void activateEffect();
-
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -55,21 +51,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, BlueprintAssignable, Category = "Egg Effect|Effect Settings")
 	FEggEffectSignature _eggEffectSig;
 
-
-private:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Egg Effect|Effect Settings", meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Egg Effect|Effect Settings")
 	UParticleSystemComponent* _effectParticleComp;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Egg Effect|General Settings", meta = (AllowPrivateAccess = true))
-	//APlayerController* _playerController;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Egg Effect|General Settings", meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Egg Effect|General Settings")
 	APawn* _playerPawn;
-
-
-	//FEggEffectEvent _eggEvent;
-	//UPROPERTY(BlueprintAssignable, meta = (AllowPrivateAccess = true))
-	//FEggDelegate _eggDelegate;
-
 
 };

@@ -1,5 +1,0 @@
-C:\Users\Maxke\Desktop\Summer Incubator\GoNutsRemastered\Intermediate\Build\Win64\UE4Editor\Development\GoNutsRemastered\Definitions.GoNutsRemastered.h
-C:\Program Files\Epic Games\UE_4.25\Engine\Source\Runtime\CoreUObject\Public\UObject/GeneratedCppIncludes.h
-C:\Program Files\Epic Games\UE_4.25\Engine\Source\Runtime\CoreUObject\Public\UObject/MetaData.h
-C:\Users\Maxke\Desktop\Summer Incubator\GoNutsRemastered\Source\GoNutsRemastered/Egg.h
-C:\Users\Maxke\Desktop\Summer Incubator\GoNutsRemastered\Intermediate\Build\Win64\UE4Editor\Inc\GoNutsRemastered\Egg.generated.h

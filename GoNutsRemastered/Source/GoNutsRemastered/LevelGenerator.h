@@ -4,9 +4,36 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "LevelSegment.h"
 #include "LevelGenerator.generated.h"
 
-class ALevelSegment;
+//class ALevelSegment;
+
+
+//USTRUCT(BlueprintType)
+//struct FSegmentGroup
+//{
+//	GENERATED_BODY()
+//
+//	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
+//	//TArray<TSubclassOf<ALevelSegment>> _validSegments;
+//
+//	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
+//	TSet<TSubclassOf<ALevelSegment>> _validRightSegments;
+//
+//	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
+//	TSet<TSubclassOf<ALevelSegment>> _validLeftSegments;
+//
+//	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
+//	TSet<TSubclassOf<ALevelSegment>> _validUpSegments;
+//
+//	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
+//	TSet<TSubclassOf<ALevelSegment>> _validDownSegments;
+//};
+
+
+DECLARE_LOG_CATEGORY_EXTERN(LogLevelGen, Log, All);
+
 
 //DECLARE_EVENT_OneParam(ALevelGenerator, FOnCrosswalkSpawned, AActor*)
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCrosswalkSpawned, ALevelSegment*, crosswalk);
@@ -36,6 +63,13 @@ private:
 
 	void streamLevelsTest();
 
+	ALevelSegment* getValidSegment(ESegmentTypes hSegmentType, ESegmentTypes vSegmentType);
+	ALevelSegment* getValidSegment(ALevelSegment* hSegment, ALevelSegment* vSegment);
+	ALevelSegment* getValidSegment(ALevelSegment* hSegment, ALevelSegment* vSegment, int ver);
+	void setValidOrientation(ALevelSegment* segment, ESegmentOrientations leftOrientation, ESegmentTypes leftType,
+								ESegmentTypes bottomType, ESegmentOrientations bottomOrientation);
+	void setValidOrientation(ALevelSegment* segment, uint8 validOrientations);
+
 
 	UPROPERTY(EditAnywhere, BlueprintAssignable, Category = "Level Gen|Generation Events", meta = (AllowPrivateAccess = true))
 	FOnCrosswalkSpawned _onCrosswalkSpawnedEvent;
@@ -52,8 +86,12 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen", meta = (AllowPrivateAccess = true))
 	TArray<FName> _levelStreamNames;
 
-
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
 	TArray<TSubclassOf<ALevelSegment>> _spawnableActors;
+
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
+	//TMap<ESegmentTypes, TArray<TSubclassOf<ALevelSegment>>> _segmentGroups;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
+	TMap<ESegmentTypes, FSegmentGroup> _segmentGroups;
 };

@@ -123,6 +123,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Level Segment")
 	FVector getHOffsetLocation() const;
 
+	UFUNCTION(BlueprintCallable, Category = "Level Segment")
+	float getLocalVOffset() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Level Segment")
+	float getWorldVOffset() const;
+
 	ESegmentOrientations getOrientation() const;
 
 	void setOrientation(const ESegmentOrientations orientation);

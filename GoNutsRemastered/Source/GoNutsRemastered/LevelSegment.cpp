@@ -133,6 +133,57 @@ FVector ALevelSegment::getHOffsetLocation() const
 	return hOffsetLocation;
 }
 
+float ALevelSegment::getLocalVOffset() const
+{
+	float vOffset = 0.0f;
+
+	switch (_orientation)
+	{
+	case ESegmentOrientations::SEGO_Right:
+		vOffset = 0.0f;
+		break;
+	case ESegmentOrientations::SEGO_Left:
+		vOffset = getMesh()->Bounds.BoxExtent.X * 2.0f;
+		break;
+	case ESegmentOrientations::SEGO_Up:
+		vOffset = 0.0f;
+		break;
+	case ESegmentOrientations::SEGO_Down:
+		vOffset = getMesh()->Bounds.BoxExtent.X * 2.0f;
+		break;
+	default:
+		break;
+	}
+
+	return vOffset;
+}
+
+float ALevelSegment::getWorldVOffset() const
+{
+	float vOffset = 0.0f;
+
+	switch (_orientation)
+	{
+	case ESegmentOrientations::SEGO_Right:
+		vOffset = GetActorLocation().X;
+		break;
+	case ESegmentOrientations::SEGO_Left:
+		vOffset = GetActorLocation().X - (getMesh()->Bounds.BoxExtent.X * 2.0f);
+		break;
+	case ESegmentOrientations::SEGO_Up:
+		vOffset = GetActorLocation().X;
+		break;
+	case ESegmentOrientations::SEGO_Down:
+		vOffset = GetActorLocation().X - (getMesh()->Bounds.BoxExtent.X * 2.0f);
+		break;
+	default:
+		break;
+	}
+
+	//vOffset = GetActorLocation().X;
+	return vOffset;
+}
+
 ESegmentOrientations ALevelSegment::getOrientation() const
 {
 	return _orientation;

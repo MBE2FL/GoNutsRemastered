@@ -442,7 +442,7 @@ ALevelSegment* ALevelGenerator::getValidSegment(ALevelSegment* leftSegment)
 		FCollisionObjectQueryParams queryParams;
 		queryParams.AddObjectTypesToQuery(ECC_LevelSegmentChannel);
 		FVector traceStart = leftSegment->getHOffsetLocation() + FVector(0.0f, 150.0f, 0.0f);
-		FVector traceEnd = FVector(traceStart.X - 2000.0f, traceStart.Y + 100.0f, traceStart.Z);
+		FVector traceEnd = FVector(traceStart.X - 500.0f - leftSegment->getLocalVOffset(), traceStart.Y + 100.0f, traceStart.Z);
 		
 		//if (GetWorld()->LineTraceSingleByObjectType(hitResult, traceStart, traceEnd, queryParams))
 		//{
@@ -607,7 +607,7 @@ ALevelSegment* ALevelGenerator::getValidSegment(ALevelSegment* leftSegment)
 		segment = Cast<ALevelSegment>(GetWorld()->SpawnActor(segSpawnInfo._segment));
 
 		// Set the position and rotation of the segment.
-		//horPos = leftSegment->GetActorLocation().Y + (leftSegment->getMesh()->Bounds.BoxExtent.Y * 2.0f);
+		vertPos = leftSegment->getWorldVOffset();
 		segment->SetActorLocation(FVector(vertPos, horPos, 500.0f));
 		setValidOrientation(segment, segSpawnInfo._validOrientations);
 

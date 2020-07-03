@@ -50,7 +50,7 @@ void UPedestrianManager::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	// ...
 }
 
-void UPedestrianManager::spawnPedestrians(ALevelSegment* crosswalk)
+void UPedestrianManager::spawnPedestrians(ALevelSegment* crosswalk, const TArray<USceneComponent*>& pedestrianSpawnPoints)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Level gen notified pedstrian manager about crosswalk."));
 }

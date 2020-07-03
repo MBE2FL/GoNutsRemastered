@@ -9,6 +9,8 @@
 
 class UArrowComponent;
 
+#define ECC_LevelSegmentChannel ECollisionChannel::ECC_GameTraceChannel1
+
 
 UENUM(meta = (Bitflags))
 enum class ESegmentTypes : uint8
@@ -19,7 +21,6 @@ enum class ESegmentTypes : uint8
 	House,
 	Road,
 	Sidewalk,
-	Sidewalk_Right
 };
 ENUM_CLASS_FLAGS(ESegmentTypes);
 
@@ -33,6 +34,19 @@ enum class ESegmentOrientations : uint8
 	SEGO_Down = 8	UMETA(DisplayName = "Down"),
 };
 //ENUM_CLASS_FLAGS(ESegmentOrientations);
+
+UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
+namespace ESegmentFeatures
+{
+	enum Type
+	{
+		SF_None = 0	UMETA(DisplayName = "None (DON'T USE THIS!)"),
+		SF_No_Features = 1	UMETA(DisplayName = "No Features"),
+		SF_Spawn_Cars = 2	UMETA(DisplayName = "Spawn Cars"),
+		SF_Spawn_Obstacles = 4	UMETA(DisplayName = "Spawn Obstacles"),
+		SF_Spawn_Pedestrians = 8	UMETA(DisplayName = "Spawn Pedestrians"),
+	};
+}
 
 USTRUCT(BlueprintType)
 struct FSegmentSpawnInfo
@@ -97,23 +111,31 @@ public:
 
 	ESegmentTypes getSegmentType() const;
 
+	ESegmentFeatures::Type getSegmentFeatures() const;
+
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& propertyChangedEvent) override;
 
 	UStaticMeshComponent* getMesh() const;
 
-	USceneComponent* getNextHSlot() const;
+	UFUNCTION(BlueprintCallable, Category = "Level Segment")
 	float getHOffset() const;
 
-	USceneComponent* getNextVSlot() const;
-
-	//USceneComponent* getPrevHSlot() const;
-
-	//USceneComponent* getPrevVSlot() const;
+	UFUNCTION(BlueprintCallable, Category = "Level Segment")
+	FVector getHOffsetLocation() const;
 
 	ESegmentOrientations getOrientation() const;
 
 	void setOrientation(const ESegmentOrientations orientation);
 
+	UFUNCTION(BlueprintCallable, Category = "Level Segment|Segment Features")
+	void setSpawnPoints(UPARAM(ref) TArray<USceneComponent*> carSpawnPoints, UPARAM(ref) TArray<USceneComponent*> obstableSpawnPoints,
+						UPARAM(ref) TArray<USceneComponent*> pedestrianSpawnPoints);
+
+	UFUNCTION(BlueprintCallable, Category = "Level Segment|Segment Features")
+	const TArray<USceneComponent*>& getObstacleSpawnPoints() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Level Segment|Segment Features")
+	const TArray<USceneComponent*>& getPedestrianSpawnPoints() const;
 
 
 	const TSet<FSegmentSpawnInfo>& getValidRightSegments() const;
@@ -131,9 +153,12 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 
-private:
+protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Segment", meta = (AllowPrivateAccess = true))
 	ESegmentTypes _segmentType = ESegmentTypes::Generic;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Segment", meta = (Bitmask, BitmaskEnum = "ESegmentFeatures"))
+	int32 _segmentFeatures = ESegmentFeatures::Type::SF_No_Features;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Segment|Connection Settings", meta = (AllowPrivateAccess = true))
 	UStaticMeshComponent* _mesh;
@@ -145,10 +170,10 @@ private:
 	UArrowComponent* _leftDir;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Segment", meta = (AllowPrivateAccess = true))
-	UArrowComponent* _upDir;
+	UArrowComponent* _topDir;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Segment", meta = (AllowPrivateAccess = true))
-	UArrowComponent* _downDir;
+	UArrowComponent* _bottomDir;
 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Level Segment", meta = (AllowPrivateAccess = true))
@@ -162,11 +187,19 @@ private:
 	TSet<FSegmentSpawnInfo> _validLeftSegments;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Segment|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
-	TSet<FSegmentSpawnInfo> _validUpSegments;
+	TSet<FSegmentSpawnInfo> _validTopSegments;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Segment|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
-	TSet<FSegmentSpawnInfo> _validDownSegments;
+	TSet<FSegmentSpawnInfo> _validBottomSegments;
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Segment|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
 	//TMap<ESegmentTypes, FSegmentSpawnInfo> _validOrientations;
+
+
+	UPROPERTY()
+		TArray<USceneComponent*> _carSpawnPoints;
+	UPROPERTY()
+		TArray<USceneComponent*> _obstacleSpawnPoints;
+	UPROPERTY()
+		TArray<USceneComponent*> _pedestrianSpawnPoints;
 };

@@ -17,6 +17,9 @@ ALevelSegment::ALevelSegment()
 	_mesh->SetStaticMesh(meshAsset.Object);
 	static ConstructorHelpers::FObjectFinder<UMaterial> matAsset(TEXT("Material'/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial'"));
 	_mesh->SetMaterial(0, matAsset.Object);
+	_mesh->SetCollisionProfileName(TEXT("Custom"));
+	_mesh->SetCollisionObjectType(ECC_LevelSegmentChannel);
+	_mesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
 	RootComponent = _mesh;
 
 
@@ -32,26 +35,27 @@ ALevelSegment::ALevelSegment()
 	_leftDir->SetArrowColor(FLinearColor::Yellow);
 	_leftDir->SetRelativeScale3D(FVector(3.0f, 3.0f, 1.0f));
 
-	_upDir = CreateDefaultSubobject<UArrowComponent>(TEXT("UpDir"));
-	_upDir->SetupAttachment(_mesh);
-	_upDir->SetRelativeLocationAndRotation(FVector(_mesh->Bounds.BoxExtent.X * 2.0f, 0.0f, 0.0f), FRotator::ZeroRotator);
-	_upDir->SetArrowColor(FLinearColor::Red);
-	_upDir->SetRelativeScale3D(FVector(3.0f, 3.0f, 1.0f));
+	_topDir = CreateDefaultSubobject<UArrowComponent>(TEXT("UpDir"));
+	_topDir->SetupAttachment(_mesh);
+	_topDir->SetRelativeLocationAndRotation(FVector(_mesh->Bounds.BoxExtent.X * 2.0f, 0.0f, 0.0f), FRotator::ZeroRotator);
+	_topDir->SetArrowColor(FLinearColor::Red);
+	_topDir->SetRelativeScale3D(FVector(3.0f, 3.0f, 1.0f));
 
-	_downDir = CreateDefaultSubobject<UArrowComponent>(TEXT("DownDir"));
-	_downDir->SetupAttachment(_mesh);
-	_downDir->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, 0.0f), FRotator(0.0f, 180.0f, 0.0f));
-	_downDir->SetArrowColor(FLinearColor::Black);
-	_downDir->SetRelativeScale3D(FVector(3.0f, 3.0f, 1.0f));
-
-
-	//_mesh->OnStaticMeshChanged().AddUObject(this, &ALevelSegment::onMeshChanged);
-	
+	_bottomDir = CreateDefaultSubobject<UArrowComponent>(TEXT("DownDir"));
+	_bottomDir->SetupAttachment(_mesh);
+	_bottomDir->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, 0.0f), FRotator(0.0f, 180.0f, 0.0f));
+	_bottomDir->SetArrowColor(FLinearColor::Black);
+	_bottomDir->SetRelativeScale3D(FVector(3.0f, 3.0f, 1.0f));	
 }
 
 ESegmentTypes ALevelSegment::getSegmentType() const
 {
 	return _segmentType;
+}
+
+ESegmentFeatures::Type ALevelSegment::getSegmentFeatures() const
+{
+	return static_cast<ESegmentFeatures::Type>(_segmentFeatures);
 }
 
 void ALevelSegment::PostEditChangeProperty(FPropertyChangedEvent& propertyChangedEvent)
@@ -62,12 +66,6 @@ void ALevelSegment::PostEditChangeProperty(FPropertyChangedEvent& propertyChange
 UStaticMeshComponent* ALevelSegment::getMesh() const
 {
 	return _mesh;
-}
-
-USceneComponent* ALevelSegment::getNextHSlot() const
-{
-	//return _nextHSlot;
-	return nullptr;
 }
 
 float ALevelSegment::getHOffset() const
@@ -84,13 +82,55 @@ float ALevelSegment::getHOffset() const
 	//	return _nextHSlot->GetComponentLocation().Y;
 	//}
 
-	return 0.0f;
+	float hOffset = 0.0f;
+
+	switch (_orientation)
+	{
+	case ESegmentOrientations::SEGO_Right:
+		hOffset = GetActorLocation().Y + (getMesh()->Bounds.BoxExtent.Y * 2.0f);
+		break;
+	case ESegmentOrientations::SEGO_Left:
+		hOffset = GetActorLocation().Y;
+		break;
+	case ESegmentOrientations::SEGO_Up:
+		hOffset = GetActorLocation().Y + (getMesh()->Bounds.BoxExtent.Y * 2.0f);
+		break;
+	case ESegmentOrientations::SEGO_Down:
+		hOffset = GetActorLocation().Y + (getMesh()->Bounds.BoxExtent.Y * 2.0f);
+		break;
+	default:
+		break;
+	}
+
+	return hOffset;
 }
 
-USceneComponent* ALevelSegment::getNextVSlot() const
+FVector ALevelSegment::getHOffsetLocation() const
 {
-	//return _nextVSlot;
-	return nullptr;
+	FVector hOffsetLocation;
+
+	switch (_orientation)
+	{
+	case ESegmentOrientations::SEGO_Right:
+		hOffsetLocation = GetActorLocation();
+		hOffsetLocation.Y += (getMesh()->Bounds.BoxExtent.Y * 2.0f);
+		break;
+	case ESegmentOrientations::SEGO_Left:
+		hOffsetLocation = GetActorLocation();
+		break;
+	case ESegmentOrientations::SEGO_Up:
+		hOffsetLocation = GetActorLocation();
+		hOffsetLocation.Y += (getMesh()->Bounds.BoxExtent.Y * 2.0f);
+		break;
+	case ESegmentOrientations::SEGO_Down:
+		hOffsetLocation = GetActorLocation();
+		hOffsetLocation.Y += (getMesh()->Bounds.BoxExtent.Y * 2.0f);
+		break;
+	default:
+		break;
+	}
+
+	return hOffsetLocation;
 }
 
 ESegmentOrientations ALevelSegment::getOrientation() const
@@ -101,6 +141,23 @@ ESegmentOrientations ALevelSegment::getOrientation() const
 void ALevelSegment::setOrientation(const ESegmentOrientations orientation)
 {
 	_orientation = orientation;
+}
+
+void ALevelSegment::setSpawnPoints(UPARAM(ref)TArray<USceneComponent*> carSpawnPoints, UPARAM(ref)TArray<USceneComponent*> obstableSpawnPoints, UPARAM(ref)TArray<USceneComponent*> pedestrianSpawnPoints)
+{
+	_carSpawnPoints = carSpawnPoints;
+	_obstacleSpawnPoints = obstableSpawnPoints;
+	_pedestrianSpawnPoints = pedestrianSpawnPoints;
+}
+
+const TArray<USceneComponent*>& ALevelSegment::getObstacleSpawnPoints() const
+{
+	return _obstacleSpawnPoints;
+}
+
+const TArray<USceneComponent*>& ALevelSegment::getPedestrianSpawnPoints() const
+{
+	return _pedestrianSpawnPoints;
 }
 
 const TSet<FSegmentSpawnInfo>& ALevelSegment::getValidRightSegments() const
@@ -115,23 +172,13 @@ const TSet<FSegmentSpawnInfo>& ALevelSegment::getValidLeftSegments() const
 
 const TSet<FSegmentSpawnInfo>& ALevelSegment::getValidUpSegments() const
 {
-	return _validUpSegments;
+	return _validTopSegments;
 }
 
 const TSet<FSegmentSpawnInfo>& ALevelSegment::getValidDownSegments() const
 {
-	return _validDownSegments;
+	return _validBottomSegments;
 }
-
-//USceneComponent* ALevelSegment::getPrevHSlot() const
-//{
-//	return _prevHSlot;
-//}
-//
-//USceneComponent* ALevelSegment::getPrevVSlot() const
-//{
-//	return _prevVSlot;
-//}
 
 // Called when the game starts or when spawned
 void ALevelSegment::BeginPlay()

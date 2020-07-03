@@ -25,18 +25,21 @@
 //	TSet<TSubclassOf<ALevelSegment>> _validLeftSegments;
 //
 //	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
-//	TSet<TSubclassOf<ALevelSegment>> _validUpSegments;
+//	TSet<TSubclassOf<ALevelSegment>> _validTopSegments;
 //
 //	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
-//	TSet<TSubclassOf<ALevelSegment>> _validDownSegments;
+//	TSet<TSubclassOf<ALevelSegment>> _validBottomSegments;
 //};
+
+#define ECC_LevelSegmentChannel ECollisionChannel::ECC_GameTraceChannel1
 
 
 DECLARE_LOG_CATEGORY_EXTERN(LogLevelGen, Log, All);
 
 
 //DECLARE_EVENT_OneParam(ALevelGenerator, FOnCrosswalkSpawned, AActor*)
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCrosswalkSpawned, ALevelSegment*, crosswalk);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnCrosswalkSpawned, ALevelSegment*, crosswalk, const TArray<USceneComponent*>&, pedestrianSpawnPoints);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnRoadSpawned, ALevelSegment*, road, const TArray<USceneComponent*>&, obstacleSpawnPoints);
 
 UCLASS(Blueprintable)
 class GONUTSREMASTERED_API ALevelGenerator : public AActor
@@ -59,20 +62,18 @@ public:
 
 
 private:
-	void randomSpawn();
-
 	void streamLevelsTest();
 
-	ALevelSegment* getValidSegment(ESegmentTypes hSegmentType, ESegmentTypes vSegmentType);
 	ALevelSegment* getValidSegment(ALevelSegment* hSegment, ALevelSegment* vSegment);
-	ALevelSegment* getValidSegment(ALevelSegment* hSegment, ALevelSegment* vSegment, int ver);
-	void setValidOrientation(ALevelSegment* segment, ESegmentOrientations leftOrientation, ESegmentTypes leftType,
-								ESegmentTypes bottomType, ESegmentOrientations bottomOrientation);
+	ALevelSegment* getValidSegment(ALevelSegment* leftSegment);
 	void setValidOrientation(ALevelSegment* segment, uint8 validOrientations);
 
 
 	UPROPERTY(EditAnywhere, BlueprintAssignable, Category = "Level Gen|Generation Events", meta = (AllowPrivateAccess = true))
 	FOnCrosswalkSpawned _onCrosswalkSpawnedEvent;
+
+	UPROPERTY(EditAnywhere, BlueprintAssignable, Category = "Level Gen|Generation Events", meta = (AllowPrivateAccess = true))
+	FOnRoadSpawned _onRoadSpawnedEvent;
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
 	//TArray<AActor*> _spawnableActors;
@@ -94,4 +95,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
 	TMap<ESegmentTypes, FSegmentGroup> _segmentGroups;
+
+
+
+	UPROPERTY()
+	ALevelSegment* _prevRowStart;
 };

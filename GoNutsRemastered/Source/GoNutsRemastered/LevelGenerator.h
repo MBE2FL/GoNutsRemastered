@@ -51,6 +51,7 @@ public:
 	ALevelGenerator();
 
 	FOnCrosswalkSpawned& onCrosswalkSpawned() { return _onCrosswalkSpawnedEvent; }
+	FOnRoadSpawned& onRoadSpawned() { return _onRoadSpawnedEvent; }
 
 protected:
 	// Called when the game starts or when spawned

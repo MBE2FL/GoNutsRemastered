@@ -67,10 +67,10 @@ void ALevelGenerator::BeginPlay()
 				}
 				break;
 			case ESegmentTypes::Road:
-				if (segment->getSegmentFeatures() & ESegmentFeatures::SF_Spawn_Cars)
-				{
-					_onRoadSpawnedEvent.Broadcast(segment, segment->getObstacleSpawnPoints());
-				}
+				if (segment->getSegmentFeatures() & ESegmentFeatures::SF_Spawn_Obstacles)
+					{
+						_onRoadSpawnedEvent.Broadcast(segment, segment->getObstacleSpawnPoints());
+					}
 				break;
 			default:
 				break;

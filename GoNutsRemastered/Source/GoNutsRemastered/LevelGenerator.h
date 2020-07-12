@@ -7,34 +7,77 @@
 #include "LevelSegment.h"
 #include "LevelGenerator.generated.h"
 
-//class ALevelSegment;
 
+class ULevelGenState;
+class ULevelGenUpState;
+class ULevelGenLeftState;
 
-//USTRUCT(BlueprintType)
-//struct FSegmentGroup
-//{
-//	GENERATED_BODY()
-//
-//	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
-//	//TArray<TSubclassOf<ALevelSegment>> _validSegments;
-//
-//	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
-//	TSet<TSubclassOf<ALevelSegment>> _validRightSegments;
-//
-//	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
-//	TSet<TSubclassOf<ALevelSegment>> _validLeftSegments;
-//
-//	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
-//	TSet<TSubclassOf<ALevelSegment>> _validTopSegments;
-//
-//	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
-//	TSet<TSubclassOf<ALevelSegment>> _validBottomSegments;
-//};
 
 #define ECC_LevelSegmentChannel ECollisionChannel::ECC_GameTraceChannel1
 
 
 DECLARE_LOG_CATEGORY_EXTERN(LogLevelGen, Log, All);
+
+
+UENUM(BlueprintType)
+enum class EMapOrientations : uint8
+{
+	MO_Right,
+	MO_Left,
+	MO_Up,
+	MO_Down
+};
+
+USTRUCT(Blueprintable)
+struct FLane
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Lane Settings")
+	float _width;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Lane Settings")
+	TSet<TSubclassOf<ALevelSegment>> _validSegments;
+	UPROPERTY()
+	float _usedWidth;
+
+	bool isFull() const 
+	{
+		return _usedWidth >= (_width - 5.0f);
+	}
+
+	bool getValidLaneSegment(TSet<FSegmentSpawnInfo>& validSegmentsSet, FSegmentSpawnInfo& spawnInfo)
+	{
+		TArray<FSegmentSpawnInfo> validSegmentsArr = validSegmentsSet.Array();
+
+		// Extract all valid segments from the level generator.
+		TSet<TSubclassOf<ALevelSegment>> levelGenSegments;
+		
+		for (const FSegmentSpawnInfo& currSpawnInfo : validSegmentsArr)
+		{
+			levelGenSegments.Emplace(currSpawnInfo._segment);
+		}
+		
+
+		// Try to randomly find a match with the valid segments from the lane.
+		TSet<TSubclassOf<ALevelSegment>> allValidSegments = _validSegments.Intersect(levelGenSegments);
+
+		if (allValidSegments.Num() <= 0)
+		{
+			UE_LOG(LogLevelGen, Error, TEXT("Could not find a valid segment between the lane and the level generator!"));
+			return false;
+		}
+
+		TSubclassOf<ALevelSegment> validSegment = allValidSegments.Array()[FMath::RandRange(0, allValidSegments.Num() - 1)];
+
+
+		spawnInfo = FSegmentSpawnInfo(*validSegmentsArr.FindByPredicate([&validSegment](FSegmentSpawnInfo& spawnInfo) -> bool
+			{
+				return spawnInfo._segment == validSegment;
+			}));
+
+		return true;
+	}
+};
 
 
 //DECLARE_EVENT_OneParam(ALevelGenerator, FOnCrosswalkSpawned, AActor*)
@@ -53,6 +96,12 @@ public:
 	FOnCrosswalkSpawned& onCrosswalkSpawned() { return _onCrosswalkSpawnedEvent; }
 	FOnRoadSpawned& onRoadSpawned() { return _onRoadSpawnedEvent; }
 
+	EMapOrientations getMapOrientation() const { return _mapOrientation; };
+	int32 getWidth() const { return _width; };
+	static ULevelGenUpState* getLevelGenUpState() { return _levelGenUpState; };
+	static ULevelGenLeftState* getLevelGenLeftState() { return _levelGenLeftState; };
+	TArray<FLane>& getLanes() { return _lanes; };
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -63,42 +112,30 @@ public:
 
 
 private:
-	void streamLevelsTest();
-
-	ALevelSegment* getValidSegment(ALevelSegment* hSegment, ALevelSegment* vSegment);
-	ALevelSegment* getValidSegment(ALevelSegment* leftSegment);
-	void setValidOrientation(ALevelSegment* segment, uint8 validOrientations);
-
-
-	UPROPERTY(EditAnywhere, BlueprintAssignable, Category = "Level Gen|Generation Events", meta = (AllowPrivateAccess = true))
+	UPROPERTY(BlueprintAssignable, Category = "Level Gen|Generation Events", meta = (AllowPrivateAccess = true))
 	FOnCrosswalkSpawned _onCrosswalkSpawnedEvent;
 
-	UPROPERTY(EditAnywhere, BlueprintAssignable, Category = "Level Gen|Generation Events", meta = (AllowPrivateAccess = true))
+	UPROPERTY(BlueprintAssignable, Category = "Level Gen|Generation Events", meta = (AllowPrivateAccess = true))
 	FOnRoadSpawned _onRoadSpawnedEvent;
-
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
-	//TArray<AActor*> _spawnableActors;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Grid Settings", meta = (AllowPrivateAccess = true))
-	int32 _numRows;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Grid Settings", meta = (AllowPrivateAccess = true))
-	int32 _numColumns;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen", meta = (AllowPrivateAccess = true))
-	TArray<FName> _levelStreamNames;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
-	TArray<TSubclassOf<ALevelSegment>> _spawnableActors;
-
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
-	//TMap<ESegmentTypes, TArray<TSubclassOf<ALevelSegment>>> _segmentGroups;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
-	TMap<ESegmentTypes, FSegmentGroup> _segmentGroups;
 
 
 
 	UPROPERTY()
 	ALevelSegment* _prevRowStart;
+	UPROPERTY()
+	EMapOrientations _mapOrientation = EMapOrientations::MO_Up;
+	UPROPERTY()
+	int32 _width = 6;
+	UPROPERTY()
+	ULevelGenState* _levelGenState;
+	static ULevelGenUpState* _levelGenUpState;
+	static ULevelGenLeftState* _levelGenLeftState;
+	UPROPERTY()
+	FTimerHandle _timerHandle;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Lane Settings", meta = (AllowPrivateAccess = true))
+	TArray<FLane> _lanes;
+
+
+	UFUNCTION()
+	void updateLevelGen();
 };

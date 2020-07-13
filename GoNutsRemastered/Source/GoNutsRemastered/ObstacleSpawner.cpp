@@ -45,30 +45,56 @@ void UObstacleSpawner::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 
 void UObstacleSpawner::spawnObstacle(ALevelSegment* road, const TArray<USceneComponent*>& ObstacleSpawnPoints)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Level gen notified obstacles manager about road."));
+	//UE_LOG(LogTemp, Warning, TEXT("Level gen notified obstacles manager about road."));
 
 	UINT32 ObstaclePicker;
 	UINT32 SpawnChance;
 	UINT32 SpawnPosPick;
+	UINT32 SpawnPosPick2;//for if the extra obstacle spawns
 	AActor *tempActor;
 
-	//for (int i = 0; i < ObstacleSpawnPoints.Num(); i++)
-	//{
-		ObstaclePicker = FMath::RandRange(0, _ObstacleTypes.Num() - 1);
-		SpawnChance = FMath::RandRange(0, 5);
-		SpawnPosPick = FMath::RandRange(0, ObstacleSpawnPoints.Num() - 1);
+	ObstaclePicker = FMath::RandRange(0, _ObstacleTypes.Num() - 1);
+	SpawnChance = FMath::RandRange(0, 5);
+	SpawnPosPick = FMath::RandRange(0, ObstacleSpawnPoints.Num() - 1);
+
+	SpawnPosPick2 = SpawnPosPick + 3;
+	if (SpawnPosPick2 > static_cast<UINT32>(ObstacleSpawnPoints.Num() - 1))
+	{
+		SpawnPosPick2 -= SpawnPosPick;
+	}
 		
-		if (SpawnChance >= 3)
+	if (SpawnChance >= 3)
+	{
+		switch (ObstaclePicker)
 		{
+		case 0://case 0 is for the acorn
+			for (int i = 0; i < ObstacleSpawnPoints.Num(); i++)
+			{
+				tempActor = GetWorld()->SpawnActor(_ObstacleTypes[ObstaclePicker]);
+				tempActor->SetActorTransform(ObstacleSpawnPoints[i]->GetComponentTransform());
+			}
+			//UE_LOG(LogTemp, Warning, TEXT("It went in here"));
+			break;
+
+		default://so far for every other obstacle
+
+			//spawns first obstacle
 			tempActor = GetWorld()->SpawnActor(_ObstacleTypes[ObstaclePicker]);
 			tempActor->SetActorTransform(ObstacleSpawnPoints[SpawnPosPick]->GetComponentTransform());
-		}
-		else
-		{
 
-		}
-	//}
+			//chance to spawn second
+			SpawnChance = FMath::RandRange(0, 5);
+			if (SpawnChance >= 4)
+			{
+				ObstaclePicker = FMath::RandRange(1, _ObstacleTypes.Num() - 1);//set at 1 - max so no acorn spawns
+				tempActor = GetWorld()->SpawnActor(_ObstacleTypes[ObstaclePicker]);
+				tempActor->SetActorTransform(ObstacleSpawnPoints[SpawnPosPick2]->GetComponentTransform());
+			}
 
+			//UE_LOG(LogTemp, Warning, TEXT("It did not go in here"));
+			break;
+		}
+	}
 
 }
 

@@ -9,6 +9,8 @@
 #include "LevelGenUpState.h"
 #include "LevelGenLeftState.h"
 
+#include "AssetRegistryModule.h"
+
 DEFINE_LOG_CATEGORY(LogLevelGen);
 
 
@@ -22,6 +24,78 @@ ALevelGenerator::ALevelGenerator()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+
+//#if WITH_EDITOR
+//	// Load the asset registry module
+//	FAssetRegistryModule& assetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(FName("AssetRegistry"));
+//	IAssetRegistry& assetRegistry = assetRegistryModule.Get();
+//
+//	TArray<FString> contentPaths;
+//	contentPaths.Add("/LevelSegments/Segments");
+//	assetRegistry.ScanFilesSynchronous(contentPaths);
+//
+//	FName baseClassName = ALevelSegment::StaticClass()->GetFName();
+//
+//	// Get all derived class names.
+//	TSet<FName> derivedNames;
+//	{
+//		TArray<FName> baseNames;
+//		baseNames.Add(baseClassName);
+//
+//		TSet<FName> excluded;
+//		assetRegistry.GetDerivedClassNames(baseNames, excluded, derivedNames);
+//	}
+//
+//	FARFilter filter;
+//	filter.ClassNames.Add(UBlueprint::StaticClass()->GetFName());
+//	filter.bRecursiveClasses = true;
+//	filter.PackagePaths.Add(TEXT("/LevelSegments/Segments"));
+//	filter.bRecursivePaths = true;
+//
+//	TArray<FAssetData> assetList;
+//	assetRegistry.GetAssets(filter, assetList);
+//
+//	
+//	for (const FAssetData& asset : assetList)
+//	{
+//		if (const FString* generatedClassPathPtr = asset.TagsAndValues.Find(TEXT("GeneratedClass")))
+//		{
+//			// Convert path to just the name part.
+//			const FString classObjectPath = FPackageName::ExportTextPathToObjectPath(*generatedClassPathPtr);
+//			const FString className = FPackageName::ObjectPathToObjectName(classObjectPath);
+//
+//			// Check if the class is in the derived set.
+//			if (!derivedNames.Contains(*className))
+//			{
+//				continue;
+//			}
+//
+//			// Store using the path to the generated class.
+//			
+//		}
+//	}
+//#endif
+
+}
+
+const TSet<FSegmentSpawnInfo>& ALevelGenerator::getValidRightSegments(const ESegmentTypes& segmentType) const
+{
+	return _validSegmentsLookup.Find(segmentType)->_validRightSegments;
+}
+
+const TSet<FSegmentSpawnInfo>& ALevelGenerator::getValidLeftSegments(const ESegmentTypes& segmentType) const
+{
+	return _validSegmentsLookup.Find(segmentType)->_validLeftSegments;
+}
+
+const TSet<FSegmentSpawnInfo>& ALevelGenerator::getValidTopSegments(const ESegmentTypes& segmentType) const
+{
+	return _validSegmentsLookup.Find(segmentType)->_validTopSegments;
+}
+
+const TSet<FSegmentSpawnInfo>& ALevelGenerator::getValidBottomSegments(const ESegmentTypes& segmentType) const
+{
+	return _validSegmentsLookup.Find(segmentType)->_validBottomSegments;
 }
 
 // Called when the game starts or when spawned

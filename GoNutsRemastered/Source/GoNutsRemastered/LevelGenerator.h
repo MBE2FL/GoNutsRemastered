@@ -34,49 +34,81 @@ struct FLane
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Lane Settings")
-	float _width;
+	uint8 _slots;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Lane Settings")
-	TSet<TSubclassOf<ALevelSegment>> _validSegments;
+	TSet<ESegmentTypes> _validSegmentTypes;
+	//TSet<TSubclassOf<ALevelSegment>> _validSegments;
+
 	UPROPERTY()
-	float _usedWidth;
+	uint8 _usedSlots;
 
 	bool isFull() const 
 	{
-		return _usedWidth >= (_width - 5.0f);
+		return _usedSlots >= _slots;
 	}
 
 	bool getValidLaneSegment(TSet<FSegmentSpawnInfo>& validSegmentsSet, FSegmentSpawnInfo& spawnInfo)
 	{
 		TArray<FSegmentSpawnInfo> validSegmentsArr = validSegmentsSet.Array();
 
-		// Extract all valid segments from the level generator.
-		TSet<TSubclassOf<ALevelSegment>> levelGenSegments;
+		// Extract all valid segment types from the level generator.
+		TSet<ESegmentTypes> levelGenSegments;
 		
 		for (const FSegmentSpawnInfo& currSpawnInfo : validSegmentsArr)
 		{
-			levelGenSegments.Emplace(currSpawnInfo._segment);
+			levelGenSegments.Emplace(currSpawnInfo._segmentType);
 		}
 		
 
-		// Try to randomly find a match with the valid segments from the lane.
-		TSet<TSubclassOf<ALevelSegment>> allValidSegments = _validSegments.Intersect(levelGenSegments);
+		// Try to randomly find a match with the valid segment types from the lane.
+		TSet<ESegmentTypes> allValidSegmentTypes = _validSegmentTypes.Intersect(levelGenSegments);
 
-		if (allValidSegments.Num() <= 0)
+		if (allValidSegmentTypes.Num() <= 0)
 		{
-			UE_LOG(LogLevelGen, Error, TEXT("Could not find a valid segment between the lane and the level generator!"));
+			UE_LOG(LogLevelGen, Error, TEXT("Could not find a valid segment type between the lane and the level generator!"));
 			return false;
 		}
 
-		TSubclassOf<ALevelSegment> validSegment = allValidSegments.Array()[FMath::RandRange(0, allValidSegments.Num() - 1)];
+		ESegmentTypes validSegmentType = allValidSegmentTypes.Array()[FMath::RandRange(0, allValidSegmentTypes.Num() - 1)];
 
 
-		spawnInfo = FSegmentSpawnInfo(*validSegmentsArr.FindByPredicate([&validSegment](FSegmentSpawnInfo& spawnInfo) -> bool
+		spawnInfo = FSegmentSpawnInfo(*validSegmentsArr.FindByPredicate([&validSegmentType](FSegmentSpawnInfo& spawnInfo) -> bool
 			{
-				return spawnInfo._segment == validSegment;
+				return spawnInfo._segmentType == validSegmentType;
 			}));
 
 		return true;
 	}
+};
+
+
+USTRUCT(Blueprintable)
+struct FSegmentClassTypes
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Segment Settings")
+	TArray<TSubclassOf<ALevelSegment>> _segmentClassTypes;
+};
+
+
+USTRUCT(Blueprintable)
+struct FSegmentTypeConnectInfo
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Segment Settings")
+	TSet<FSegmentSpawnInfo> _validRightSegments;			
+															
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Segment Settings")
+	TSet<FSegmentSpawnInfo> _validLeftSegments;				
+															
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Segment Settings")
+	TSet<FSegmentSpawnInfo> _validTopSegments;				
+															
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Segment Settings")
+	TSet<FSegmentSpawnInfo> _validBottomSegments;
 };
 
 
@@ -101,6 +133,12 @@ public:
 	static ULevelGenUpState* getLevelGenUpState() { return _levelGenUpState; };
 	static ULevelGenLeftState* getLevelGenLeftState() { return _levelGenLeftState; };
 	TArray<FLane>& getLanes() { return _lanes; };
+	TMap<ESegmentTypes, FSegmentClassTypes>& getSegments() { return _segments; }
+
+	const TSet<FSegmentSpawnInfo>& getValidRightSegments(const ESegmentTypes& segmentType) const;
+	const TSet<FSegmentSpawnInfo>& getValidLeftSegments(const ESegmentTypes& segmentType) const;
+	const TSet<FSegmentSpawnInfo>& getValidTopSegments(const ESegmentTypes& segmentType) const;
+	const TSet<FSegmentSpawnInfo>& getValidBottomSegments(const ESegmentTypes& segmentType) const;
 
 protected:
 	// Called when the game starts or when spawned
@@ -122,18 +160,31 @@ private:
 
 	UPROPERTY()
 	ALevelSegment* _prevRowStart;
+
 	UPROPERTY()
 	EMapOrientations _mapOrientation = EMapOrientations::MO_Up;
+
 	UPROPERTY()
 	int32 _width = 6;
+
 	UPROPERTY()
 	ULevelGenState* _levelGenState;
+
 	static ULevelGenUpState* _levelGenUpState;
 	static ULevelGenLeftState* _levelGenLeftState;
+
 	UPROPERTY()
 	FTimerHandle _timerHandle;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Lane Settings", meta = (AllowPrivateAccess = true))
 	TArray<FLane> _lanes;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Segment Settings", meta = (AllowPrivateAccess = true))
+	TMap<ESegmentTypes, FSegmentClassTypes> _segments;
+	//TMultiMap<ESegmentTypes, TSubclassOf<ALevelSegment>> _segments;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Segment Settings", meta = (AllowPrivateAccess = true))
+	TMap<ESegmentTypes, FSegmentTypeConnectInfo> _validSegmentsLookup;
 
 
 	UFUNCTION()

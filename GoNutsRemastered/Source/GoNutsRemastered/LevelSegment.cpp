@@ -68,6 +68,31 @@ UStaticMeshComponent* ALevelSegment::getMesh() const
 	return _mesh;
 }
 
+float ALevelSegment::getLocalHOffset() const
+{
+	float hOffset = 0.0f;
+
+	switch (_orientation)
+	{
+	case ESegmentOrientations::SEGO_Right:
+		hOffset = 0.0f;
+		break;
+	case ESegmentOrientations::SEGO_Left:
+		hOffset = SLOT_SIZE * _horizontalSlots;
+		break;
+	case ESegmentOrientations::SEGO_Up:
+		hOffset = SLOT_SIZE * _verticalSlots;
+		break;
+	case ESegmentOrientations::SEGO_Down:
+		hOffset = 0.0f;
+		break;
+	default:
+		break;
+	}
+
+	return hOffset;
+}
+
 float ALevelSegment::getHOffset() const
 {
 	//return _mesh->Bounds.BoxExtent.Y * 2.0f;
@@ -84,19 +109,37 @@ float ALevelSegment::getHOffset() const
 
 	float hOffset = 0.0f;
 
+	//switch (_orientation)
+	//{
+	//case ESegmentOrientations::SEGO_Right:
+	//	hOffset = GetActorLocation().Y + (getMesh()->Bounds.BoxExtent.Y * 2.0f);
+	//	break;
+	//case ESegmentOrientations::SEGO_Left:
+	//	hOffset = GetActorLocation().Y;
+	//	break;
+	//case ESegmentOrientations::SEGO_Up:
+	//	hOffset = GetActorLocation().Y + (getMesh()->Bounds.BoxExtent.Y * 2.0f);
+	//	break;
+	//case ESegmentOrientations::SEGO_Down:
+	//	hOffset = GetActorLocation().Y + (getMesh()->Bounds.BoxExtent.Y * 2.0f);
+	//	break;
+	//default:
+	//	break;
+	//}
+
 	switch (_orientation)
 	{
 	case ESegmentOrientations::SEGO_Right:
-		hOffset = GetActorLocation().Y + (getMesh()->Bounds.BoxExtent.Y * 2.0f);
+		hOffset = GetActorLocation().Y + (SLOT_SIZE * _horizontalSlots);
 		break;
 	case ESegmentOrientations::SEGO_Left:
 		hOffset = GetActorLocation().Y;
 		break;
 	case ESegmentOrientations::SEGO_Up:
-		hOffset = GetActorLocation().Y + (getMesh()->Bounds.BoxExtent.Y * 2.0f);
+		hOffset = GetActorLocation().Y + (SLOT_SIZE * _horizontalSlots);
 		break;
 	case ESegmentOrientations::SEGO_Down:
-		hOffset = GetActorLocation().Y + (getMesh()->Bounds.BoxExtent.Y * 2.0f);
+		hOffset = GetActorLocation().Y + (SLOT_SIZE * _horizontalSlots);
 		break;
 	default:
 		break;
@@ -113,18 +156,18 @@ FVector ALevelSegment::getHOffsetLocation() const
 	{
 	case ESegmentOrientations::SEGO_Right:
 		hOffsetLocation = GetActorLocation();
-		hOffsetLocation.Y += (getMesh()->Bounds.BoxExtent.Y * 2.0f);
+		hOffsetLocation.Y += (SLOT_SIZE * _horizontalSlots);
 		break;
 	case ESegmentOrientations::SEGO_Left:
 		hOffsetLocation = GetActorLocation();
 		break;
 	case ESegmentOrientations::SEGO_Up:
 		hOffsetLocation = GetActorLocation();
-		hOffsetLocation.Y += (getMesh()->Bounds.BoxExtent.Y * 2.0f);
+		//hOffsetLocation.Y += (SLOT_SIZE * _horizontalSlots);
 		break;
 	case ESegmentOrientations::SEGO_Down:
 		hOffsetLocation = GetActorLocation();
-		hOffsetLocation.Y += (getMesh()->Bounds.BoxExtent.Y * 2.0f);
+		hOffsetLocation.Y += (SLOT_SIZE * _horizontalSlots);
 		break;
 	default:
 		break;
@@ -133,7 +176,79 @@ FVector ALevelSegment::getHOffsetLocation() const
 	return hOffsetLocation;
 }
 
-float ALevelSegment::getLocalVOffset() const
+FVector ALevelSegment::getNextSegmentSpawnPoint() const
+{
+	FVector spawnPoint;
+
+	switch (_orientation)
+	{
+	case ESegmentOrientations::SEGO_Right:
+		spawnPoint = GetActorLocation();
+		spawnPoint.Y += (SLOT_SIZE * _horizontalSlots);
+		break;
+	case ESegmentOrientations::SEGO_Left:
+		spawnPoint = GetActorLocation();
+		spawnPoint.X -= (SLOT_SIZE * _verticalSlots);
+		break;
+	default:
+		break;
+	}
+
+
+	return spawnPoint;
+}
+
+float ALevelSegment::getLocalVerticalValue() const
+{
+	float v = 0.0f;
+
+	switch (_orientation)
+	{
+	case ESegmentOrientations::SEGO_Right:
+		v = 0.0f;
+		break;
+	case ESegmentOrientations::SEGO_Left:
+		v = SLOT_SIZE * _verticalSlots;
+		break;
+	case ESegmentOrientations::SEGO_Up:
+		v = 0.0f;
+		break;
+	case ESegmentOrientations::SEGO_Down:
+		v = SLOT_SIZE * _verticalSlots;
+		break;
+	default:
+		break;
+	}
+
+	return v;
+}
+
+float ALevelSegment::getWorldVerticalValue() const
+{
+	float v = 0.0f;
+
+	switch (_orientation)
+	{
+	case ESegmentOrientations::SEGO_Right:
+		v = GetActorLocation().X;
+		break;
+	case ESegmentOrientations::SEGO_Left:
+		v = GetActorLocation().X + (SLOT_SIZE * _verticalSlots);
+		break;
+	case ESegmentOrientations::SEGO_Up:
+		v = GetActorLocation().X;
+		break;
+	case ESegmentOrientations::SEGO_Down:
+		v = GetActorLocation().X + (SLOT_SIZE * _verticalSlots);
+		break;
+	default:
+		break;
+	}
+
+	return v;
+}
+
+float ALevelSegment::getLocalVerticalOffset() const
 {
 	float vOffset = 0.0f;
 
@@ -143,13 +258,13 @@ float ALevelSegment::getLocalVOffset() const
 		vOffset = 0.0f;
 		break;
 	case ESegmentOrientations::SEGO_Left:
-		vOffset = getMesh()->Bounds.BoxExtent.X * 2.0f;
+		vOffset = SLOT_SIZE * _verticalSlots;
 		break;
 	case ESegmentOrientations::SEGO_Up:
 		vOffset = 0.0f;
 		break;
 	case ESegmentOrientations::SEGO_Down:
-		vOffset = getMesh()->Bounds.BoxExtent.X * 2.0f;
+		vOffset = SLOT_SIZE * _verticalSlots;
 		break;
 	default:
 		break;
@@ -158,7 +273,7 @@ float ALevelSegment::getLocalVOffset() const
 	return vOffset;
 }
 
-float ALevelSegment::getWorldVOffset() const
+float ALevelSegment::getWorldVerticalOffset() const
 {
 	float vOffset = 0.0f;
 
@@ -168,13 +283,13 @@ float ALevelSegment::getWorldVOffset() const
 		vOffset = GetActorLocation().X;
 		break;
 	case ESegmentOrientations::SEGO_Left:
-		vOffset = GetActorLocation().X - (getMesh()->Bounds.BoxExtent.X * 2.0f);
+		vOffset = GetActorLocation().X - (SLOT_SIZE * _verticalSlots);
 		break;
 	case ESegmentOrientations::SEGO_Up:
 		vOffset = GetActorLocation().X;
 		break;
 	case ESegmentOrientations::SEGO_Down:
-		vOffset = GetActorLocation().X - (getMesh()->Bounds.BoxExtent.X * 2.0f);
+		vOffset = GetActorLocation().X - (SLOT_SIZE * _verticalSlots);
 		break;
 	default:
 		break;
@@ -182,6 +297,58 @@ float ALevelSegment::getWorldVOffset() const
 
 	//vOffset = GetActorLocation().X;
 	return vOffset;
+}
+
+FVector ALevelSegment::getWorldVerticalOffsetLocation() const
+{
+	FVector vOffsetLocation;
+
+	switch (_orientation)
+	{
+	case ESegmentOrientations::SEGO_Right:
+		vOffsetLocation = GetActorLocation();
+		vOffsetLocation.X += (SLOT_SIZE * _verticalSlots);
+		break;
+	case ESegmentOrientations::SEGO_Left:
+		vOffsetLocation = GetActorLocation();
+		break;
+	case ESegmentOrientations::SEGO_Up:
+		vOffsetLocation = GetActorLocation();
+		vOffsetLocation.X += (SLOT_SIZE * _horizontalSlots);
+		break;
+	case ESegmentOrientations::SEGO_Down:
+		vOffsetLocation = GetActorLocation();
+		break;
+	default:
+		break;
+	}
+
+	return vOffsetLocation;
+}
+
+float ALevelSegment::getWorldMaxVerticalValue() const
+{
+	float maxVertical = 0.0f;
+
+	switch (_orientation)
+	{
+	case ESegmentOrientations::SEGO_Right:
+		maxVertical = GetActorLocation().X + (SLOT_SIZE * _verticalSlots);
+		break;
+	case ESegmentOrientations::SEGO_Left:
+		maxVertical = GetActorLocation().X;
+		break;
+	case ESegmentOrientations::SEGO_Up:
+		maxVertical = GetActorLocation().X + (SLOT_SIZE * _verticalSlots);
+		break;
+	case ESegmentOrientations::SEGO_Down:
+		maxVertical = GetActorLocation().X;
+		break;
+	default:
+		break;
+	}
+
+	return maxVertical;
 }
 
 ESegmentOrientations ALevelSegment::getOrientation() const
@@ -209,26 +376,6 @@ const TArray<USceneComponent*>& ALevelSegment::getObstacleSpawnPoints() const
 const TArray<USceneComponent*>& ALevelSegment::getPedestrianSpawnPoints() const
 {
 	return _pedestrianSpawnPoints;
-}
-
-const TSet<FSegmentSpawnInfo>& ALevelSegment::getValidRightSegments() const
-{
-	return _validRightSegments;
-}
-
-const TSet<FSegmentSpawnInfo>& ALevelSegment::getValidLeftSegments() const
-{
-	return _validLeftSegments;
-}
-
-const TSet<FSegmentSpawnInfo>& ALevelSegment::getValidUpSegments() const
-{
-	return _validTopSegments;
-}
-
-const TSet<FSegmentSpawnInfo>& ALevelSegment::getValidDownSegments() const
-{
-	return _validBottomSegments;
 }
 
 // Called when the game starts or when spawned

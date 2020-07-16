@@ -50,18 +50,18 @@ void UObstacleSpawner::spawnObstacle(ALevelChunk* road, const TArray<USceneCompo
 	UINT32 ObstaclePicker;
 	UINT32 SpawnChance;
 	UINT32 SpawnPosPick;
-	UINT32 SpawnPosPick2;//for if the extra obstacle spawns
+	//UINT32 SpawnPosPick2;//for if the extra obstacle spawns
 	AActor *tempActor;
 
 	ObstaclePicker = FMath::RandRange(0, _ObstacleTypes.Num() - 1);
 	SpawnChance = FMath::RandRange(0, 5);
 	SpawnPosPick = FMath::RandRange(0, ObstacleSpawnPoints.Num() - 1);
 
-	SpawnPosPick2 = SpawnPosPick + 3;
-	if (SpawnPosPick2 > static_cast<UINT32>(ObstacleSpawnPoints.Num() - 1))
-	{
-		SpawnPosPick2 -= SpawnPosPick;
-	}
+	//SpawnPosPick2 = SpawnPosPick + 3;
+	//if (SpawnPosPick2 > static_cast<UINT32>(ObstacleSpawnPoints.Num() - 1))
+	//{
+	//	SpawnPosPick2 -= SpawnPosPick;
+	//}
 		
 	if (SpawnChance >= 3)
 	{
@@ -83,13 +83,13 @@ void UObstacleSpawner::spawnObstacle(ALevelChunk* road, const TArray<USceneCompo
 			tempActor->SetActorTransform(ObstacleSpawnPoints[SpawnPosPick]->GetComponentTransform());
 
 			//chance to spawn second
-			SpawnChance = FMath::RandRange(0, 5);
-			if (SpawnChance >= 4)
-			{
-				ObstaclePicker = FMath::RandRange(1, _ObstacleTypes.Num() - 1);//set at 1 - max so no acorn spawns
-				tempActor = GetWorld()->SpawnActor(_ObstacleTypes[ObstaclePicker]);
-				tempActor->SetActorTransform(ObstacleSpawnPoints[SpawnPosPick2]->GetComponentTransform());
-			}
+			//SpawnChance = FMath::RandRange(0, 5);
+			//if (SpawnChance >= 4)
+			//{
+			//	ObstaclePicker = FMath::RandRange(1, _ObstacleTypes.Num() - 1);//set at 1 - max so no acorn spawns
+			//	tempActor = GetWorld()->SpawnActor(_ObstacleTypes[ObstaclePicker]);
+			//	tempActor->SetActorTransform(ObstacleSpawnPoints[SpawnPosPick2]->GetComponentTransform());
+			//}
 
 			//UE_LOG(LogTemp, Warning, TEXT("It did not go in here"));
 			break;

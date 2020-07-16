@@ -6,6 +6,8 @@
 #include "LevelGenState.h"
 #include "LevelGenUpState.generated.h"
 
+DECLARE_LOG_CATEGORY_EXTERN(LogLevelGenUpState, Log, All);
+
 /**
  * 
  */
@@ -19,12 +21,6 @@ public:
 	virtual ULevelGenState* updateState() override;
 
 private:
-	virtual ALevelSegment* getValidSegment(ALevelSegment* leftSegment, FLane* lane) override { return nullptr; };
-	ALevelSegment* getValidSegment(FLane* lane, uint8 slotIndex);
-	ALevelSegment* getValidSegment(FLane* lane, uint8 slotIndex, int32 ver);
-	void findAdjacentSegments(ALevelSegment** outLeftSegment, ALevelSegment** outBottomSegment, uint8 slotIndex);
-	virtual void setValidOrientation(ALevelSegment* segment, uint8 validOrientations) override;
+	virtual ALevelChunk* getValidChunk() override;
 
-	UPROPERTY()
-	TArray<ALevelSegment*> _prevRow;
 };

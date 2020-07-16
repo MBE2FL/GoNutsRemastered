@@ -3,9 +3,9 @@
 
 #include "LevelGenerator.h"
 #include <Runtime\Engine\Classes\Kismet\GameplayStatics.h>
-#include "Engine/LevelStreaming.h"
-#include "EngineUtils.h"
-#include "LevelSegment.h"
+//#include "Engine/LevelStreaming.h"
+//#include "EngineUtils.h"
+//#include "LevelSegment.h"
 #include "LevelGenUpState.h"
 #include "LevelGenLeftState.h"
 
@@ -76,27 +76,15 @@ ALevelGenerator::ALevelGenerator()
 //	}
 //#endif
 
+
+	// Load all chunks, and store them according to their chunk descriptors.
+
 }
 
-const TSet<FSegmentSpawnInfo>& ALevelGenerator::getValidRightSegments(const ESegmentTypes& segmentType) const
-{
-	return _validSegmentsLookup.Find(segmentType)->_validRightSegments;
-}
-
-const TSet<FSegmentSpawnInfo>& ALevelGenerator::getValidLeftSegments(const ESegmentTypes& segmentType) const
-{
-	return _validSegmentsLookup.Find(segmentType)->_validLeftSegments;
-}
-
-const TSet<FSegmentSpawnInfo>& ALevelGenerator::getValidTopSegments(const ESegmentTypes& segmentType) const
-{
-	return _validSegmentsLookup.Find(segmentType)->_validTopSegments;
-}
-
-const TSet<FSegmentSpawnInfo>& ALevelGenerator::getValidBottomSegments(const ESegmentTypes& segmentType) const
-{
-	return _validSegmentsLookup.Find(segmentType)->_validBottomSegments;
-}
+//const TSet<FSegmentSpawnInfo>& ALevelGenerator::getValidRightSegments(const ESegmentTypes& segmentType) const
+//{
+//	return _validSegmentsLookup.Find(segmentType)->_validRightSegments;
+//}
 
 // Called when the game starts or when spawned
 void ALevelGenerator::BeginPlay()

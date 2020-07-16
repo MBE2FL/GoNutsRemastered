@@ -38,5 +38,5 @@ private:
 		TArray<TSubclassOf<AActor>> _ObstacleTypes;
 
 	UFUNCTION()
-		void spawnObstacle(ALevelSegment* road, const TArray<USceneComponent*>& ObstacleSpawnPoints);
+		void spawnObstacle(ALevelChunk* road, const TArray<USceneComponent*>& ObstacleSpawnPoints);
 };

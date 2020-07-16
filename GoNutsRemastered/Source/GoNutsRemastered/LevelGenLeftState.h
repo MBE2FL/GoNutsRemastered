@@ -19,6 +19,5 @@ public:
 	virtual ULevelGenState* updateState() override;
 
 private:
-	virtual ALevelSegment* getValidSegment(ALevelSegment* leftSegment, FLane* lane) override;
-	virtual void setValidOrientation(ALevelSegment* segment, uint8 validOrientations) override;
+	virtual ALevelChunk* getValidChunk() { return nullptr; };
 };

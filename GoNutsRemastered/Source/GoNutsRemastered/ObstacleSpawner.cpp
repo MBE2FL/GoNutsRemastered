@@ -43,7 +43,7 @@ void UObstacleSpawner::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	// ...
 }
 
-void UObstacleSpawner::spawnObstacle(ALevelSegment* road, const TArray<USceneComponent*>& ObstacleSpawnPoints)
+void UObstacleSpawner::spawnObstacle(ALevelChunk* road, const TArray<USceneComponent*>& ObstacleSpawnPoints)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Level gen notified obstacles manager about road."));
 
@@ -58,15 +58,15 @@ void UObstacleSpawner::spawnObstacle(ALevelSegment* road, const TArray<USceneCom
 		SpawnChance = FMath::RandRange(0, 5);
 		SpawnPosPick = FMath::RandRange(0, ObstacleSpawnPoints.Num() - 1);
 		
-		if (SpawnChance >= 3)
-		{
+		//if (SpawnChance >= 3)
+		//{
 			tempActor = GetWorld()->SpawnActor(_ObstacleTypes[ObstaclePicker]);
 			tempActor->SetActorTransform(ObstacleSpawnPoints[SpawnPosPick]->GetComponentTransform());
-		}
-		else
-		{
+		//}
+		//else
+		//{
 
-		}
+		//}
 	//}
 
 

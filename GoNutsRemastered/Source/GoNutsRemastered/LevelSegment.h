@@ -95,7 +95,7 @@ public:
 
 	ESegmentFeatures::Type getSegmentFeatures() const;
 
-	virtual void PostEditChangeProperty(FPropertyChangedEvent& propertyChangedEvent) override;
+	//virtual void PostEditChangeProperty(FPropertyChangedEvent& propertyChangedEvent) override;
 
 	UStaticMeshComponent* getMesh() const;
 

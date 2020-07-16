@@ -58,10 +58,10 @@ ESegmentFeatures::Type ALevelSegment::getSegmentFeatures() const
 	return static_cast<ESegmentFeatures::Type>(_segmentFeatures);
 }
 
-void ALevelSegment::PostEditChangeProperty(FPropertyChangedEvent& propertyChangedEvent)
-{
-
-}
+//void ALevelSegment::PostEditChangeProperty(FPropertyChangedEvent& propertyChangedEvent)
+//{
+//
+//}
 
 UStaticMeshComponent* ALevelSegment::getMesh() const
 {

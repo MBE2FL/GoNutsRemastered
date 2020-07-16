@@ -74,12 +74,3 @@ ULevelGenState* ULevelGenLeftState::updateState()
 		return nullptr;
 	}
 }
-
-ALevelSegment* ULevelGenLeftState::getValidSegment(ALevelSegment* leftSegment, FLane* lane)
-{
-    return nullptr;
-}
-
-void ULevelGenLeftState::setValidOrientation(ALevelSegment* segment, uint8 validOrientations)
-{
-}

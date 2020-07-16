@@ -7,7 +7,7 @@
 #include "PedestrianManager.generated.h"
 
 class ACharacter;
-class ALevelSegment;
+class ALevelChunk;
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -33,5 +33,5 @@ private:
 	TArray<ACharacter*> _pedestrianTypes;
 
 	UFUNCTION()
-	void spawnPedestrians(ALevelSegment* crosswalk, const TArray<USceneComponent*>& pedestrianSpawnPoints);
+	void spawnPedestrians(ALevelChunk* crosswalk, const TArray<USceneComponent*>& pedestrianSpawnPoints);
 };

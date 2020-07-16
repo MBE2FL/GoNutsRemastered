@@ -43,7 +43,7 @@ void UObstacleSpawner::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	// ...
 }
 
-void UObstacleSpawner::spawnObstacle(ALevelSegment* road, const TArray<USceneComponent*>& ObstacleSpawnPoints)
+void UObstacleSpawner::spawnObstacle(ALevelChunk* road, const TArray<USceneComponent*>& ObstacleSpawnPoints)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Level gen notified obstacles manager about road."));
 

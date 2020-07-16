@@ -4,32 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "LevelSegment.h"
+//#include "LevelSegment.h"
+#include "LevelChunk.h"
 #include "LevelGenerator.generated.h"
 
-//class ALevelSegment;
 
+class ULevelGenState;
+class ULevelGenUpState;
+class ULevelGenLeftState;
 
-//USTRUCT(BlueprintType)
-//struct FSegmentGroup
-//{
-//	GENERATED_BODY()
-//
-//	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
-//	//TArray<TSubclassOf<ALevelSegment>> _validSegments;
-//
-//	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
-//	TSet<TSubclassOf<ALevelSegment>> _validRightSegments;
-//
-//	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
-//	TSet<TSubclassOf<ALevelSegment>> _validLeftSegments;
-//
-//	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
-//	TSet<TSubclassOf<ALevelSegment>> _validTopSegments;
-//
-//	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
-//	TSet<TSubclassOf<ALevelSegment>> _validBottomSegments;
-//};
 
 #define ECC_LevelSegmentChannel ECollisionChannel::ECC_GameTraceChannel1
 
@@ -37,9 +20,41 @@
 DECLARE_LOG_CATEGORY_EXTERN(LogLevelGen, Log, All);
 
 
+UENUM(BlueprintType)
+enum class EMapOrientations : uint8
+{
+	MO_Right,
+	MO_Left,
+	MO_Up,
+	MO_Down
+};
+
+
+
+
+USTRUCT(Blueprintable)
+struct FChunkClassTypes
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Chunk Settings")
+	TArray<TSubclassOf<ALevelChunk>> _chunkClassTypes;
+};
+
+
+//USTRUCT(Blueprintable)
+//struct FSegmentTypeConnectInfo
+//{
+//	GENERATED_BODY()
+//
+//	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Segment Settings")
+//	TSet<FSegmentSpawnInfo> _validRightSegments;			
+//};
+
+
 //DECLARE_EVENT_OneParam(ALevelGenerator, FOnCrosswalkSpawned, AActor*)
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnCrosswalkSpawned, ALevelSegment*, crosswalk, const TArray<USceneComponent*>&, pedestrianSpawnPoints);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnRoadSpawned, ALevelSegment*, road, const TArray<USceneComponent*>&, obstacleSpawnPoints);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnCrosswalkSpawned, ALevelChunk*, crosswalk, const TArray<USceneComponent*>&, pedestrianSpawnPoints);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnRoadSpawned, ALevelChunk*, road, const TArray<USceneComponent*>&, obstacleSpawnPoints);
 
 UCLASS(Blueprintable)
 class GONUTSREMASTERED_API ALevelGenerator : public AActor
@@ -53,6 +68,13 @@ public:
 	FOnCrosswalkSpawned& onCrosswalkSpawned() { return _onCrosswalkSpawnedEvent; }
 	FOnRoadSpawned& onRoadSpawned() { return _onRoadSpawnedEvent; }
 
+	EMapOrientations getMapOrientation() const { return _mapOrientation; };
+	static ULevelGenUpState* getLevelGenUpState() { return _levelGenUpState; };
+	static ULevelGenLeftState* getLevelGenLeftState() { return _levelGenLeftState; };
+
+	const TMap<int32, FChunkClassTypes>& getChunkClassTypes() const { return _chunks; }
+	//const TSet<FSegmentSpawnInfo>& getValidRightSegments(const ESegmentTypes& segmentType) const;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -63,42 +85,33 @@ public:
 
 
 private:
-	void streamLevelsTest();
-
-	ALevelSegment* getValidSegment(ALevelSegment* hSegment, ALevelSegment* vSegment);
-	ALevelSegment* getValidSegment(ALevelSegment* leftSegment);
-	void setValidOrientation(ALevelSegment* segment, uint8 validOrientations);
-
-
-	UPROPERTY(EditAnywhere, BlueprintAssignable, Category = "Level Gen|Generation Events", meta = (AllowPrivateAccess = true))
+	UPROPERTY(BlueprintAssignable, Category = "Level Gen|Generation Events", meta = (AllowPrivateAccess = true))
 	FOnCrosswalkSpawned _onCrosswalkSpawnedEvent;
 
-	UPROPERTY(EditAnywhere, BlueprintAssignable, Category = "Level Gen|Generation Events", meta = (AllowPrivateAccess = true))
+	UPROPERTY(BlueprintAssignable, Category = "Level Gen|Generation Events", meta = (AllowPrivateAccess = true))
 	FOnRoadSpawned _onRoadSpawnedEvent;
-
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
-	//TArray<AActor*> _spawnableActors;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Grid Settings", meta = (AllowPrivateAccess = true))
-	int32 _numRows;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Grid Settings", meta = (AllowPrivateAccess = true))
-	int32 _numColumns;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen", meta = (AllowPrivateAccess = true))
-	TArray<FName> _levelStreamNames;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
-	TArray<TSubclassOf<ALevelSegment>> _spawnableActors;
-
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
-	//TMap<ESegmentTypes, TArray<TSubclassOf<ALevelSegment>>> _segmentGroups;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
-	TMap<ESegmentTypes, FSegmentGroup> _segmentGroups;
 
 
 
 	UPROPERTY()
-	ALevelSegment* _prevRowStart;
+	EMapOrientations _mapOrientation = EMapOrientations::MO_Up;
+
+	UPROPERTY()
+	ULevelGenState* _levelGenState;
+
+	static ULevelGenUpState* _levelGenUpState;
+	static ULevelGenLeftState* _levelGenLeftState;
+
+	UPROPERTY()
+	FTimerHandle _timerHandle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Chunk Settings", meta = (AllowPrivateAccess = true))
+	TMap<int32, FChunkClassTypes> _chunks;
+	
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Segment Settings", meta = (AllowPrivateAccess = true))
+	//TMap<ESegmentTypes, FSegmentTypeConnectInfo> _validSegmentsLookup;
+
+
+	UFUNCTION()
+	void updateLevelGen();
 };

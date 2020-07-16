@@ -10,9 +10,12 @@
 class UArrowComponent;
 
 #define ECC_LevelSegmentChannel ECollisionChannel::ECC_GameTraceChannel1
+#define SLOT_SIZE 500
+#define HALF_SLOT_SIZE 250
+#define DOUBLE_SLOT_SIZE 1000
 
 
-UENUM(meta = (Bitflags))
+UENUM(BlueprintType)
 enum class ESegmentTypes : uint8
 {
 	None,
@@ -22,7 +25,6 @@ enum class ESegmentTypes : uint8
 	Road,
 	Sidewalk,
 };
-ENUM_CLASS_FLAGS(ESegmentTypes);
 
 UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
 enum class ESegmentOrientations : uint8
@@ -48,16 +50,16 @@ namespace ESegmentFeatures
 	};
 }
 
-USTRUCT(BlueprintType)
+USTRUCT(Blueprintable)
 struct FSegmentSpawnInfo
 {
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Segment|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
-	TSubclassOf<ALevelSegment> _segment;
+	ESegmentTypes _segmentType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Segment|Spawnable Actor Settings", meta = (Bitmask, BitmaskEnum = "ESegmentOrientations", AllowPrivateAccess = true))
-	uint8 _validOrientations; // TO-DO Test down, may not fit into an 8-bit integer.
+	uint8 _validOrientations;
 
 	bool operator==(const FSegmentSpawnInfo& other) const
 	{
@@ -69,7 +71,7 @@ struct FSegmentSpawnInfo
 		//UE_LOG(LogTemp, Warning, TEXT("SegmentSpawnInfo: Segment_2: %s"), *name2);
 		//UE_LOG(LogTemp, Warning, TEXT("SegmentSpawnInfo: Segment: %i, Orientation: %i"), static_cast<int32>(segment), static_cast<int32>(ori));
 
-		return (_validOrientations & other._validOrientations) && (_segment == other._segment);
+		return (_validOrientations & other._validOrientations) && (_segmentType == other._segmentType);
 	}
 };
 
@@ -78,26 +80,6 @@ FORCEINLINE uint32 GetTypeHash(const FSegmentSpawnInfo& segmentSpawnInfo)
 	return FCrc::MemCrc_DEPRECATED(&segmentSpawnInfo, sizeof(segmentSpawnInfo));
 }
 
-
-
-USTRUCT(BlueprintType)
-struct FSegmentGroup
-{
-	GENERATED_BODY()
-
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
-	TSet<TSubclassOf<ALevelSegment>> _validRightSegments;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
-	TSet<TSubclassOf<ALevelSegment>> _validLeftSegments;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
-	TSet<TSubclassOf<ALevelSegment>> _validUpSegments;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
-	TSet<TSubclassOf<ALevelSegment>> _validDownSegments;
-};
 
 
 UCLASS(Blueprintable)
@@ -113,9 +95,13 @@ public:
 
 	ESegmentFeatures::Type getSegmentFeatures() const;
 
-	virtual void PostEditChangeProperty(FPropertyChangedEvent& propertyChangedEvent) override;
+	//virtual void PostEditChangeProperty(FPropertyChangedEvent& propertyChangedEvent) override;
 
 	UStaticMeshComponent* getMesh() const;
+
+
+	UFUNCTION(BlueprintCallable, Category = "Level Segment")
+	float getLocalHOffset() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Level Segment")
 	float getHOffset() const;
@@ -123,11 +109,30 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Level Segment")
 	FVector getHOffsetLocation() const;
 
-	UFUNCTION(BlueprintCallable, Category = "Level Segment")
-	float getLocalVOffset() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Level Segment")
-	float getWorldVOffset() const;
+	FVector getNextSegmentSpawnPoint() const;
+
+
+	UFUNCTION(BlueprintCallable, Category = "Level Segment")
+	float getLocalVerticalValue() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Level Segment")
+	float getWorldVerticalValue() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Level Segment")
+	float getLocalVerticalOffset() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Level Segment")
+	float getWorldVerticalOffset() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Level Segment")
+	FVector getWorldVerticalOffsetLocation() const;
+
+
+	UFUNCTION(BlueprintCallable, Category = "Level Segment")
+	float getWorldMaxVerticalValue() const;
+
 
 	ESegmentOrientations getOrientation() const;
 
@@ -144,10 +149,10 @@ public:
 	const TArray<USceneComponent*>& getPedestrianSpawnPoints() const;
 
 
-	const TSet<FSegmentSpawnInfo>& getValidRightSegments() const;
-	const TSet<FSegmentSpawnInfo>& getValidLeftSegments() const;
-	const TSet<FSegmentSpawnInfo>& getValidUpSegments() const;
-	const TSet<FSegmentSpawnInfo>& getValidDownSegments() const;
+	UFUNCTION(BlueprintCallable, Category = "Level Segment|Lane Settings")
+	uint8 getHorizontalSlots() const { return _horizontalSlots; }
+	UFUNCTION(BlueprintCallable, Category = "Level Segment|Lane Settings")
+	uint8 getVerticalSlots() const { return _verticalSlots; }
 
 
 protected:
@@ -169,16 +174,16 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Segment|Connection Settings", meta = (AllowPrivateAccess = true))
 	UStaticMeshComponent* _mesh;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Segment", meta = (AllowPrivateAccess = true))
+	UPROPERTY()
 	UArrowComponent* _rightDir;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Segment", meta = (AllowPrivateAccess = true))
+	UPROPERTY()
 	UArrowComponent* _leftDir;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Segment", meta = (AllowPrivateAccess = true))
+	UPROPERTY()
 	UArrowComponent* _topDir;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Segment", meta = (AllowPrivateAccess = true))
+	UPROPERTY()
 	UArrowComponent* _bottomDir;
 
 
@@ -186,26 +191,16 @@ protected:
 	ESegmentOrientations _orientation = ESegmentOrientations::SEGO_Right;
 
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Segment|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
-	TSet<FSegmentSpawnInfo> _validRightSegments;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Segment|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
-	TSet<FSegmentSpawnInfo> _validLeftSegments;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Segment|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
-	TSet<FSegmentSpawnInfo> _validTopSegments;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Segment|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
-	TSet<FSegmentSpawnInfo> _validBottomSegments;
-
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Segment|Spawnable Actor Settings", meta = (AllowPrivateAccess = true))
-	//TMap<ESegmentTypes, FSegmentSpawnInfo> _validOrientations;
-
-
 	UPROPERTY()
-		TArray<USceneComponent*> _carSpawnPoints;
+	TArray<USceneComponent*> _carSpawnPoints;
 	UPROPERTY()
-		TArray<USceneComponent*> _obstacleSpawnPoints;
+	TArray<USceneComponent*> _obstacleSpawnPoints;
 	UPROPERTY()
-		TArray<USceneComponent*> _pedestrianSpawnPoints;
+	TArray<USceneComponent*> _pedestrianSpawnPoints;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Segment|Lane Settings", meta = (AllowPrivateAccess = true))
+	uint8 _horizontalSlots = 1;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Segment|Lane Settings", meta = (AllowPrivateAccess = true))
+	uint8 _verticalSlots = 1;
 };

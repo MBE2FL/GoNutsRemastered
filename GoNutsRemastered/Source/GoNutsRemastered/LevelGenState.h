@@ -7,6 +7,10 @@
 #include "LevelGenerator.h"
 #include "LevelGenState.generated.h"
 
+
+DECLARE_LOG_CATEGORY_EXTERN(LogLevelGenState, Log, All);
+
+
 /**
  * 
  */
@@ -17,6 +21,7 @@ class GONUTSREMASTERED_API ULevelGenState : public UObject
 
 public:
 	void init(ALevelGenerator* levelGen);
+	//virtual void cleanupState();
 
 	virtual void update() {};
 	virtual ULevelGenState* updateState() { return nullptr; };
@@ -28,7 +33,8 @@ protected:
 	int32 _currColumn;
 	UPROPERTY()
 	ALevelChunk* _prevChunk;
-
+	UPROPERTY()
+	ACharacter* _player;
 
 	ULevelGenState() {};
 	virtual ALevelChunk* getValidChunk() { return nullptr; };

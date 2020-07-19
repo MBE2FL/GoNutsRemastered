@@ -2,6 +2,11 @@
 
 
 #include "LevelChunk.h"
+#include "ChunkObjectPool.h"
+#include "GameFramework/Character.h"
+#include "Kismet/GameplayStatics.h"
+
+DEFINE_LOG_CATEGORY(LogLevelChunk);
 
 const EChunkDescriptors::Type ALevelChunk::TOWN_THREE_LANES_ISLAND = static_cast<EChunkDescriptors::Type>(EChunkDescriptors::Type::CD_BIOME_TYPE_TOWN | 
 																		EChunkDescriptors::Type::CD_THREE_LANES | EChunkDescriptors::Type::CD_LANE_CONTAINS_ISLAND);
@@ -28,7 +33,7 @@ ALevelChunk::ALevelChunk()
 void ALevelChunk::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 // Called every frame
@@ -36,6 +41,28 @@ void ALevelChunk::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+
+	UChunkObjectPool* chunkObjectPool = UChunkObjectPool::getInstance();
+	ACharacter* player = chunkObjectPool->getPlayer();
+
+	if (IsValid(player))
+	{
+		FVector nonNormDir = GetActorLocation() - player->GetActorLocation();
+
+		// Check if this chunk is behind the player.
+		if (FVector::DotProduct(player->GetActorForwardVector(), nonNormDir) < 0.0f)
+		{
+			// Check if this chunk is far enough away from the player to be recycled.
+			if (FVector::DistSquaredXY(player->GetActorLocation(), GetActorLocation()) >= FMath::Square(2000.0f))
+			{
+				chunkObjectPool->recycleLevelChunk(this);
+			}
+		}
+	}
+	else
+	{
+		UE_LOG(LogLevelChunk, Error, TEXT("Chunk, %s, does not have a reference to the player!"), *GetName());
+	}
 }
 
 EChunkDescriptors::Type ALevelChunk::getChunkDescriptors() const

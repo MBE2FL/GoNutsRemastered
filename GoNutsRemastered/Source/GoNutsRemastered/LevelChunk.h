@@ -8,6 +8,9 @@
 
 
 
+DECLARE_LOG_CATEGORY_EXTERN(LogLevelChunk, Log, All);
+
+
 UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
 namespace EChunkDescriptors
 {

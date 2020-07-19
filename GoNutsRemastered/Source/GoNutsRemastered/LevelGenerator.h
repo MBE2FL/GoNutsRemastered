@@ -12,6 +12,8 @@
 class ULevelGenState;
 class ULevelGenUpState;
 class ULevelGenLeftState;
+class UChunkObjectPool;
+class ACharacter;
 
 
 #define ECC_LevelSegmentChannel ECollisionChannel::ECC_GameTraceChannel1
@@ -65,6 +67,8 @@ public:
 	// Sets default values for this actor's properties
 	ALevelGenerator();
 
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+
 	FOnCrosswalkSpawned& onCrosswalkSpawned() { return _onCrosswalkSpawnedEvent; }
 	FOnRoadSpawned& onRoadSpawned() { return _onRoadSpawnedEvent; }
 
@@ -73,11 +77,22 @@ public:
 	static ULevelGenLeftState* getLevelGenLeftState() { return _levelGenLeftState; };
 
 	const TMap<int32, FChunkClassTypes>& getChunkClassTypes() const { return _chunks; }
-	//const TSet<FSegmentSpawnInfo>& getValidRightSegments(const ESegmentTypes& segmentType) const;
+	//const TArray<TSubclassOf<ALevelChunk>>& getChunkClassTypes() const { return _chunkClassTypes; }
+	
+
+
+
+	// Chunk memory pool funcitons
+	ALevelChunk* spawnChunk(const TSubclassOf<ALevelChunk>& chunkClassType);
+	void recycleChunk(ALevelChunk* chunk);
+
+
+	ACharacter* getPlayer();
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 public:	
 	// Called every frame
@@ -107,11 +122,22 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Chunk Settings", meta = (AllowPrivateAccess = true))
 	TMap<int32, FChunkClassTypes> _chunks;
-	
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Segment Settings", meta = (AllowPrivateAccess = true))
-	//TMap<ESegmentTypes, FSegmentTypeConnectInfo> _validSegmentsLookup;
 
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Chunk Settings", meta = (AllowPrivateAccess = true))
+	//TArray<TSubclassOf<ALevelChunk>> _chunkClassTypes;
+
+	UPROPERTY()
+	UChunkObjectPool* _chunkObjectPool;
+
+	UPROPERTY()
+	ACharacter* _player;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Chunk Settings", meta = (AllowPrivateAccess = true))
+	bool _refreshChunkClassTypes = false;
 
 	UFUNCTION()
 	void updateLevelGen();
+
+	UFUNCTION()
+	void getAllChunkClassTypes();
 };

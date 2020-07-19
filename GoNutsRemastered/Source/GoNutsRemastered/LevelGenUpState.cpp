@@ -6,6 +6,8 @@
 #include "DrawDebugHelpers.h"
 #include "LevelGenLeftState.h"
 
+#include "GameFramework/Character.h"
+
 DEFINE_LOG_CATEGORY(LogLevelGenUpState);
 
 ULevelGenState* ULevelGenUpState::updateState()
@@ -30,6 +32,23 @@ ULevelGenState* ULevelGenUpState::updateState()
 
 void ULevelGenUpState::update()
 {
+	if (!IsValid(_player))
+	{
+		_player = _levelGen->getPlayer();
+		return;
+	}
+
+
+
+	if (IsValid(_prevChunk))
+	{
+		if (FVector::DistSquaredXY(_player->GetActorLocation(), _prevChunk->GetActorLocation()) >= FMath::Square(8000.0f))
+		{
+			return;
+		}
+	}
+
+
 	ALevelChunk* chunk = nullptr;
 	chunk = getValidChunk();
 
@@ -68,6 +87,8 @@ void ULevelGenUpState::update()
 
 
 		_prevChunk = chunk;
+
+		UE_LOG(LogLevelGenUpState, Warning, TEXT("Spawned chunk: %s"), *chunk->GetName());
 	}
 	else if (IsValid(chunk))
 	{
@@ -77,6 +98,8 @@ void ULevelGenUpState::update()
 
 
 		_prevChunk = chunk;
+
+		UE_LOG(LogLevelGenUpState, Warning, TEXT("Spawned chunk: %s"), *chunk->GetName());
 	}
 }
 
@@ -97,19 +120,20 @@ ALevelChunk* ULevelGenUpState::getValidChunk()
 			const FChunkClassTypes* chunkClassTypes = _levelGen->getChunkClassTypes().Find(static_cast<int32>(prevChunkDescriptor));
 			if (!chunkClassTypes)
 			{
-				UE_LOG(LogLevelGen, Error, TEXT("Level Gen did not have any class types assigned to a chunk descriptor type: %d!"), static_cast<int32>(prevChunkDescriptor));
+				UE_LOG(LogLevelGenUpState, Error, TEXT("Level Gen did not have any class types assigned to a chunk descriptor type: %d!"), static_cast<int32>(prevChunkDescriptor));
 				return chunk;
 			}
 			const TArray<TSubclassOf<ALevelChunk>> classTypesArr = chunkClassTypes->_chunkClassTypes;
 
 			if (classTypesArr.Num() <= 0)
 			{
-				UE_LOG(LogLevelGen, Error, TEXT("Level Gen did not have any class types assigned to a chunk descriptor type!"));
+				UE_LOG(LogLevelGenUpState, Error, TEXT("Level Gen did not have any class types assigned to a chunk descriptor type!"));
 				return chunk;
 			}
 
 			TSubclassOf<ALevelChunk> classType = classTypesArr[FMath::RandRange(0, classTypesArr.Num() - 1)];
-			chunk = Cast<ALevelChunk>(_levelGen->GetWorld()->SpawnActor(classType));
+			//chunk = Cast<ALevelChunk>(_levelGen->GetWorld()->SpawnActor(classType));
+			chunk = _levelGen->spawnChunk(classType);
 
 			return chunk;
 		}
@@ -122,19 +146,20 @@ ALevelChunk* ULevelGenUpState::getValidChunk()
 		const FChunkClassTypes* chunkClassTypes = _levelGen->getChunkClassTypes().Find(static_cast<int32>(ALevelChunk::TOWN_THREE_LANES_ISLAND));
 		if (!chunkClassTypes)
 		{
-			UE_LOG(LogLevelGen, Error, TEXT("Level Gen did not have any class types assigned to a chunk descriptor type: %d!"), static_cast<int32>(ALevelChunk::TOWN_THREE_LANES_ISLAND));
+			UE_LOG(LogLevelGenUpState, Error, TEXT("Level Gen did not have any class types assigned to a chunk descriptor type: %d!"), static_cast<int32>(ALevelChunk::TOWN_THREE_LANES_ISLAND));
 			return chunk;
 		}
 		const TArray<TSubclassOf<ALevelChunk>> classTypesArr = chunkClassTypes->_chunkClassTypes;
 
 		if (classTypesArr.Num() <= 0)
 		{
-			UE_LOG(LogLevelGen, Error, TEXT("Level Gen did not have any class types assigned to a chunk descriptor type!"));
+			UE_LOG(LogLevelGenUpState, Error, TEXT("Level Gen did not have any class types assigned to a chunk descriptor type!"));
 			return chunk;
 		}
 
 		TSubclassOf<ALevelChunk> classType = classTypesArr[FMath::RandRange(0, classTypesArr.Num() - 1)];
-		chunk = Cast<ALevelChunk>(_levelGen->GetWorld()->SpawnActor(classType));
+		//chunk = Cast<ALevelChunk>(_levelGen->GetWorld()->SpawnActor(classType));
+		chunk = _levelGen->spawnChunk(classType);
 
 		return chunk;
 	}

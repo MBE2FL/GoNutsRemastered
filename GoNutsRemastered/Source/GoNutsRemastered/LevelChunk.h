@@ -60,6 +60,9 @@ public:
 	ALevelChunk();
 
 	static const EChunkDescriptors::Type TOWN_THREE_LANES_ISLAND;
+	static const EChunkDescriptors::Type TOWN_THREE_LANES_INTERSECTION;
+	static const EChunkDescriptors::Type TOWN_TWO_LANES;
+	static const EChunkDescriptors::Type TOWN_THREE_TO_TWO_LANES_MERGER;
 
 protected:
 	// Called when the game starts or when spawned

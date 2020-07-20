@@ -106,6 +106,7 @@ void ULevelGenUpState::update()
 ALevelChunk* ULevelGenUpState::getValidChunk()
 {
 	ALevelChunk* chunk = nullptr;
+	EChunkDescriptors::Type nextChunkDescriptor = ALevelChunk::TOWN_THREE_LANES_ISLAND;
 
 	// Spawn a chunk based on the previous chunk.
 	//if (_prevChunk)
@@ -113,57 +114,78 @@ ALevelChunk* ULevelGenUpState::getValidChunk()
 	{
 		const EChunkDescriptors::Type prevChunkDescriptor = _prevChunk->getChunkDescriptors();
 
-		if (prevChunkDescriptor & ALevelChunk::TOWN_THREE_LANES_ISLAND)
+		// Previous chunk(Biome: Town, Lanes: 3)
+		if ((prevChunkDescriptor | ALevelChunk::TOWN_THREE_LANES_ISLAND) == ALevelChunk::TOWN_THREE_LANES_ISLAND)
 		{
 			UE_LOG(LogLevelGenUpState, Warning, TEXT("Prev Chunk: Town_Three_Lanes_Island"));
 
-			const FChunkClassTypes* chunkClassTypes = _levelGen->getChunkClassTypes().Find(static_cast<int32>(prevChunkDescriptor));
-			if (!chunkClassTypes)
+			// Spawn a chunk from the same pool of objects the previous chunk belongs to.
+			// Spawn a chunk not from the same pool of objects the previous chunk belongs to, but is still valid.
+			int32 testRand = FMath::RandRange(0, 100);
+
+			if (testRand <= 90)
 			{
-				UE_LOG(LogLevelGenUpState, Error, TEXT("Level Gen did not have any class types assigned to a chunk descriptor type: %d!"), static_cast<int32>(prevChunkDescriptor));
-				return chunk;
+				nextChunkDescriptor = prevChunkDescriptor;
 			}
-			const TArray<TSubclassOf<ALevelChunk>> classTypesArr = chunkClassTypes->_chunkClassTypes;
-
-			if (classTypesArr.Num() <= 0)
+			else if (testRand > 90 && testRand <= 95)
 			{
-				UE_LOG(LogLevelGenUpState, Error, TEXT("Level Gen did not have any class types assigned to a chunk descriptor type!"));
-				return chunk;
+				nextChunkDescriptor = ALevelChunk::TOWN_THREE_LANES_INTERSECTION;
+			}
+			else if (testRand > 95)
+			{
+				nextChunkDescriptor = ALevelChunk::TOWN_THREE_TO_TWO_LANES_MERGER;
 			}
 
-			TSubclassOf<ALevelChunk> classType = classTypesArr[FMath::RandRange(0, classTypesArr.Num() - 1)];
-			//chunk = Cast<ALevelChunk>(_levelGen->GetWorld()->SpawnActor(classType));
-			chunk = _levelGen->spawnChunk(classType);
+		}
+		else if ((prevChunkDescriptor | ALevelChunk::TOWN_THREE_LANES_INTERSECTION) == ALevelChunk::TOWN_THREE_LANES_INTERSECTION)
+		{
+			UE_LOG(LogLevelGenUpState, Warning, TEXT("Prev Chunk: Town_Intersection_Three_Lanes"));
 
-			return chunk;
+			// Spawn a chunk not from the same pool of objects the previous chunk belongs to, but is still valid.
+			nextChunkDescriptor = ALevelChunk::TOWN_THREE_LANES_ISLAND;
+
+		}
+		else if ((prevChunkDescriptor | ALevelChunk::TOWN_THREE_TO_TWO_LANES_MERGER) == ALevelChunk::TOWN_THREE_TO_TWO_LANES_MERGER)
+		{
+			UE_LOG(LogLevelGenUpState, Warning, TEXT("Prev Chunk: Town_Three_To_Two_Lanes_Merger"));
+
+			// Spawn a chunk not from the same pool of objects the previous chunk belongs to, but is still valid.
+			nextChunkDescriptor = ALevelChunk::TOWN_TWO_LANES;
+		}
+		else if ((prevChunkDescriptor | ALevelChunk::TOWN_TWO_LANES) == ALevelChunk::TOWN_TWO_LANES)
+		{
+			UE_LOG(LogLevelGenUpState, Warning, TEXT("Prev Chunk: Town_Two_Lanes"));
+
+			// Spawn a chunk not from the same pool of objects the previous chunk belongs to, but is still valid.
+			nextChunkDescriptor = ALevelChunk::TOWN_TWO_LANES;
 		}
 	}
 	// Spawn a default starter chunk.
 	else
 	{
 		UE_LOG(LogLevelGenUpState, Warning, TEXT("Prev Chunk: None"));
+	}
 
-		const FChunkClassTypes* chunkClassTypes = _levelGen->getChunkClassTypes().Find(static_cast<int32>(ALevelChunk::TOWN_THREE_LANES_ISLAND));
-		if (!chunkClassTypes)
-		{
-			UE_LOG(LogLevelGenUpState, Error, TEXT("Level Gen did not have any class types assigned to a chunk descriptor type: %d!"), static_cast<int32>(ALevelChunk::TOWN_THREE_LANES_ISLAND));
-			return chunk;
-		}
-		const TArray<TSubclassOf<ALevelChunk>> classTypesArr = chunkClassTypes->_chunkClassTypes;
 
-		if (classTypesArr.Num() <= 0)
-		{
-			UE_LOG(LogLevelGenUpState, Error, TEXT("Level Gen did not have any class types assigned to a chunk descriptor type!"));
-			return chunk;
-		}
 
-		TSubclassOf<ALevelChunk> classType = classTypesArr[FMath::RandRange(0, classTypesArr.Num() - 1)];
-		//chunk = Cast<ALevelChunk>(_levelGen->GetWorld()->SpawnActor(classType));
-		chunk = _levelGen->spawnChunk(classType);
 
+	const FChunkClassTypes* chunkClassTypes = _levelGen->getChunkClassTypes().Find(static_cast<int32>(nextChunkDescriptor));
+	if (!chunkClassTypes)
+	{
+		UE_LOG(LogLevelGenUpState, Error, TEXT("Level Gen did not have any class types assigned to a chunk descriptor type: %d!"), static_cast<int32>(nextChunkDescriptor));
+		return chunk;
+	}
+	const TArray<TSubclassOf<ALevelChunk>> classTypesArr = chunkClassTypes->_chunkClassTypes;
+
+	if (classTypesArr.Num() <= 0)
+	{
+		UE_LOG(LogLevelGenUpState, Error, TEXT("Level Gen did not have any class types assigned to a chunk descriptor type!"));
 		return chunk;
 	}
 
+	TSubclassOf<ALevelChunk> classType = classTypesArr[FMath::RandRange(0, classTypesArr.Num() - 1)];
+	//chunk = Cast<ALevelChunk>(_levelGen->GetWorld()->SpawnActor(classType));
+	chunk = _levelGen->spawnChunk(classType);
 
 	return chunk;
 }

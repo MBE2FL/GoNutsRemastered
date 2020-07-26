@@ -143,6 +143,8 @@ void ALevelGenerator::BeginPlay()
 	// Create the default generation state.
 	_levelGenUpState = NewObject<ULevelGenUpState>();
 	_levelGenLeftState = NewObject<ULevelGenLeftState>();
+	_levelGenUpState->AddToRoot();
+	_levelGenLeftState->AddToRoot();
 	_levelGenUpState->init(this);
 	_levelGenLeftState->init(this);
 	_levelGenState = _levelGenUpState;

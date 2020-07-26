@@ -13,7 +13,8 @@ class ULevelGenState;
 class ULevelGenUpState;
 class ULevelGenLeftState;
 class UChunkObjectPool;
-class ACharacter;
+//class ACharacter;
+class AFreeRoamCharacter;
 
 
 #define ECC_LevelSegmentChannel ECollisionChannel::ECC_GameTraceChannel1
@@ -73,6 +74,7 @@ public:
 	FOnRoadSpawned& onRoadSpawned() { return _onRoadSpawnedEvent; }
 
 	EMapOrientations getMapOrientation() const { return _mapOrientation; };
+	void setMapOrientation(const bool& turnLeft);
 	static ULevelGenUpState* getLevelGenUpState() { return _levelGenUpState; };
 	static ULevelGenLeftState* getLevelGenLeftState() { return _levelGenLeftState; };
 
@@ -87,7 +89,7 @@ public:
 	void recycleChunk(ALevelChunk* chunk);
 
 
-	ACharacter* getPlayer();
+	AFreeRoamCharacter* getPlayer();
 
 protected:
 	// Called when the game starts or when spawned
@@ -113,6 +115,7 @@ private:
 
 	UPROPERTY()
 	ULevelGenState* _levelGenState;
+	//TWeakObjectPtr<ULevelGenState> _levelGenState;
 
 	static ULevelGenUpState* _levelGenUpState;
 	static ULevelGenLeftState* _levelGenLeftState;
@@ -130,7 +133,7 @@ private:
 	UChunkObjectPool* _chunkObjectPool;
 
 	UPROPERTY()
-	ACharacter* _player;
+	AFreeRoamCharacter* _player;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Chunk Settings", meta = (AllowPrivateAccess = true))
 	bool _refreshChunkClassTypes = false;

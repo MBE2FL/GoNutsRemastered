@@ -12,13 +12,15 @@
 #include "AssetRegistryModule.h"
 
 #include "ChunkObjectPool.h"
-#include "GameFramework/Character.h"
+//#include "GameFramework/Character.h"
+#include "FreeRoamCharacter.h"
 
 DEFINE_LOG_CATEGORY(LogLevelGen);
 
 
-ULevelGenUpState* ALevelGenerator::_levelGenUpState = NewObject<ULevelGenUpState>();
-ULevelGenLeftState* ALevelGenerator::_levelGenLeftState = NewObject<ULevelGenLeftState>();
+ULevelGenUpState* ALevelGenerator::_levelGenUpState = nullptr;
+//ULevelGenLeftState* ALevelGenerator::_levelGenLeftState = NewObject<ULevelGenLeftState>();
+ULevelGenLeftState* ALevelGenerator::_levelGenLeftState = nullptr;
 
 
 // Sets default values
@@ -52,6 +54,55 @@ void ALevelGenerator::PostEditChangeProperty(FPropertyChangedEvent& PropertyChan
 	}
 }
 
+void ALevelGenerator::setMapOrientation(const bool& turnLeft)
+{
+	switch (_mapOrientation)
+	{
+	case EMapOrientations::MO_Right:
+		if (turnLeft)
+		{
+			_mapOrientation = EMapOrientations::MO_Up;
+		}
+		else
+		{
+			_mapOrientation = EMapOrientations::MO_Down;
+		}
+		break;
+	case EMapOrientations::MO_Left:
+		if (turnLeft)
+		{
+			_mapOrientation = EMapOrientations::MO_Down;
+		}
+		else
+		{
+			_mapOrientation = EMapOrientations::MO_Up;
+		}
+		break;
+	case EMapOrientations::MO_Up:
+		if (turnLeft)
+		{
+			_mapOrientation = EMapOrientations::MO_Left;
+		}
+		else
+		{
+			_mapOrientation = EMapOrientations::MO_Right;
+		}
+		break;
+	case EMapOrientations::MO_Down:
+		if (turnLeft)
+		{
+			_mapOrientation = EMapOrientations::MO_Right;
+		}
+		else
+		{
+			_mapOrientation = EMapOrientations::MO_Left;
+		}
+		break;
+	default:
+		break;
+	}
+}
+
 ALevelChunk* ALevelGenerator::spawnChunk(const TSubclassOf<ALevelChunk>& chunkClassType)
 {
 	return _chunkObjectPool->getLevelChunk(chunkClassType);
@@ -62,11 +113,16 @@ void ALevelGenerator::recycleChunk(ALevelChunk* chunk)
 	_chunkObjectPool->recycleLevelChunk(chunk);
 }
 
-ACharacter* ALevelGenerator::getPlayer()
+AFreeRoamCharacter* ALevelGenerator::getPlayer()
 {
 	if (!IsValid(_player))
 	{
-		_player = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+		_player = Cast<AFreeRoamCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+
+		if (IsValid(_player))
+		{
+			_player->init(this);
+		}
 	}
 
 	return _player;
@@ -81,11 +137,15 @@ void ALevelGenerator::BeginPlay()
 	
 
 	// Get a reference to the player.
-	_player = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+	//_player = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+	getPlayer();
 
 	// Create the default generation state.
-	_levelGenState = NewObject<ULevelGenUpState>();
-	_levelGenState->init(this);
+	_levelGenUpState = NewObject<ULevelGenUpState>();
+	_levelGenLeftState = NewObject<ULevelGenLeftState>();
+	_levelGenUpState->init(this);
+	_levelGenLeftState->init(this);
+	_levelGenState = _levelGenUpState;
 
 	// Create generation timer.
 	GetWorldTimerManager().SetTimer(_timerHandle, this, &ALevelGenerator::updateLevelGen, 0.5f, true, 1.0f);
@@ -102,20 +162,28 @@ void ALevelGenerator::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	// Clear the generation timer.
 	GetWorldTimerManager().ClearTimer(_timerHandle);
 
-	// Cleanup states.
-	//if (IsValid(_levelGenUpState))
-	//{
-	//	_levelGenUpState->cleanupState();
-	//}
 
-	//if (IsValid(_levelGenLeftState))
-	//{
-	//	_levelGenLeftState->cleanupState();
-	//}
+	// Cleanup states.
+	if (IsValid(_levelGenUpState))
+	{
+		_levelGenUpState->cleanupState();
+		_levelGenUpState = nullptr;
+	}
+
+	if (IsValid(_levelGenLeftState))
+	{
+		_levelGenLeftState->cleanupState();
+		_levelGenLeftState = nullptr;
+	}
+
+	_levelGenState = nullptr;
+
 
 	// Cleanup the chunk memory pool.
 	UChunkObjectPool::destroyInstance();
 	GetWorld()->ForceGarbageCollection(true);
+
+	_chunkObjectPool = nullptr;
 }
 
 // Called every frame
@@ -131,9 +199,14 @@ void ALevelGenerator::updateLevelGen()
 	ULevelGenState* currLevelGenState = _levelGenState->updateState();
 
 	// State has changed.
-	if (currLevelGenState)
+	if (IsValid(currLevelGenState))
 	{
-
+		if (IsValid(_player))
+		{
+			_levelGenState = currLevelGenState;
+			_levelGenState->transition(_player->getChunk());
+			_levelGenState->update();
+		}
 	}
 	// Still in previous state.
 	else

@@ -30,7 +30,7 @@ namespace EChunkDescriptors
 
 		CD_IS_INTERSECTION = 128	UMETA(DisplayName = "Is An Intersection"),
 
-		CD_IS_MERGER = 256	UMETA(DisplayName = "Is A Merger"),
+		CD_IS_MERGER = 256	UMETA(DisplayName = "Is A Merger")
 	};
 }
 
@@ -41,13 +41,20 @@ namespace EChunkFeatures
 	enum Type
 	{
 		CF_NONE = 0	UMETA(DisplayName = "None (DON'T USE THIS!)"),
+
 		CF_NO_FEATURES = 1	UMETA(DisplayName = "No Features"),
 		CF_SPAWN_CARS = 2	UMETA(DisplayName = "Spawn Cars"),
 		CF_SPAWN_OBSTACLES = 4	UMETA(DisplayName = "Spawn Obstacles"),
 		CF_SPAWN_PEDESTRIANS = 8	UMETA(DisplayName = "Spawn Pedestrians"),
+
+		CF_PLAYER_TURN_LEFT = 16	UMETA(DisplayName = "Player Can Turn Left"),
+		CF_PLAYER_TURN_RIGHT = 32	UMETA(DisplayName = "Player Can Turn Right"),
+		CF_PLAYER_TURN_LEFT_RIGHT = CF_PLAYER_TURN_LEFT | CF_PLAYER_TURN_RIGHT	UMETA(DisplayName = "Player Can Turn Left Or Right")
 	};
 }
 
+
+#define ECC_LevelChunkChannel ECollisionChannel::ECC_GameTraceChannel1
 
 
 UCLASS()
@@ -71,6 +78,9 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	
+	//UFUNCTION(BlueprintCallable)
+	//void refreshComponents();
 
 
 	UFUNCTION(BlueprintCallable, Category = "Chunk|Chunk Features")
@@ -96,7 +106,7 @@ public:
 	const TArray<USceneComponent*>& getPedestrianSpawnPoints() const;
 
 
-private:
+protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chunk|Connection Settings", meta = (AllowPrivateAccess = true))
 	UStaticMeshComponent* _mesh;
 

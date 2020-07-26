@@ -3,8 +3,10 @@
 
 #include "LevelChunk.h"
 #include "ChunkObjectPool.h"
-#include "GameFramework/Character.h"
+//#include "GameFramework/Character.h"
+#include "FreeRoamCharacter.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/SceneComponent.h"
 
 DEFINE_LOG_CATEGORY(LogLevelChunk);
 
@@ -23,15 +25,14 @@ ALevelChunk::ALevelChunk()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-
 	_mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Static Mesh"));
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> meshAsset(TEXT("StaticMesh'/Engine/BasicShapes/Sphere.Sphere'"));
 	_mesh->SetStaticMesh(meshAsset.Object);
 	static ConstructorHelpers::FObjectFinder<UMaterial> matAsset(TEXT("Material'/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial'"));
 	_mesh->SetMaterial(0, matAsset.Object);
-	//_mesh->SetCollisionProfileName(TEXT("Custom"));
-	//_mesh->SetCollisionObjectType(ECC_LevelSegmentChannel);
-	//_mesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
+	_mesh->SetCollisionProfileName(TEXT("Custom"));
+	_mesh->SetCollisionObjectType(ECC_LevelChunkChannel);
+	_mesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
 	RootComponent = _mesh;
 }
 
@@ -49,7 +50,7 @@ void ALevelChunk::Tick(float DeltaTime)
 
 
 	UChunkObjectPool* chunkObjectPool = UChunkObjectPool::getInstance();
-	ACharacter* player = chunkObjectPool->getPlayer();
+	AFreeRoamCharacter* player = chunkObjectPool->getPlayer();
 
 	if (IsValid(player))
 	{
@@ -59,17 +60,31 @@ void ALevelChunk::Tick(float DeltaTime)
 		if (FVector::DotProduct(player->GetActorForwardVector(), nonNormDir) < 0.0f)
 		{
 			// Check if this chunk is far enough away from the player to be recycled.
-			if (FVector::DistSquaredXY(player->GetActorLocation(), GetActorLocation()) >= FMath::Square(2000.0f))
+			// Distance is calculated from the player's position to this chunks's position, minus this chunks's static local vertical(X) size.
+			float offset = FMath::Square(getMesh()->GetStaticMesh()->GetBounds().BoxExtent.X * 2.0f);
+			if (FVector::DistSquaredXY(player->GetActorLocation(), GetActorLocation()) - offset >= FMath::Square(2000.0f))
 			{
 				chunkObjectPool->recycleLevelChunk(this);
 			}
 		}
+
 	}
 	else
 	{
 		UE_LOG(LogLevelChunk, Error, TEXT("Chunk, %s, does not have a reference to the player!"), *GetName());
 	}
 }
+
+//void ALevelChunk::refreshComponents()
+//{
+//	UActorComponent* comp = NewObject<UActorComponent>(this, USceneComponent::StaticClass(), "Howdy", RF_Transient);
+//	check(comp);
+//	comp->RegisterComponent();
+//
+//	AddComponent("HowdyScene", false, FTransform::Identity, this);
+//
+//	UE_LOG(LogLevelChunk, Error, TEXT("Chunk, %s, Howdy Called!"), *GetName());
+//}
 
 EChunkDescriptors::Type ALevelChunk::getChunkDescriptors() const
 {

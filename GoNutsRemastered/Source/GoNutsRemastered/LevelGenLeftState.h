@@ -6,6 +6,8 @@
 #include "LevelGenState.h"
 #include "LevelGenLeftState.generated.h"
 
+DECLARE_LOG_CATEGORY_EXTERN(LogLevelGenLeftState, Log, All);
+
 /**
  * 
  */
@@ -15,9 +17,10 @@ class GONUTSREMASTERED_API ULevelGenLeftState : public ULevelGenState
 	GENERATED_BODY()
 	
 public:
-	virtual void update() override;
 	virtual ULevelGenState* updateState() override;
+	virtual void update() override;
+	virtual void transition(const ALevelChunk* intersection) override;
 
 private:
-	virtual ALevelChunk* getValidChunk() { return nullptr; };
+	virtual ALevelChunk* getValidChunk() override;
 };

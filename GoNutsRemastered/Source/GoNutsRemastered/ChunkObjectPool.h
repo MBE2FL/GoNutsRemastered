@@ -9,7 +9,8 @@
 
 class ALevelGenerator;
 class ALevelChunk;
-class ACharacter;
+//class ACharacter;
+class AFreeRoamCharacter;
 
 
 DECLARE_LOG_CATEGORY_EXTERN(LogChunkObjectPool, Log, All);
@@ -42,7 +43,7 @@ class GONUTSREMASTERED_API UChunkObjectPool : public UObject
 public:
 	static UChunkObjectPool* getInstance();
 	static void destroyInstance();
-	ACharacter* getPlayer() const;
+	AFreeRoamCharacter* getPlayer() const;
 	void init(ALevelGenerator* levelGen);
 	void createObjectPools();
 	ALevelChunk* getLevelChunk(const TSubclassOf<ALevelChunk>& chunkClassType);

@@ -4,6 +4,7 @@
 #include "ChunkObjectPool.h"
 #include "LevelGenerator.h"
 //#include "LevelChunk.h"
+#include "FreeRoamCharacter.h"
 
 DEFINE_LOG_CATEGORY(LogChunkObjectPool);
 
@@ -31,7 +32,7 @@ void UChunkObjectPool::destroyInstance()
 	}
 }
 
-ACharacter* UChunkObjectPool::getPlayer() const
+AFreeRoamCharacter* UChunkObjectPool::getPlayer() const
 {
 	if (IsValid(_levelGen))
 	{

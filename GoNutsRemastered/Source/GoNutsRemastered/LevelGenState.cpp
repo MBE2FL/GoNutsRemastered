@@ -2,6 +2,7 @@
 
 
 #include "LevelGenState.h"
+#include "FreeRoamCharacter.h"
 
 
 DEFINE_LOG_CATEGORY(LogLevelGenState);
@@ -9,11 +10,11 @@ DEFINE_LOG_CATEGORY(LogLevelGenState);
 
 void ULevelGenState::init(ALevelGenerator* levelGen)
 {
-	_levelGen = levelGen;
-
-	if (IsValid(_levelGen))
+	if (IsValid(levelGen))
 	{
+		_levelGen = levelGen;
 		_player = _levelGen->getPlayer();
+		_initialized = true;
 	}
 	else
 	{
@@ -21,7 +22,7 @@ void ULevelGenState::init(ALevelGenerator* levelGen)
 	}
 }
 
-//void ULevelGenState::cleanupState()
-//{
-//	ConditionalBeginDestroy();
-//}
+void ULevelGenState::cleanupState()
+{
+	ConditionalBeginDestroy();
+}

@@ -6,24 +6,32 @@
 #include "DrawDebugHelpers.h"
 #include "LevelGenLeftState.h"
 
-#include "GameFramework/Character.h"
+//#include "GameFramework/Character.h"
+#include "FreeRoamCharacter.h"
 
 DEFINE_LOG_CATEGORY(LogLevelGenUpState);
 
 ULevelGenState* ULevelGenUpState::updateState()
 {
-	// Transition to right generation state.
-	if (_levelGen->getMapOrientation() == EMapOrientations::MO_Right)
+	if (_initialized)
 	{
-		return nullptr;
+		// Transition to right generation state.
+		if (_levelGen->getMapOrientation() == EMapOrientations::MO_Right)
+		{
+			return nullptr;
+		}
+		// Transition to left generation state.
+		else if (_levelGen->getMapOrientation() == EMapOrientations::MO_Left)
+		{
+			//return _levelGen->getLevelGenLeftState();
+			return ALevelGenerator::getLevelGenLeftState();
+		}
+		// Stay in current generation state.
+		else
+		{
+			return nullptr;
+		}
 	}
-	// Transition to left generation state.
-	else if (_levelGen->getMapOrientation() == EMapOrientations::MO_Left)
-	{
-		return _levelGen->getLevelGenLeftState();
-		//return ALevelGenerator::getLevelGenLeftState();
-	}
-	// Stay in current generation state.
 	else
 	{
 		return nullptr;
@@ -32,74 +40,72 @@ ULevelGenState* ULevelGenUpState::updateState()
 
 void ULevelGenUpState::update()
 {
-	if (!IsValid(_player))
+	if (_initialized)
 	{
-		_player = _levelGen->getPlayer();
-		return;
-	}
-
-
-
-	if (IsValid(_prevChunk))
-	{
-		if (FVector::DistSquaredXY(_player->GetActorLocation(), _prevChunk->GetActorLocation()) >= FMath::Square(8000.0f))
+		// Check if the player is still in the game.
+		if (!IsValid(_player))
 		{
+			_player = _levelGen->getPlayer();
 			return;
 		}
-	}
 
 
-	ALevelChunk* chunk = nullptr;
-	chunk = getValidChunk();
-
-	//if (chunk)
-	//{
-	//	_prevChunk = chunk;
-	//}
-
-	if (IsValid(_prevChunk) && IsValid(chunk))
-	{
-		FVector position = _prevChunk->GetActorLocation();
-		position.X += _prevChunk->getMesh()->Bounds.BoxExtent.X * 2.0f;
-		//position.X += 2000.0f;
-		chunk->SetActorLocation(position);
-
-		
-		// Notify listeners for chunk features.
-		// TO-DO Make combined enum values.
-		switch (chunk->getChunckFeatures())
+		// Check whether to keep spawning chunks ahead of the player.
+		if (IsValid(_prevChunk))
 		{
-		case EChunkFeatures::CF_NONE:
-			break;
-		case EChunkFeatures::CF_NO_FEATURES:
-			break;
-		case EChunkFeatures::CF_SPAWN_CARS:
-			break;
-		case EChunkFeatures::CF_SPAWN_OBSTACLES:
-			_levelGen->onRoadSpawned().Broadcast(chunk, chunk->getObstacleSpawnPoints());
-			break;
-		case EChunkFeatures::CF_SPAWN_PEDESTRIANS:
-			_levelGen->onCrosswalkSpawned().Broadcast(chunk, chunk->getPedestrianSpawnPoints());
-			break;
-		default:
-			break;
+			if (FVector::DistSquaredXY(_player->GetActorLocation(), _prevChunk->GetActorLocation()) >= FMath::Square(8000.0f))
+			{
+				return;
+			}
 		}
 
-
-		_prevChunk = chunk;
-
-		UE_LOG(LogLevelGenUpState, Warning, TEXT("Spawned chunk: %s"), *chunk->GetName());
-	}
-	else if (IsValid(chunk))
-	{
-		//FVector position = _prevChunk->GetActorLocation();
-		//position.X += _prevChunk->getMesh()->Bounds.BoxExtent.X * 2.0f;
-		//chunk->SetActorLocation(position);
+		// Attempt to spawn a chunk.
+		ALevelChunk* chunk = nullptr;
+		chunk = getValidChunk();
 
 
-		_prevChunk = chunk;
+		if (IsValid(_prevChunk) && IsValid(chunk))
+		{
+			// Set the position and rotation of the new chunk.
+			FRotator rotation = FRotator(0.0f, 0.0f, 0.0f);
+			chunk->SetActorRotation(rotation);
+			FVector position = _prevChunk->GetActorLocation();
+			position.X += _prevChunk->getMesh()->Bounds.BoxExtent.X * 2.0f;
+			chunk->SetActorLocation(position);
 
-		UE_LOG(LogLevelGenUpState, Warning, TEXT("Spawned chunk: %s"), *chunk->GetName());
+
+			// Notify listeners for chunk features.
+			// TO-DO Make combined enum values.
+			switch (chunk->getChunckFeatures())
+			{
+			case EChunkFeatures::CF_SPAWN_CARS:
+				break;
+			case EChunkFeatures::CF_SPAWN_OBSTACLES:
+				_levelGen->onRoadSpawned().Broadcast(chunk, chunk->getObstacleSpawnPoints());
+				break;
+			case EChunkFeatures::CF_SPAWN_PEDESTRIANS:
+				_levelGen->onCrosswalkSpawned().Broadcast(chunk, chunk->getPedestrianSpawnPoints());
+				break;
+			default:
+				break;
+			}
+
+
+			_prevChunk = chunk;
+
+			UE_LOG(LogLevelGenUpState, Warning, TEXT("Spawned chunk: %s"), *chunk->GetName());
+		}
+		else if (IsValid(chunk))
+		{
+			//FVector position = _prevChunk->GetActorLocation();
+			//position.X += _prevChunk->getMesh()->Bounds.BoxExtent.X * 2.0f;
+			//chunk->SetActorLocation(position);
+
+
+			_prevChunk = chunk;
+
+			UE_LOG(LogLevelGenUpState, Warning, TEXT("Spawned chunk: %s"), *chunk->GetName());
+		}
 	}
 }
 
@@ -123,11 +129,11 @@ ALevelChunk* ULevelGenUpState::getValidChunk()
 			// Spawn a chunk not from the same pool of objects the previous chunk belongs to, but is still valid.
 			int32 testRand = FMath::RandRange(0, 100);
 
-			if (testRand <= 90)
+			if (testRand <= 60)
 			{
 				nextChunkDescriptor = prevChunkDescriptor;
 			}
-			else if (testRand > 90 && testRand <= 95)
+			else if (testRand > 60 && testRand <= 95)
 			{
 				nextChunkDescriptor = ALevelChunk::TOWN_THREE_LANES_INTERSECTION;
 			}

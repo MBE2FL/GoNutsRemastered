@@ -78,7 +78,7 @@ void AFreeRoamCharacter::Tick(float DeltaTime)
 
 
 	// Move this character forward.
-	AddMovementInput(GetActorForwardVector(), 500.0f);
+	AddMovementInput(GetActorForwardVector(), 100.0f);
 	//UE_LOG(LogTemp, Warning, TEXT("X: %f, Y: %f, Z: %f"), forwardVector.X, forwardVector.Y, forwardVector.Z);
 
 
@@ -176,7 +176,7 @@ void AFreeRoamCharacter::turnRight()
 
 void AFreeRoamCharacter::OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& HitResult)
 {
-	//UE_LOG(LogTemp, Error, TEXT("COLLIDED: %s"), *OtherActor->GetName());
+	UE_LOG(LogTemp, Error, TEXT("COLLIDED: %s"), *OtherActor->GetName());
 	//ALevelChunk* chunk = Cast<ALevelChunk>(OtherActor);
 
 	//if (IsValid(chunk))

@@ -24,7 +24,7 @@ public:
 	virtual void cleanupState();
 
 	virtual ULevelGenState* updateState() { return nullptr; };
-	virtual void transition(const ALevelChunk* intersection) {};
+	virtual void transition(const ALevelChunk* intersection, const EMapOrientations& prevMapOrientation) {};
 	virtual void update() {};
 
 protected:
@@ -40,5 +40,5 @@ protected:
 	AFreeRoamCharacter* _player = nullptr;
 
 	ULevelGenState() {};
-	virtual ALevelChunk* getValidChunk() { return nullptr; };
+	virtual ALevelChunk* getValidChunk();
 };

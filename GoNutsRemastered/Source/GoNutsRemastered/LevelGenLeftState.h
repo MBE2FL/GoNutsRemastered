@@ -18,9 +18,6 @@ class GONUTSREMASTERED_API ULevelGenLeftState : public ULevelGenState
 	
 public:
 	virtual ULevelGenState* updateState() override;
+	virtual void transition(const ALevelChunk* intersection, const EMapOrientations& prevMapOrientation) override;
 	virtual void update() override;
-	virtual void transition(const ALevelChunk* intersection) override;
-
-private:
-	virtual ALevelChunk* getValidChunk() override;
 };

@@ -47,4 +47,17 @@ private:
 
 	UPROPERTY()
 	ALevelGenerator* _levelGen = nullptr;
+
+
+	// TO-DO Change to timeline.
+	UPROPERTY()
+	bool _rotatePlayer = false;
+	UPROPERTY()
+	FRotator _targetRot;
+	UPROPERTY()
+	float _rotateTValue = 0.0f;
+	UPROPERTY()
+	float _prevYaw = 0.0f;
+	UPROPERTY()
+	float _newYaw = 0.0f;
 };

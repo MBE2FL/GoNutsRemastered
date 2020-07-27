@@ -12,6 +12,8 @@
 class ULevelGenState;
 class ULevelGenUpState;
 class ULevelGenLeftState;
+class ULevelGenRightState;
+class ULevelGenDownState;
 class UChunkObjectPool;
 //class ACharacter;
 class AFreeRoamCharacter;
@@ -77,6 +79,8 @@ public:
 	void setMapOrientation(const bool& turnLeft);
 	static ULevelGenUpState* getLevelGenUpState() { return _levelGenUpState; };
 	static ULevelGenLeftState* getLevelGenLeftState() { return _levelGenLeftState; };
+	static ULevelGenRightState* getLevelGenRightState() { return _levelGenRightState; };
+	static ULevelGenDownState* getLevelGenDownState() { return _levelGenDownState; };
 
 	const TMap<int32, FChunkClassTypes>& getChunkClassTypes() const { return _chunks; }
 	//const TArray<TSubclassOf<ALevelChunk>>& getChunkClassTypes() const { return _chunkClassTypes; }
@@ -114,14 +118,19 @@ private:
 	EMapOrientations _mapOrientation = EMapOrientations::MO_Up;
 
 	UPROPERTY()
+	EMapOrientations _prevMapOrientation = EMapOrientations::MO_Up;
+
+	UPROPERTY()
 	ULevelGenState* _levelGenState;
 	//TWeakObjectPtr<ULevelGenState> _levelGenState;
 
 	static ULevelGenUpState* _levelGenUpState;
 	static ULevelGenLeftState* _levelGenLeftState;
+	static ULevelGenRightState* _levelGenRightState;
+	static ULevelGenDownState* _levelGenDownState;
 
-	UPROPERTY()
-	FTimerHandle _timerHandle;
+	//UPROPERTY()
+	//FTimerHandle _timerHandle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Chunk Settings", meta = (AllowPrivateAccess = true))
 	TMap<int32, FChunkClassTypes> _chunks;

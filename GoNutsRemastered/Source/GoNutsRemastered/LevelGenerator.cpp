@@ -8,6 +8,8 @@
 //#include "LevelSegment.h"
 #include "LevelGenUpState.h"
 #include "LevelGenLeftState.h"
+#include "LevelGenRightState.h"
+#include "LevelGenDownState.h"
 
 #include "AssetRegistryModule.h"
 
@@ -21,6 +23,8 @@ DEFINE_LOG_CATEGORY(LogLevelGen);
 ULevelGenUpState* ALevelGenerator::_levelGenUpState = nullptr;
 //ULevelGenLeftState* ALevelGenerator::_levelGenLeftState = NewObject<ULevelGenLeftState>();
 ULevelGenLeftState* ALevelGenerator::_levelGenLeftState = nullptr;
+ULevelGenRightState* ALevelGenerator::_levelGenRightState = nullptr;
+ULevelGenDownState* ALevelGenerator::_levelGenDownState = nullptr;
 
 
 // Sets default values
@@ -56,6 +60,10 @@ void ALevelGenerator::PostEditChangeProperty(FPropertyChangedEvent& PropertyChan
 
 void ALevelGenerator::setMapOrientation(const bool& turnLeft)
 {
+	// Save previous map orientation for state transitions.
+	_prevMapOrientation = _mapOrientation;
+
+	// Determine current map orientation.
 	switch (_mapOrientation)
 	{
 	case EMapOrientations::MO_Right:
@@ -143,14 +151,20 @@ void ALevelGenerator::BeginPlay()
 	// Create the default generation state.
 	_levelGenUpState = NewObject<ULevelGenUpState>();
 	_levelGenLeftState = NewObject<ULevelGenLeftState>();
+	_levelGenRightState = NewObject<ULevelGenRightState>();
+	_levelGenDownState = NewObject<ULevelGenDownState>();
 	_levelGenUpState->AddToRoot();
 	_levelGenLeftState->AddToRoot();
+	_levelGenRightState->AddToRoot();
+	_levelGenDownState->AddToRoot();
 	_levelGenUpState->init(this);
 	_levelGenLeftState->init(this);
+	_levelGenRightState->init(this);
+	_levelGenDownState->init(this);
 	_levelGenState = _levelGenUpState;
 
 	// Create generation timer.
-	GetWorldTimerManager().SetTimer(_timerHandle, this, &ALevelGenerator::updateLevelGen, 0.5f, true, 1.0f);
+	//GetWorldTimerManager().SetTimer(_timerHandle, this, &ALevelGenerator::updateLevelGen, 0.5f, true, 1.0f);
 
 	// Create chunk memory pool.
 	_chunkObjectPool = UChunkObjectPool::getInstance();
@@ -162,7 +176,7 @@ void ALevelGenerator::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Super::EndPlay(EndPlayReason);
 
 	// Clear the generation timer.
-	GetWorldTimerManager().ClearTimer(_timerHandle);
+	//GetWorldTimerManager().ClearTimer(_timerHandle);
 
 
 	// Cleanup states.
@@ -176,6 +190,18 @@ void ALevelGenerator::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	{
 		_levelGenLeftState->cleanupState();
 		_levelGenLeftState = nullptr;
+	}
+
+	if (IsValid(_levelGenRightState))
+	{
+		_levelGenRightState->cleanupState();
+		_levelGenRightState = nullptr;
+	}
+
+	if (IsValid(_levelGenDownState))
+	{
+		_levelGenDownState->cleanupState();
+		_levelGenDownState = nullptr;
 	}
 
 	_levelGenState = nullptr;
@@ -193,7 +219,7 @@ void ALevelGenerator::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-
+	updateLevelGen();
 }
 
 void ALevelGenerator::updateLevelGen()
@@ -206,7 +232,7 @@ void ALevelGenerator::updateLevelGen()
 		if (IsValid(_player))
 		{
 			_levelGenState = currLevelGenState;
-			_levelGenState->transition(_player->getChunk());
+			_levelGenState->transition(_player->getChunk(), _prevMapOrientation);
 			_levelGenState->update();
 		}
 	}

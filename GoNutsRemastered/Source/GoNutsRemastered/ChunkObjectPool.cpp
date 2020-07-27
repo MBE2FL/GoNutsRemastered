@@ -17,7 +17,7 @@ UChunkObjectPool* UChunkObjectPool::getInstance()
 {
 	if (!IsValid(_instance))
 	{
-		_instance = NewObject<UChunkObjectPool>();
+		_instance = NewObject<UChunkObjectPool>();	// TO-DO Add to the root set of objects.
 	}
 
 	return _instance;

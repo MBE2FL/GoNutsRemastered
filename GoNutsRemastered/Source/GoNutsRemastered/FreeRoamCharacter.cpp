@@ -47,18 +47,43 @@ void AFreeRoamCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	// Smoothly rotate this player.
+	if (_rotatePlayer)
+	{
+		FQuat startRot = GetControlRotation().Quaternion();
+		FQuat targetRot = _targetRot.Quaternion();
+
+		_prevYaw = _newYaw;
+
+		_rotateTValue = _rotateTValue + (10.0f * DeltaTime);
+
+		if (_rotateTValue >= 1.0f)
+		{
+			_rotatePlayer = false;
+			_rotateTValue = 0.0f;
+			_newYaw = FQuat::Slerp(startRot, targetRot, 1.0f).Rotator().Yaw;
+		}
+		else
+		{
+			_newYaw = FQuat::Slerp(startRot, targetRot, _rotateTValue).Rotator().Yaw;
+		}
+
+		AddControllerYawInput(_newYaw - _prevYaw);
+	}
+
 	// Zero out pitch and roll.
-	//FRotator rotator = FRotator(0.0f, GetControlRotation().Yaw, 0.0f);
-	FRotator rotator = FRotator(0.0f, GetActorRotation().Yaw, 0.0f);
+	FRotator rotator = FRotator(0.0f, GetControlRotation().Yaw, 0.0f);
+	//FRotator rotator = FRotator(0.0f, GetActorRotation().Yaw, 0.0f);
 	SetActorRotation(rotator);
 
-	FVector forwardVector = GetActorForwardVector() * 2.0f;
 
 	// Move this character forward.
-	AddMovementInput(forwardVector);
+	AddMovementInput(GetActorForwardVector(), 500.0f);
 	//UE_LOG(LogTemp, Warning, TEXT("X: %f, Y: %f, Z: %f"), forwardVector.X, forwardVector.Y, forwardVector.Z);
 
 
+
+	// Find out which chunk is underneath this player.
 	FHitResult hit;
 	FCollisionQueryParams collisionParams;
 	FVector startPos = GetActorLocation();
@@ -106,9 +131,8 @@ void AFreeRoamCharacter::startJump()
 void AFreeRoamCharacter::moveRight(float value)
 {
 	// Move left or right when the A or D key is pressed.
-	FVector rightVector = GetActorRightVector() * value;
-
-	AddMovementInput(rightVector);
+	AddMovementInput(GetActorRightVector(), value);
+	AddMovementInput(GetActorForwardVector(), FMath::Abs(value));
 }
 
 void AFreeRoamCharacter::turnLeft()
@@ -118,14 +142,17 @@ void AFreeRoamCharacter::turnLeft()
 		if (_chunk->getChunckFeatures() & EChunkFeatures::CF_PLAYER_TURN_LEFT)
 		{
 			UE_LOG(LogTemp, Error, TEXT("Trying to go left!"));
+
 			_levelGen->setMapOrientation(true);
+
+			//SetActorRotation(FRotator(0.0f, -90.0f, 0.0f));
+			//AddControllerYawInput(-90.0f);
+
+			_rotatePlayer = true;
+			_targetRot = GetActorRotation();
+			_targetRot.Yaw -= 90.0f;
 		}
 	}
-
-
-	SetActorRotation(FRotator(0.0f, -90.0f, 0.0f));
-
-	//_player->AddControllerYawInput(-90.0f);
 }
 
 void AFreeRoamCharacter::turnRight()
@@ -134,7 +161,15 @@ void AFreeRoamCharacter::turnRight()
 	{
 		if (_chunk->getChunckFeatures() & EChunkFeatures::CF_PLAYER_TURN_RIGHT)
 		{
+			UE_LOG(LogTemp, Error, TEXT("Trying to go right!"));
+
 			_levelGen->setMapOrientation(false);
+
+			//AddControllerYawInput(90.0f);
+
+			_rotatePlayer = true;
+			_targetRot = GetActorRotation();
+			_targetRot.Yaw += 90.0f;
 		}
 	}
 }

@@ -3,7 +3,8 @@
 
 #include "LevelGenLeftState.h"
 #include "LevelGenUpState.h"
-#include "GameFramework/Character.h"
+#include "LevelGenDownState.h"
+//#include "GameFramework/Character.h"
 #include "IntersectionChunk.h"
 #include "FreeRoamCharacter.h"
 
@@ -13,10 +14,15 @@ ULevelGenState* ULevelGenLeftState::updateState()
 {
 	if (_initialized)
 	{
-		// Transition to forward generation state.
+		// Transition to up generation state.
 		if (_levelGen->getMapOrientation() == EMapOrientations::MO_Up)
 		{
 			return ALevelGenerator::getLevelGenUpState();
+		}
+		// Transition to down generation state.
+		else if (_levelGen->getMapOrientation() == EMapOrientations::MO_Down)
+		{
+			return ALevelGenerator::getLevelGenDownState();
 		}
 		// Stay in current generation state.
 		else
@@ -30,15 +36,22 @@ ULevelGenState* ULevelGenLeftState::updateState()
 	}
 }
 
-void ULevelGenLeftState::transition(const ALevelChunk* intersection)
+void ULevelGenLeftState::transition(const ALevelChunk* intersection, const EMapOrientations& prevMapOrientation)
 {
 	const AIntersectionChunk* interChunk = Cast<AIntersectionChunk>(intersection);
 
-	USceneComponent* leftConnector = interChunk->getLeftConnector();
+	USceneComponent* connector = nullptr;
 
-	if (!IsValid(leftConnector))
+	switch (prevMapOrientation)
 	{
-		UE_LOG(LogLevelGenLeftState, Warning, TEXT("Intersection chunk, %s, does not have a left connector!"), *interChunk->GetName());
+	case EMapOrientations::MO_Up:
+		connector = interChunk->getLeftConnector();
+		break;
+	case EMapOrientations::MO_Down:
+		connector = interChunk->getRightConnector();
+		break;
+	default:
+		UE_LOG(LogLevelGenLeftState, Warning, TEXT("Intersection chunk, %s, does not have a valid connector!"), *interChunk->GetName());
 		return;
 	}
 
@@ -53,7 +66,7 @@ void ULevelGenLeftState::transition(const ALevelChunk* intersection)
 	// Set the position and rotation of the new chunk.
 	FRotator rotation = FRotator(0.0f, -90.0f, 0.0f);
 	chunk->SetActorRotation(rotation);
-	FVector position = leftConnector->GetComponentLocation();
+	FVector position = connector->GetComponentLocation();
 	chunk->SetActorLocation(position);
 
 	_prevChunk = chunk;
@@ -69,7 +82,6 @@ void ULevelGenLeftState::transition(const ALevelChunk* intersection)
 	FVector boxSize = chunk->getMesh()->GetStaticMesh()->GetBounds().BoxExtent * 2.0f;
 	//UE_LOG(LogLevelGenLeftState, Error, TEXT("Chunk, %s, Bounds: min %s, max %s!"), *chunk->GetName(), *min.ToString(), *max.ToString());
 	UE_LOG(LogLevelGenLeftState, Error, TEXT("Chunk, %s, Bounds: %s!"), *chunk->GetName(), *boxSize.ToString());
-
 }
 
 void ULevelGenLeftState::update()
@@ -105,7 +117,7 @@ void ULevelGenLeftState::update()
 			chunk->SetActorRotation(rotation);
 			FVector position = _prevChunk->GetActorLocation();
 			//position.Y += _prevChunk->getMesh()->Bounds.BoxExtent.X * 2.0f;
-			position.Y -= _prevChunk->getMesh()->GetStaticMesh()->GetBounds().BoxExtent.X;
+			position.Y -= _prevChunk->getMesh()->GetStaticMesh()->GetBounds().BoxExtent.X * 2.0f;
 			chunk->SetActorLocation(position);
 
 
@@ -142,91 +154,4 @@ void ULevelGenLeftState::update()
 			UE_LOG(LogLevelGenLeftState, Warning, TEXT("Spawned chunk: %s"), *chunk->GetName());
 		}
 	}
-}
-
-ALevelChunk* ULevelGenLeftState::getValidChunk()
-{
-	ALevelChunk* chunk = nullptr;
-	EChunkDescriptors::Type nextChunkDescriptor = ALevelChunk::TOWN_THREE_LANES_ISLAND;
-
-	// Spawn a chunk based on the previous chunk.
-	//if (_prevChunk)
-	if (IsValid(_prevChunk))
-	{
-		const EChunkDescriptors::Type prevChunkDescriptor = _prevChunk->getChunkDescriptors();
-
-		// Previous chunk(Biome: Town, Lanes: 3)
-		if ((prevChunkDescriptor | ALevelChunk::TOWN_THREE_LANES_ISLAND) == ALevelChunk::TOWN_THREE_LANES_ISLAND)
-		{
-			UE_LOG(LogLevelGenLeftState, Warning, TEXT("Prev Chunk: Town_Three_Lanes_Island"));
-
-			// Spawn a chunk from the same pool of objects the previous chunk belongs to.
-			// Spawn a chunk not from the same pool of objects the previous chunk belongs to, but is still valid.
-			int32 testRand = FMath::RandRange(0, 100);
-
-			if (testRand <= 90)
-			{
-				nextChunkDescriptor = prevChunkDescriptor;
-			}
-			else if (testRand > 90 && testRand <= 95)
-			{
-				nextChunkDescriptor = ALevelChunk::TOWN_THREE_LANES_INTERSECTION;
-			}
-			else if (testRand > 95)
-			{
-				nextChunkDescriptor = ALevelChunk::TOWN_THREE_TO_TWO_LANES_MERGER;
-			}
-
-		}
-		else if ((prevChunkDescriptor | ALevelChunk::TOWN_THREE_LANES_INTERSECTION) == ALevelChunk::TOWN_THREE_LANES_INTERSECTION)
-		{
-			UE_LOG(LogLevelGenLeftState, Warning, TEXT("Prev Chunk: Town_Intersection_Three_Lanes"));
-
-			// Spawn a chunk not from the same pool of objects the previous chunk belongs to, but is still valid.
-			nextChunkDescriptor = ALevelChunk::TOWN_THREE_LANES_ISLAND;
-
-		}
-		else if ((prevChunkDescriptor | ALevelChunk::TOWN_THREE_TO_TWO_LANES_MERGER) == ALevelChunk::TOWN_THREE_TO_TWO_LANES_MERGER)
-		{
-			UE_LOG(LogLevelGenLeftState, Warning, TEXT("Prev Chunk: Town_Three_To_Two_Lanes_Merger"));
-
-			// Spawn a chunk not from the same pool of objects the previous chunk belongs to, but is still valid.
-			nextChunkDescriptor = ALevelChunk::TOWN_TWO_LANES;
-		}
-		else if ((prevChunkDescriptor | ALevelChunk::TOWN_TWO_LANES) == ALevelChunk::TOWN_TWO_LANES)
-		{
-			UE_LOG(LogLevelGenLeftState, Warning, TEXT("Prev Chunk: Town_Two_Lanes"));
-
-			// Spawn a chunk not from the same pool of objects the previous chunk belongs to, but is still valid.
-			nextChunkDescriptor = ALevelChunk::TOWN_TWO_LANES;
-		}
-	}
-	// Spawn a default starter chunk.
-	else
-	{
-		UE_LOG(LogLevelGenLeftState, Warning, TEXT("Prev Chunk: None"));
-	}
-
-
-
-
-	const FChunkClassTypes* chunkClassTypes = _levelGen->getChunkClassTypes().Find(static_cast<int32>(nextChunkDescriptor));
-	if (!chunkClassTypes)
-	{
-		UE_LOG(LogLevelGenLeftState, Error, TEXT("Level Gen did not have any class types assigned to a chunk descriptor type: %d!"), static_cast<int32>(nextChunkDescriptor));
-		return chunk;
-	}
-	const TArray<TSubclassOf<ALevelChunk>> classTypesArr = chunkClassTypes->_chunkClassTypes;
-
-	if (classTypesArr.Num() <= 0)
-	{
-		UE_LOG(LogLevelGenLeftState, Error, TEXT("Level Gen did not have any class types assigned to a chunk descriptor type!"));
-		return chunk;
-	}
-
-	TSubclassOf<ALevelChunk> classType = classTypesArr[FMath::RandRange(0, classTypesArr.Num() - 1)];
-	//chunk = Cast<ALevelChunk>(_levelGen->GetWorld()->SpawnActor(classType));
-	chunk = _levelGen->spawnChunk(classType);
-
-	return chunk;
 }

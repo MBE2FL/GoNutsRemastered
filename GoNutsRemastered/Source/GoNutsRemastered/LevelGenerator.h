@@ -12,6 +12,11 @@
 class ULevelGenState;
 class ULevelGenUpState;
 class ULevelGenLeftState;
+class ULevelGenRightState;
+class ULevelGenDownState;
+class UChunkObjectPool;
+//class ACharacter;
+class AFreeRoamCharacter;
 
 
 #define ECC_LevelSegmentChannel ECollisionChannel::ECC_GameTraceChannel1
@@ -65,19 +70,35 @@ public:
 	// Sets default values for this actor's properties
 	ALevelGenerator();
 
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+
 	FOnCrosswalkSpawned& onCrosswalkSpawned() { return _onCrosswalkSpawnedEvent; }
 	FOnRoadSpawned& onRoadSpawned() { return _onRoadSpawnedEvent; }
 
 	EMapOrientations getMapOrientation() const { return _mapOrientation; };
+	void setMapOrientation(const bool& turnLeft);
 	static ULevelGenUpState* getLevelGenUpState() { return _levelGenUpState; };
 	static ULevelGenLeftState* getLevelGenLeftState() { return _levelGenLeftState; };
+	static ULevelGenRightState* getLevelGenRightState() { return _levelGenRightState; };
+	static ULevelGenDownState* getLevelGenDownState() { return _levelGenDownState; };
 
 	const TMap<int32, FChunkClassTypes>& getChunkClassTypes() const { return _chunks; }
-	//const TSet<FSegmentSpawnInfo>& getValidRightSegments(const ESegmentTypes& segmentType) const;
+	//const TArray<TSubclassOf<ALevelChunk>>& getChunkClassTypes() const { return _chunkClassTypes; }
+	
+
+
+
+	// Chunk memory pool funcitons
+	ALevelChunk* spawnChunk(const TSubclassOf<ALevelChunk>& chunkClassType);
+	void recycleChunk(ALevelChunk* chunk);
+
+
+	AFreeRoamCharacter* getPlayer();
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 public:	
 	// Called every frame
@@ -97,21 +118,38 @@ private:
 	EMapOrientations _mapOrientation = EMapOrientations::MO_Up;
 
 	UPROPERTY()
+	EMapOrientations _prevMapOrientation = EMapOrientations::MO_Up;
+
+	UPROPERTY()
 	ULevelGenState* _levelGenState;
+	//TWeakObjectPtr<ULevelGenState> _levelGenState;
 
 	static ULevelGenUpState* _levelGenUpState;
 	static ULevelGenLeftState* _levelGenLeftState;
+	static ULevelGenRightState* _levelGenRightState;
+	static ULevelGenDownState* _levelGenDownState;
 
-	UPROPERTY()
-	FTimerHandle _timerHandle;
+	//UPROPERTY()
+	//FTimerHandle _timerHandle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Chunk Settings", meta = (AllowPrivateAccess = true))
 	TMap<int32, FChunkClassTypes> _chunks;
-	
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Segment Settings", meta = (AllowPrivateAccess = true))
-	//TMap<ESegmentTypes, FSegmentTypeConnectInfo> _validSegmentsLookup;
 
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Chunk Settings", meta = (AllowPrivateAccess = true))
+	//TArray<TSubclassOf<ALevelChunk>> _chunkClassTypes;
+
+	UPROPERTY()
+	UChunkObjectPool* _chunkObjectPool;
+
+	UPROPERTY()
+	AFreeRoamCharacter* _player;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Chunk Settings", meta = (AllowPrivateAccess = true))
+	bool _refreshChunkClassTypes = false;
 
 	UFUNCTION()
 	void updateLevelGen();
+
+	UFUNCTION()
+	void getAllChunkClassTypes();
 };

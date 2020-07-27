@@ -6,6 +6,9 @@
 #include "GameFramework/Character.h"
 #include "FreeRoamCharacter.generated.h"
 
+class ALevelChunk;
+class ALevelGenerator;
+
 UCLASS()
 class GONUTSREMASTERED_API AFreeRoamCharacter : public ACharacter
 {
@@ -14,6 +17,8 @@ class GONUTSREMASTERED_API AFreeRoamCharacter : public ACharacter
 public:
 	// Sets default values for this character's properties
 	AFreeRoamCharacter();
+	void init(ALevelGenerator* levelGen);
+	ALevelChunk* getChunk() const;
 
 protected:
 	// Called when the game starts or when spawned
@@ -30,4 +35,29 @@ public:
 private:
 	void startJump();
 	void moveRight(float value);
+	void turnLeft();
+	void turnRight();
+
+	UFUNCTION()
+	void OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse,
+		const FHitResult& HitResult);
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
+	ALevelChunk* _chunk = nullptr;
+
+	UPROPERTY()
+	ALevelGenerator* _levelGen = nullptr;
+
+
+	// TO-DO Change to timeline.
+	UPROPERTY()
+	bool _rotatePlayer = false;
+	UPROPERTY()
+	FRotator _targetRot;
+	UPROPERTY()
+	float _rotateTValue = 0.0f;
+	UPROPERTY()
+	float _prevYaw = 0.0f;
+	UPROPERTY()
+	float _newYaw = 0.0f;
 };

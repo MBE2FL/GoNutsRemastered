@@ -17,10 +17,7 @@ class GONUTSREMASTERED_API ULevelGenUpState : public ULevelGenState
 	GENERATED_BODY()
 
 public:
-	virtual void update() override;
 	virtual ULevelGenState* updateState() override;
-
-private:
-	virtual ALevelChunk* getValidChunk() override;
-
+	virtual void transition(const ALevelChunk* intersection, const EMapOrientations& prevMapOrientation) override;
+	virtual void update() override;
 };

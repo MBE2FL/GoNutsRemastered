@@ -7,6 +7,10 @@
 #include "LevelGenerator.h"
 #include "LevelGenState.generated.h"
 
+
+DECLARE_LOG_CATEGORY_EXTERN(LogLevelGenState, Log, All);
+
+
 /**
  * 
  */
@@ -17,19 +21,24 @@ class GONUTSREMASTERED_API ULevelGenState : public UObject
 
 public:
 	void init(ALevelGenerator* levelGen);
+	virtual void cleanupState();
 
-	virtual void update() {};
 	virtual ULevelGenState* updateState() { return nullptr; };
+	virtual void transition(const ALevelChunk* intersection, const EMapOrientations& prevMapOrientation) {};
+	virtual void update() {};
 
 protected:
+	UPROPERTY()
+	bool _initialized = false;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Level Gen State", meta = (AllowPrivateAccess = true))
-	ALevelGenerator* _levelGen;
+	ALevelGenerator* _levelGen = nullptr;
 	UPROPERTY()
 	int32 _currColumn;
 	UPROPERTY()
-	ALevelChunk* _prevChunk;
-
+	ALevelChunk* _prevChunk = nullptr;
+	UPROPERTY()
+	AFreeRoamCharacter* _player = nullptr;
 
 	ULevelGenState() {};
-	virtual ALevelChunk* getValidChunk() { return nullptr; };
+	virtual ALevelChunk* getValidChunk();
 };

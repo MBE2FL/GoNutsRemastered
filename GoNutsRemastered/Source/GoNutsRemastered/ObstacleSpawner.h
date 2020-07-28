@@ -35,7 +35,10 @@ private:
 	ALevelGenerator *_levelGenerator;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Obstacle Spawner|Obstacle Types", meta = (AllowPrivateAccess = true))
-		TArray<TSubclassOf<AActor>> _ObstacleTypes;
+		TArray<TSubclassOf<AActor>> _RoadObstacleTypes;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Obstacle Spawner|Obstacle Types", meta = (AllowPrivateAccess = true))
+		TArray<TSubclassOf<AActor>> _GrassObstacleTypes;
 
 	UFUNCTION()
 		void spawnObstacle(ALevelChunk* road, const TArray<USceneComponent*>& ObstacleSpawnPoints);

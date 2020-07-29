@@ -8,6 +8,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/SceneComponent.h"
 
+
 DEFINE_LOG_CATEGORY(LogLevelChunk);
 
 const EChunkDescriptors::Type ALevelChunk::TOWN_THREE_LANES_ISLAND = static_cast<EChunkDescriptors::Type>(EChunkDescriptors::Type::CD_BIOME_TYPE_TOWN | 
@@ -47,6 +48,25 @@ void ALevelChunk::BeginPlay()
 void ALevelChunk::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+
+#if WITH_EDITOR
+	//if (!GWorld->HasBegunPlay())
+	//UWorld* world = GEngine->GetWorldFromContextObject(this);
+	UWorld* world = Cast<UObject>(this)->GetWorld();
+
+	if (IsValid(world))
+	{
+		if (world->WorldType == EWorldType::Type::EditorPreview)
+		{
+			return;
+		}
+	}
+	else
+	{
+		return;
+	}
+#endif
 
 
 	UChunkObjectPool* chunkObjectPool = UChunkObjectPool::getInstance();
@@ -122,4 +142,3 @@ const TArray<USceneComponent*>& ALevelChunk::getPedestrianSpawnPoints() const
 {
 	return _pedestrianSpawnPoints;
 }
-

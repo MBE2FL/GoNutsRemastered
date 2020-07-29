@@ -38,7 +38,8 @@ void AFreeRoamCharacter::BeginPlay()
 	
 
 	UCapsuleComponent* capsuleComp = GetCapsuleComponent();
-	capsuleComp->OnComponentHit.AddDynamic(this, &AFreeRoamCharacter::OnCompHit);
+	//capsuleComp->OnComponentHit.AddDynamic(this, &AFreeRoamCharacter::OnCompHit);
+	capsuleComp->OnComponentBeginOverlap.AddDynamic(this, &AFreeRoamCharacter::OnBeginOverlap);
 
 }
 
@@ -183,4 +184,10 @@ void AFreeRoamCharacter::OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherAc
 	//{
 	//	_chunk = chunk;
 	//}
+}
+
+void AFreeRoamCharacter::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
+	bool bFromSweep, const FHitResult& SweepResult)
+{
+	UE_LOG(LogTemp, Error, TEXT("Overlapped: %s"), *OtherActor->GetName());
 }

@@ -78,6 +78,10 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+#if WITH_EDITOR
+	virtual bool ShouldTickIfViewportsOnly() const override { return true; };
+#endif
 	
 	//UFUNCTION(BlueprintCallable)
 	//void refreshComponents();

@@ -7,6 +7,8 @@
 #include "LevelChunk.generated.h"
 
 
+class ULaneComponent;
+
 
 DECLARE_LOG_CATEGORY_EXTERN(LogLevelChunk, Log, All);
 
@@ -109,6 +111,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Chunk|Chunk Features")
 	const TArray<USceneComponent*>& getPedestrianSpawnPoints() const;
 
+	UFUNCTION(BlueprintCallable, Category = "Chunk|Lanes")
+	const TArray<ULaneComponent*>& getLanes() const;
+
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chunk|Connection Settings", meta = (AllowPrivateAccess = true))
@@ -126,4 +131,8 @@ protected:
 	TArray<USceneComponent*> _obstacleSpawnPoints;
 	UPROPERTY()
 	TArray<USceneComponent*> _pedestrianSpawnPoints;
+
+
+	UPROPERTY()
+	TArray<ULaneComponent*> _lanes;
 };

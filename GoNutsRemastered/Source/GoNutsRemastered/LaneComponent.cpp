@@ -2,10 +2,13 @@
 
 
 #include "LaneComponent.h"
+#include "Obstacle.h"
 
 #if WITH_EDITOR
 #include "DrawDebugHelpers.h"
 #endif
+
+DEFINE_LOG_CATEGORY(LogLane);
 
 const uint8 ULaneComponent::MAX_OBSTACLES = 5;
 
@@ -17,6 +20,8 @@ ULaneComponent::ULaneComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	// ...
+
+	_obstacleTypes = static_cast<uint8>(EObstacleType::OT_NONE);
 }
 
 
@@ -26,10 +31,28 @@ void ULaneComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-
 	_obstacles.Reserve(MAX_OBSTACLES);
 }
 
+
+//void ULaneComponent::OnRegister()
+//{
+//#if WITH_EDITOR
+//	if (AActor* owner = GetOwner())
+//	{
+//		if (!_visComp)
+//		{
+//			_visComp = NewObject<ULaneVisualizationComponent>(owner, NAME_None, RF_Transactional | RF_TextExportTransient);
+//			_visComp->SetupAttachment(this);
+//			_visComp->SetIsVisualizationComponent(true);
+//			_visComp->CreationMethod = CreationMethod;
+//			_visComp->RegisterComponentWithWorld(GetWorld());
+//		}
+//	}
+//#endif
+//
+//	Super::OnRegister();
+//}
 
 // Called every frame
 void ULaneComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -49,11 +72,17 @@ void ULaneComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 	{
 		if (world->WorldType == EWorldType::Type::EditorPreview)
 		{
-			DrawDebugBox(world, GetRelativeLocation(), FVector(_boundingBox.GetSize(), 50.0f), FColor::Red, false, -1.0f, 0, 4.0f);
+			FVector2D extends = _boundingBox * 0.5f;
+			DrawDebugBox(world, GetRelativeLocation() + FVector(extends, 0.0f), FVector(extends, 50.0f), FColor::Red, false, -1.0f, 0, 4.0f);
 
 			return;
 		}
 	}
 #endif
+}
+
+uint8 ULaneComponent::getObstacleTypes() const
+{
+	return _obstacleTypes;
 }
 

@@ -79,7 +79,7 @@ void AFreeRoamCharacter::Tick(float DeltaTime)
 
 
 	// Move this character forward.
-	AddMovementInput(GetActorForwardVector(), 100.0f);
+	AddMovementInput(GetActorForwardVector(), 500.0f);
 	//UE_LOG(LogTemp, Warning, TEXT("X: %f, Y: %f, Z: %f"), forwardVector.X, forwardVector.Y, forwardVector.Z);
 
 

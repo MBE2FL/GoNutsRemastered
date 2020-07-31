@@ -7,6 +7,7 @@
 #include "FreeRoamCharacter.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/SceneComponent.h"
+#include "LaneComponent.h"
 
 
 DEFINE_LOG_CATEGORY(LogLevelChunk);
@@ -42,6 +43,13 @@ void ALevelChunk::BeginPlay()
 {
 	Super::BeginPlay();
 
+	
+	// Store all lanes in a TArray for easy access.
+	TInlineComponentArray<ULaneComponent*> laneComponents(this);
+	GetComponents(laneComponents);
+
+	_lanes.Reserve(laneComponents.Num());
+	_lanes = laneComponents;
 }
 
 // Called every frame
@@ -141,4 +149,9 @@ const TArray<USceneComponent*>& ALevelChunk::getObstacleSpawnPoints() const
 const TArray<USceneComponent*>& ALevelChunk::getPedestrianSpawnPoints() const
 {
 	return _pedestrianSpawnPoints;
+}
+
+const TArray<ULaneComponent*>& ALevelChunk::getLanes() const
+{
+	return _lanes;
 }

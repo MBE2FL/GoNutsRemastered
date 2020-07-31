@@ -41,22 +41,22 @@ ALevelGenerator::ALevelGenerator()
 //	return _validSegmentsLookup.Find(segmentType)->_validRightSegments;
 //}
 
-void ALevelGenerator::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
-{
-	Super::PostEditChangeProperty(PropertyChangedEvent);
-
-	FName propertyName = PropertyChangedEvent.GetPropertyName();
-
-	if (propertyName == GET_MEMBER_NAME_CHECKED(ALevelGenerator, _refreshChunkClassTypes))
-	{
-		if (_refreshChunkClassTypes)
-		{
-			UE_LOG(LogLevelGen, Warning, TEXT("Refreshing chunk class types..."));
-			getAllChunkClassTypes();
-			_refreshChunkClassTypes = false;
-		}
-	}
-}
+//void ALevelGenerator::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+//{
+//	Super::PostEditChangeProperty(PropertyChangedEvent);
+//
+//	FName propertyName = PropertyChangedEvent.GetPropertyName();
+//
+//	if (propertyName == GET_MEMBER_NAME_CHECKED(ALevelGenerator, _refreshChunkClassTypes))
+//	{
+//		if (_refreshChunkClassTypes)
+//		{
+//			UE_LOG(LogLevelGen, Warning, TEXT("Refreshing chunk class types..."));
+//			getAllChunkClassTypes();
+//			_refreshChunkClassTypes = false;
+//		}
+//	}
+//}
 
 void ALevelGenerator::setMapOrientation(const bool& turnLeft)
 {
@@ -209,7 +209,8 @@ void ALevelGenerator::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 	// Cleanup the chunk memory pool.
 	UChunkObjectPool::destroyInstance();
-	GetWorld()->ForceGarbageCollection(true);
+	//GetWorld()->ForceGarbageCollection(true);
+	GEngine->ForceGarbageCollection(true);
 
 	_chunkObjectPool = nullptr;
 }
@@ -245,96 +246,96 @@ void ALevelGenerator::updateLevelGen()
 
 void ALevelGenerator::getAllChunkClassTypes()
 {
-#if WITH_EDITOR
-	// Load the asset registry module
-	FAssetRegistryModule& assetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(FName("AssetRegistry"));
-	IAssetRegistry& assetRegistry = assetRegistryModule.Get();
-
-	TArray<FString> contentPaths;
-	contentPaths.Add(TEXT("/Game/LevelChunks/Chunks"));
-	assetRegistry.ScanFilesSynchronous(contentPaths);
-
-	FName baseClassName = ALevelChunk::StaticClass()->GetFName();
-
-	// Get all derived class names.
-	TSet<FName> derivedNames;
-	{
-		TArray<FName> baseNames;
-		baseNames.Add(baseClassName);
-
-		TSet<FName> excluded;
-		assetRegistry.GetDerivedClassNames(baseNames, excluded, derivedNames);
-	}
-
-
-	TArray<FName> filterPaths;
-	filterPaths.Reserve(4);
-	filterPaths.Add(TEXT("/Game/LevelChunks/Chunks/Town_3Lanes"));
-	filterPaths.Add(TEXT("/Game/LevelChunks/Chunks/Town_Intersection_3Lanes"));
-	filterPaths.Add(TEXT("/Game/LevelChunks/Chunks/Town_2Lanes"));
-	filterPaths.Add(TEXT("/Game/LevelChunks/Chunks/Town_3To2Lanes_Merger"));
-
-
-	for (const FName& filterPath : filterPaths)
-	{
-		UE_LOG(LogLevelGen, Warning, TEXT("Searching for all level chunk types in %s."), *filterPath.ToString());
-
-		// Filter each sub-folder in the root LevelChunks folder.
-		FARFilter filter;
-		filter.ClassNames.Add(UBlueprint::StaticClass()->GetFName());
-		filter.bRecursiveClasses = true;
-		filter.PackagePaths.Add(filterPath);
-		filter.bRecursivePaths = true;
-
-		// Load all chunks, and store them according to their respective folder's designated chunk descriptor.
-		TArray<FAssetData> assetList;
-		assetRegistry.GetAssets(filter, assetList);
-
-		FChunkClassTypes chunkClassTypes{};
-		for (const FAssetData& asset : assetList)
-		{
-			if (const FString* generatedClassPathPtr = asset.TagsAndValues.Find(TEXT("GeneratedClass")))
-			{
-				// Convert path to just the name part.
-				const FString classObjectPath = FPackageName::ExportTextPathToObjectPath(*generatedClassPathPtr);
-				const FString className = FPackageName::ObjectPathToObjectName(classObjectPath);
-
-				// Check if the class is in the derived set.
-				if (!derivedNames.Contains(*className))
-				{
-					continue;
-				}
-
-				// Store chunk according to it's class type.
-				TAssetSubclassOf<ALevelChunk> test = TAssetSubclassOf<ALevelChunk>(FStringAssetReference(classObjectPath));
-				TSubclassOf<ALevelChunk> chunkClassType = test.Get();
-				UE_LOG(LogLevelGen, Warning, TEXT("Found blueprint: %s"), *test.Get()->GetName());
-
-				chunkClassTypes._chunkClassTypes.Add(chunkClassType);
-			}
-		}
-
-		// Save list of class types according to it's sub-folder's designated chunk descriptor.
-		if (filterPath.ToString().Contains(TEXT("Town_3Lanes")))
-		{
-			UE_LOG(LogLevelGen, Warning, TEXT("Added blueprints to descriptor group: %u"), static_cast<int32>(ALevelChunk::TOWN_THREE_LANES_ISLAND));
-			_chunks.Add(ALevelChunk::TOWN_THREE_LANES_ISLAND, chunkClassTypes);
-		}
-		else if (filterPath.ToString().Contains(TEXT("Town_Intersection_3Lanes")))
-		{
-			UE_LOG(LogLevelGen, Warning, TEXT("Added blueprints to descriptor group: %u"), static_cast<int32>(ALevelChunk::TOWN_THREE_LANES_INTERSECTION));
-			_chunks.Add(ALevelChunk::TOWN_THREE_LANES_INTERSECTION, chunkClassTypes);
-		}
-		else if (filterPath.ToString().Contains(TEXT("Town_2Lanes")))
-		{
-			UE_LOG(LogLevelGen, Warning, TEXT("Added blueprints to descriptor group: %u"), static_cast<int32>(ALevelChunk::TOWN_TWO_LANES));
-			_chunks.Add(ALevelChunk::TOWN_TWO_LANES, chunkClassTypes);
-		}
-		else if (filterPath.ToString().Contains(TEXT("Town_3To2Lanes_Merger")))
-		{
-			UE_LOG(LogLevelGen, Warning, TEXT("Added blueprints to descriptor group: %u"), static_cast<int32>(ALevelChunk::TOWN_THREE_TO_TWO_LANES_MERGER));
-			_chunks.Add(ALevelChunk::TOWN_THREE_TO_TWO_LANES_MERGER, chunkClassTypes);
-		}
-	}
-#endif
+//#if WITH_EDITOR
+//	// Load the asset registry module
+//	FAssetRegistryModule& assetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(FName("AssetRegistry"));
+//	IAssetRegistry& assetRegistry = assetRegistryModule.Get();
+//
+//	TArray<FString> contentPaths;
+//	contentPaths.Add(TEXT("/Game/LevelChunks/Chunks"));
+//	assetRegistry.ScanFilesSynchronous(contentPaths);
+//
+//	FName baseClassName = ALevelChunk::StaticClass()->GetFName();
+//
+//	// Get all derived class names.
+//	TSet<FName> derivedNames;
+//	{
+//		TArray<FName> baseNames;
+//		baseNames.Add(baseClassName);
+//
+//		TSet<FName> excluded;
+//		assetRegistry.GetDerivedClassNames(baseNames, excluded, derivedNames);
+//	}
+//
+//
+//	TArray<FName> filterPaths;
+//	filterPaths.Reserve(4);
+//	filterPaths.Add(TEXT("/Game/LevelChunks/Chunks/Town_3Lanes"));
+//	filterPaths.Add(TEXT("/Game/LevelChunks/Chunks/Town_Intersection_3Lanes"));
+//	filterPaths.Add(TEXT("/Game/LevelChunks/Chunks/Town_2Lanes"));
+//	filterPaths.Add(TEXT("/Game/LevelChunks/Chunks/Town_3To2Lanes_Merger"));
+//
+//
+//	for (const FName& filterPath : filterPaths)
+//	{
+//		UE_LOG(LogLevelGen, Warning, TEXT("Searching for all level chunk types in %s."), *filterPath.ToString());
+//
+//		// Filter each sub-folder in the root LevelChunks folder.
+//		FARFilter filter;
+//		filter.ClassNames.Add(UBlueprint::StaticClass()->GetFName());
+//		filter.bRecursiveClasses = true;
+//		filter.PackagePaths.Add(filterPath);
+//		filter.bRecursivePaths = true;
+//
+//		// Load all chunks, and store them according to their respective folder's designated chunk descriptor.
+//		TArray<FAssetData> assetList;
+//		assetRegistry.GetAssets(filter, assetList);
+//
+//		FChunkClassTypes chunkClassTypes{};
+//		for (const FAssetData& asset : assetList)
+//		{
+//			if (const FString* generatedClassPathPtr = asset.TagsAndValues.Find(TEXT("GeneratedClass")))
+//			{
+//				// Convert path to just the name part.
+//				const FString classObjectPath = FPackageName::ExportTextPathToObjectPath(*generatedClassPathPtr);
+//				const FString className = FPackageName::ObjectPathToObjectName(classObjectPath);
+//
+//				// Check if the class is in the derived set.
+//				if (!derivedNames.Contains(*className))
+//				{
+//					continue;
+//				}
+//
+//				// Store chunk according to it's class type.
+//				TAssetSubclassOf<ALevelChunk> test = TAssetSubclassOf<ALevelChunk>(FStringAssetReference(classObjectPath));
+//				TSubclassOf<ALevelChunk> chunkClassType = test.Get();
+//				UE_LOG(LogLevelGen, Warning, TEXT("Found blueprint: %s"), *test.Get()->GetName());
+//
+//				chunkClassTypes._chunkClassTypes.Add(chunkClassType);
+//			}
+//		}
+//
+//		// Save list of class types according to it's sub-folder's designated chunk descriptor.
+//		if (filterPath.ToString().Contains(TEXT("Town_3Lanes")))
+//		{
+//			UE_LOG(LogLevelGen, Warning, TEXT("Added blueprints to descriptor group: %u"), static_cast<int32>(ALevelChunk::TOWN_THREE_LANES_ISLAND));
+//			_chunks.Add(ALevelChunk::TOWN_THREE_LANES_ISLAND, chunkClassTypes);
+//		}
+//		else if (filterPath.ToString().Contains(TEXT("Town_Intersection_3Lanes")))
+//		{
+//			UE_LOG(LogLevelGen, Warning, TEXT("Added blueprints to descriptor group: %u"), static_cast<int32>(ALevelChunk::TOWN_THREE_LANES_INTERSECTION));
+//			_chunks.Add(ALevelChunk::TOWN_THREE_LANES_INTERSECTION, chunkClassTypes);
+//		}
+//		else if (filterPath.ToString().Contains(TEXT("Town_2Lanes")))
+//		{
+//			UE_LOG(LogLevelGen, Warning, TEXT("Added blueprints to descriptor group: %u"), static_cast<int32>(ALevelChunk::TOWN_TWO_LANES));
+//			_chunks.Add(ALevelChunk::TOWN_TWO_LANES, chunkClassTypes);
+//		}
+//		else if (filterPath.ToString().Contains(TEXT("Town_3To2Lanes_Merger")))
+//		{
+//			UE_LOG(LogLevelGen, Warning, TEXT("Added blueprints to descriptor group: %u"), static_cast<int32>(ALevelChunk::TOWN_THREE_TO_TWO_LANES_MERGER));
+//			_chunks.Add(ALevelChunk::TOWN_THREE_TO_TWO_LANES_MERGER, chunkClassTypes);
+//		}
+//	}
+//#endif
 }

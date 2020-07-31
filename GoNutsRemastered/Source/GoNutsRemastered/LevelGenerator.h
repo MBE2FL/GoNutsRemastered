@@ -70,7 +70,7 @@ public:
 	// Sets default values for this actor's properties
 	ALevelGenerator();
 
-	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+	//virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 
 	FOnCrosswalkSpawned& onCrosswalkSpawned() { return _onCrosswalkSpawnedEvent; }
 	FOnRoadSpawned& onRoadSpawned() { return _onRoadSpawnedEvent; }

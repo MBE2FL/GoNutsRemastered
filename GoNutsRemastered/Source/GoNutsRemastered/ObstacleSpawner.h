@@ -31,9 +31,9 @@ public:
 	// Sets default values for this component's properties
 	UObstacleSpawner();
 
-#if WITH_EDITOR
-	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
-#endif
+//#if WITH_EDITOR
+//	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+//#endif
 
 
 protected:
@@ -64,11 +64,11 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Obstacle Spawner|Obstacle Types", meta = (AllowPrivateAccess = true))
 	TMap<EObstacleType, FObstacleClassTypes> _obstaclesTypes;
 
-#if WITH_EDITOR
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Obstacle Spawner|Obstacle Types", meta = (AllowPrivateAccess = true))
-	bool _refreshObstacleClassTypes = false;
-
-	UFUNCTION()
-	void getAllObstacleClassTypes();
-#endif
+//#if WITH_EDITOR
+//	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Obstacle Spawner|Obstacle Types", meta = (AllowPrivateAccess = true))
+//	bool _refreshObstacleClassTypes = false;
+//
+//	UFUNCTION()
+//	void getAllObstacleClassTypes();
+//#endif
 };

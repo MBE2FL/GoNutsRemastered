@@ -268,7 +268,7 @@ void ALevelGenerator::getAllChunkClassTypes()
 
 
 	TArray<FName> filterPaths;
-	filterPaths.Reserve(2);
+	filterPaths.Reserve(4);
 	filterPaths.Add(TEXT("/Game/LevelChunks/Chunks/Town_3Lanes"));
 	filterPaths.Add(TEXT("/Game/LevelChunks/Chunks/Town_Intersection_3Lanes"));
 	filterPaths.Add(TEXT("/Game/LevelChunks/Chunks/Town_2Lanes"));

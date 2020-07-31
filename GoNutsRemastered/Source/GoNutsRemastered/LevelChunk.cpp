@@ -7,6 +7,8 @@
 #include "FreeRoamCharacter.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/SceneComponent.h"
+#include "LaneComponent.h"
+
 
 DEFINE_LOG_CATEGORY(LogLevelChunk);
 
@@ -41,12 +43,38 @@ void ALevelChunk::BeginPlay()
 {
 	Super::BeginPlay();
 
+	
+	// Store all lanes in a TArray for easy access.
+	TInlineComponentArray<ULaneComponent*> laneComponents(this);
+	GetComponents(laneComponents);
+
+	_lanes.Reserve(laneComponents.Num());
+	_lanes = laneComponents;
 }
 
 // Called every frame
 void ALevelChunk::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+
+#if WITH_EDITOR
+	//if (!GWorld->HasBegunPlay())
+	//UWorld* world = GEngine->GetWorldFromContextObject(this);
+	UWorld* world = Cast<UObject>(this)->GetWorld();
+
+	if (IsValid(world))
+	{
+		if (world->WorldType == EWorldType::Type::EditorPreview)
+		{
+			return;
+		}
+	}
+	else
+	{
+		return;
+	}
+#endif
 
 
 	UChunkObjectPool* chunkObjectPool = UChunkObjectPool::getInstance();
@@ -123,3 +151,7 @@ const TArray<USceneComponent*>& ALevelChunk::getPedestrianSpawnPoints() const
 	return _pedestrianSpawnPoints;
 }
 
+const TArray<ULaneComponent*>& ALevelChunk::getLanes() const
+{
+	return _lanes;
+}

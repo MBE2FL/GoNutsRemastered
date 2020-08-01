@@ -211,7 +211,8 @@ void ALevelGenerator::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 	// Cleanup the chunk memory pool.
 	UChunkObjectPool::destroyInstance();
-	GetWorld()->ForceGarbageCollection(true);
+	//GetWorld()->ForceGarbageCollection(true);
+	GEngine->ForceGarbageCollection(true);
 
 	_chunkObjectPool = nullptr;
 }

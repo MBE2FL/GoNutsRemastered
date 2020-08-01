@@ -1370,3 +1370,7 @@ Phone Builds/Android Builds/Android_Multi/GoNutsRemastered-armv7.apk
 Phone Builds/Android Builds/Android_Multi/Install_GoNutsRemastered-armv7.bat
 Phone Builds/Android Builds/Android_Multi/main.1.com.YourCompany.GoNutsRemastered.obb
 Phone Builds/Android Builds/Android_Multi/Uninstall_GoNutsRemastered-armv7.bat
+
+GoNutsRemastered/Binaries/Win64/GoNutsRemasteredEditor.target
+
+GoNutsRemastered/Intermediate/Build/Win64/UE4Editor/Development/GoNutsRemastered/Definitions.GoNutsRemastered.h

@@ -41,6 +41,7 @@ ALevelGenerator::ALevelGenerator()
 //	return _validSegmentsLookup.Find(segmentType)->_validRightSegments;
 //}
 
+#if WITH_EDITOR
 void ALevelGenerator::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
@@ -57,6 +58,7 @@ void ALevelGenerator::PostEditChangeProperty(FPropertyChangedEvent& PropertyChan
 		}
 	}
 }
+#endif
 
 void ALevelGenerator::setMapOrientation(const bool& turnLeft)
 {
@@ -243,9 +245,9 @@ void ALevelGenerator::updateLevelGen()
 	}
 }
 
+#if WITH_EDITOR
 void ALevelGenerator::getAllChunkClassTypes()
 {
-#if WITH_EDITOR
 	// Load the asset registry module
 	FAssetRegistryModule& assetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(FName("AssetRegistry"));
 	IAssetRegistry& assetRegistry = assetRegistryModule.Get();
@@ -336,5 +338,5 @@ void ALevelGenerator::getAllChunkClassTypes()
 			_chunks.Add(ALevelChunk::TOWN_THREE_TO_TWO_LANES_MERGER, chunkClassTypes);
 		}
 	}
-#endif
 }
+#endif

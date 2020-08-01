@@ -70,7 +70,9 @@ public:
 	// Sets default values for this actor's properties
 	ALevelGenerator();
 
+#if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+#endif
 
 	FOnCrosswalkSpawned& onCrosswalkSpawned() { return _onCrosswalkSpawnedEvent; }
 	FOnRoadSpawned& onRoadSpawned() { return _onRoadSpawnedEvent; }
@@ -144,12 +146,16 @@ private:
 	UPROPERTY()
 	AFreeRoamCharacter* _player;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Chunk Settings", meta = (AllowPrivateAccess = true))
-	bool _refreshChunkClassTypes = false;
-
 	UFUNCTION()
 	void updateLevelGen();
 
+#if WITH_EDITORONLY_DATA
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level Gen|Spawnable Chunk Settings", meta = (AllowPrivateAccess = true))
+	bool _refreshChunkClassTypes = false;
+#endif
+
+#if WITH_EDITOR
 	UFUNCTION()
 	void getAllChunkClassTypes();
+#endif
 };

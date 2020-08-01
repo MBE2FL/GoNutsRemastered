@@ -64,10 +64,12 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Obstacle Spawner|Obstacle Types", meta = (AllowPrivateAccess = true))
 	TMap<EObstacleType, FObstacleClassTypes> _obstaclesTypes;
 
-#if WITH_EDITOR
+#if WITH_EDITORONLY_DATA
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Obstacle Spawner|Obstacle Types", meta = (AllowPrivateAccess = true))
 	bool _refreshObstacleClassTypes = false;
+#endif
 
+#if WITH_EDITOR
 	UFUNCTION()
 	void getAllObstacleClassTypes();
 #endif

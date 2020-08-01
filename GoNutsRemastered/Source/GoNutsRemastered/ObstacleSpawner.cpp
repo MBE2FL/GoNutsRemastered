@@ -71,10 +71,10 @@ void UObstacleSpawner::spawnObstacle(ALevelChunk* road, const TArray<USceneCompo
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Level gen notified obstacles manager about road."));
 
-	UINT32 ObstaclePicker;
-	UINT32 SpawnChance;
-	UINT32 SpawnPosPick;
-	UINT32 SpawnPosPick2;//for if the extra obstacle spawns
+	uint32 ObstaclePicker;
+	uint32 SpawnChance;
+	uint32 SpawnPosPick;
+	uint32 SpawnPosPick2;//for if the extra obstacle spawns
 	AActor *tempActor;
 
 	ObstaclePicker = FMath::RandRange(0, _GrassObstacleTypes.Num() - 1);
@@ -82,7 +82,7 @@ void UObstacleSpawner::spawnObstacle(ALevelChunk* road, const TArray<USceneCompo
 	SpawnPosPick = FMath::RandRange(0, ObstacleSpawnPoints.Num() - 1);
 
 	SpawnPosPick2 = SpawnPosPick + 2;
-	if (SpawnPosPick2 > static_cast<UINT32>(ObstacleSpawnPoints.Num() - 1))
+	if (SpawnPosPick2 > static_cast<uint32>(ObstacleSpawnPoints.Num() - 1))
 	{
 		SpawnPosPick2 -= SpawnPosPick;
 	}

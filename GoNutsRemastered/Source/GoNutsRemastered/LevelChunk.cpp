@@ -12,14 +12,6 @@
 
 DEFINE_LOG_CATEGORY(LogLevelChunk);
 
-const EChunkDescriptors::Type ALevelChunk::TOWN_THREE_LANES_ISLAND = static_cast<EChunkDescriptors::Type>(EChunkDescriptors::Type::CD_BIOME_TYPE_TOWN | 
-																		EChunkDescriptors::Type::CD_THREE_LANES | EChunkDescriptors::Type::CD_LANE_CONTAINS_ISLAND);
-const EChunkDescriptors::Type ALevelChunk::TOWN_THREE_LANES_INTERSECTION = static_cast<EChunkDescriptors::Type>(EChunkDescriptors::Type::CD_BIOME_TYPE_TOWN |
-																		EChunkDescriptors::Type::CD_THREE_LANES | EChunkDescriptors::Type::CD_IS_INTERSECTION);
-const EChunkDescriptors::Type ALevelChunk::TOWN_TWO_LANES = static_cast<EChunkDescriptors::Type>(EChunkDescriptors::Type::CD_BIOME_TYPE_TOWN |
-																		EChunkDescriptors::Type::CD_TWO_LANES);
-const EChunkDescriptors::Type ALevelChunk::TOWN_THREE_TO_TWO_LANES_MERGER = static_cast<EChunkDescriptors::Type>(EChunkDescriptors::Type::CD_BIOME_TYPE_TOWN |
-																		EChunkDescriptors::Type::CD_TWO_LANES | EChunkDescriptors::Type::CD_IS_MERGER);
 
 // Sets default values
 ALevelChunk::ALevelChunk()
@@ -114,9 +106,9 @@ void ALevelChunk::Tick(float DeltaTime)
 //	UE_LOG(LogLevelChunk, Error, TEXT("Chunk, %s, Howdy Called!"), *GetName());
 //}
 
-EChunkDescriptors::Type ALevelChunk::getChunkDescriptors() const
+EChunkDescriptors ALevelChunk::getChunkDescriptor() const
 {
-	return static_cast<EChunkDescriptors::Type>(_chunkDescriptors);
+	return _chunkDescriptor;
 }
 
 EChunkFeatures::Type ALevelChunk::getChunckFeatures() const

@@ -4,8 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "LevelGenerator.h"
 #include "LevelGenState.generated.h"
+
+
+class ALevelGenerator;
+enum class EMapOrientations : uint8;
+class ALevelChunk;
+class AFreeRoamCharacter;
 
 
 DECLARE_LOG_CATEGORY_EXTERN(LogLevelGenState, Log, All);

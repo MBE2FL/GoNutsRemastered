@@ -2,9 +2,9 @@
 
 
 #include "LevelGenLeftState.h"
+#include "LevelGenerator.h"
 #include "LevelGenUpState.h"
 #include "LevelGenDownState.h"
-//#include "GameFramework/Character.h"
 #include "IntersectionChunk.h"
 #include "FreeRoamCharacter.h"
 

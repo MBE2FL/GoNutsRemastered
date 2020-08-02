@@ -34,26 +34,6 @@ void ULaneComponent::BeginPlay()
 	_obstacles.Reserve(MAX_OBSTACLES);
 }
 
-
-//void ULaneComponent::OnRegister()
-//{
-//#if WITH_EDITOR
-//	if (AActor* owner = GetOwner())
-//	{
-//		if (!_visComp)
-//		{
-//			_visComp = NewObject<ULaneVisualizationComponent>(owner, NAME_None, RF_Transactional | RF_TextExportTransient);
-//			_visComp->SetupAttachment(this);
-//			_visComp->SetIsVisualizationComponent(true);
-//			_visComp->CreationMethod = CreationMethod;
-//			_visComp->RegisterComponentWithWorld(GetWorld());
-//		}
-//	}
-//#endif
-//
-//	Super::OnRegister();
-//}
-
 // Called every frame
 void ULaneComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
@@ -74,6 +54,8 @@ void ULaneComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 		{
 			FVector2D extends = _boundingBox * 0.5f;
 			DrawDebugBox(world, GetRelativeLocation() + FVector(extends, 0.0f), FVector(extends, 50.0f), FColor::Red, false, -1.0f, 0, 4.0f);
+
+			DrawDebugBox(world, GetRelativeLocation() + FVector(extends.X, 0.0f, 0.0f), FVector(extends, 50.0f), FColor::Green, false, -1.0f, 0, 4.0f);
 
 			return;
 		}

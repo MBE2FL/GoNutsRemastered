@@ -2,6 +2,8 @@
 
 
 #include "LevelGenState.h"
+#include "LevelGenerator.h"
+#include "LevelChunk.h"
 #include "FreeRoamCharacter.h"
 
 
@@ -30,16 +32,18 @@ void ULevelGenState::cleanupState()
 ALevelChunk* ULevelGenState::getValidChunk()
 {
 	ALevelChunk* chunk = nullptr;
-	EChunkDescriptors::Type nextChunkDescriptor = ALevelChunk::TOWN_THREE_LANES_ISLAND;
+	EChunkDescriptors nextChunkDescriptor = EChunkDescriptors::CD_TOWN_THREE_LANES_ISLAND;
 
 	// Spawn a chunk based on the previous chunk.
 	//if (_prevChunk)
 	if (IsValid(_prevChunk))
 	{
-		const EChunkDescriptors::Type prevChunkDescriptor = _prevChunk->getChunkDescriptors();
+		const EChunkDescriptors prevChunkDescriptor = _prevChunk->getChunkDescriptor();
 
+		switch (prevChunkDescriptor)
+		{
 		// Previous chunk(Biome: Town, Lanes: 3)
-		if ((prevChunkDescriptor | ALevelChunk::TOWN_THREE_LANES_ISLAND) == ALevelChunk::TOWN_THREE_LANES_ISLAND)
+		case EChunkDescriptors::CD_TOWN_THREE_LANES_ISLAND:
 		{
 			UE_LOG(LogLevelGenState, Warning, TEXT("Prev Chunk: Town_Three_Lanes_Island"));
 
@@ -53,35 +57,35 @@ ALevelChunk* ULevelGenState::getValidChunk()
 			}
 			else if (testRand > 60 && testRand <= 99)
 			{
-				nextChunkDescriptor = ALevelChunk::TOWN_THREE_LANES_INTERSECTION;
+				nextChunkDescriptor = EChunkDescriptors::CD_TOWN_THREE_LANES_INTERSECTION;
 			}
 			else if (testRand > 99)
 			{
-				nextChunkDescriptor = ALevelChunk::TOWN_THREE_TO_TWO_LANES_MERGER;
+				nextChunkDescriptor = EChunkDescriptors::CD_TOWN_THREE_TO_TWO_LANES_MERGER;
 			}
-
 		}
-		else if ((prevChunkDescriptor | ALevelChunk::TOWN_THREE_LANES_INTERSECTION) == ALevelChunk::TOWN_THREE_LANES_INTERSECTION)
-		{
+			break;
+		case EChunkDescriptors::CD_TOWN_THREE_LANES_INTERSECTION:
 			UE_LOG(LogLevelGenState, Warning, TEXT("Prev Chunk: Town_Intersection_Three_Lanes"));
 
 			// Spawn a chunk not from the same pool of objects the previous chunk belongs to, but is still valid.
-			nextChunkDescriptor = ALevelChunk::TOWN_THREE_LANES_ISLAND;
-
-		}
-		else if ((prevChunkDescriptor | ALevelChunk::TOWN_THREE_TO_TWO_LANES_MERGER) == ALevelChunk::TOWN_THREE_TO_TWO_LANES_MERGER)
-		{
-			UE_LOG(LogLevelGenState, Warning, TEXT("Prev Chunk: Town_Three_To_Two_Lanes_Merger"));
-
-			// Spawn a chunk not from the same pool of objects the previous chunk belongs to, but is still valid.
-			nextChunkDescriptor = ALevelChunk::TOWN_TWO_LANES;
-		}
-		else if ((prevChunkDescriptor | ALevelChunk::TOWN_TWO_LANES) == ALevelChunk::TOWN_TWO_LANES)
-		{
+			nextChunkDescriptor = EChunkDescriptors::CD_TOWN_THREE_LANES_ISLAND;
+			break;
+		case EChunkDescriptors::CD_TOWN_TWO_LANES:
 			UE_LOG(LogLevelGenState, Warning, TEXT("Prev Chunk: Town_Two_Lanes"));
 
 			// Spawn a chunk not from the same pool of objects the previous chunk belongs to, but is still valid.
-			nextChunkDescriptor = ALevelChunk::TOWN_TWO_LANES;
+			nextChunkDescriptor = EChunkDescriptors::CD_TOWN_TWO_LANES;
+			break;
+		case EChunkDescriptors::CD_TOWN_THREE_TO_TWO_LANES_MERGER:
+			UE_LOG(LogLevelGenState, Warning, TEXT("Prev Chunk: Town_Three_To_Two_Lanes_Merger"));
+
+			// Spawn a chunk not from the same pool of objects the previous chunk belongs to, but is still valid.
+			nextChunkDescriptor = EChunkDescriptors::CD_TOWN_TWO_LANES;
+			break;
+		default:
+			UE_LOG(LogLevelGenState, Warning, TEXT("Prev Chunk: None"));
+			break;
 		}
 	}
 	// Spawn a default starter chunk.
@@ -93,10 +97,10 @@ ALevelChunk* ULevelGenState::getValidChunk()
 
 
 
-	const FChunkClassTypes* chunkClassTypes = _levelGen->getChunkClassTypes().Find(static_cast<int32>(nextChunkDescriptor));
+	const FChunkClassTypes* chunkClassTypes = _levelGen->getChunkClassTypes().Find(nextChunkDescriptor);
 	if (!chunkClassTypes)
 	{
-		UE_LOG(LogLevelGenState, Error, TEXT("Level Gen did not have any class types assigned to a chunk descriptor type: %d!"), static_cast<int32>(nextChunkDescriptor));
+		UE_LOG(LogLevelGenState, Error, TEXT("Level Gen did not have any class types assigned to a chunk descriptor type: %d!"), static_cast<uint8>(nextChunkDescriptor));
 		return chunk;
 	}
 	const TArray<TSubclassOf<ALevelChunk>> classTypesArr = chunkClassTypes->_chunkClassTypes;

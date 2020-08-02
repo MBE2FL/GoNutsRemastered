@@ -2,6 +2,7 @@
 
 
 #include "LevelGenRightState.h"
+#include "LevelGenerator.h"
 #include "LevelGenUpState.h"
 #include "LevelGenDownState.h"
 #include "IntersectionChunk.h"

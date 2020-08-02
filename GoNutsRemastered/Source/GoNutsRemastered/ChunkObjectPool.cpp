@@ -3,7 +3,7 @@
 
 #include "ChunkObjectPool.h"
 #include "LevelGenerator.h"
-//#include "LevelChunk.h"
+#include "LevelChunk.h"
 #include "FreeRoamCharacter.h"
 
 DEFINE_LOG_CATEGORY(LogChunkObjectPool);
@@ -62,11 +62,11 @@ void UChunkObjectPool::init(ALevelGenerator* levelGen)
 
 void UChunkObjectPool::createObjectPools()
 {
-	const TMap<int32, FChunkClassTypes> chunkClassTypes = _levelGen->getChunkClassTypes();
+	const TMap<EChunkDescriptors, FChunkClassTypes> chunkClassTypes = _levelGen->getChunkClassTypes();
 	TArray<TSubclassOf<ALevelChunk>> chunkClassTypesArr;
 	//const TArray<TSubclassOf<ALevelChunk>> chunkClassTypes = _levelGen->getChunkClassTypes();
 
-	for (const TPair<int32, FChunkClassTypes>& chunkClassTypesInfo : chunkClassTypes)
+	for (const TPair<EChunkDescriptors, FChunkClassTypes>& chunkClassTypesInfo : chunkClassTypes)
 	{
 		chunkClassTypesArr = chunkClassTypesInfo.Value._chunkClassTypes;
 

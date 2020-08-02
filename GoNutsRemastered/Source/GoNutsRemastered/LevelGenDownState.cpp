@@ -2,9 +2,10 @@
 
 
 #include "LevelGenDownState.h"
-#include "IntersectionChunk.h"
+#include "LevelGenerator.h"
 #include "LevelGenLeftState.h"
 #include "LevelGenRightState.h"
+#include "IntersectionChunk.h"
 #include "FreeRoamCharacter.h"
 
 DEFINE_LOG_CATEGORY(LogLevelGenDownState);

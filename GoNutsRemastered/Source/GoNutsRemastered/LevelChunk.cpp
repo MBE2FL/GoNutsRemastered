@@ -7,17 +7,11 @@
 #include "FreeRoamCharacter.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/SceneComponent.h"
+#include "LaneComponent.h"
+
 
 DEFINE_LOG_CATEGORY(LogLevelChunk);
 
-const EChunkDescriptors::Type ALevelChunk::TOWN_THREE_LANES_ISLAND = static_cast<EChunkDescriptors::Type>(EChunkDescriptors::Type::CD_BIOME_TYPE_TOWN | 
-																		EChunkDescriptors::Type::CD_THREE_LANES | EChunkDescriptors::Type::CD_LANE_CONTAINS_ISLAND);
-const EChunkDescriptors::Type ALevelChunk::TOWN_THREE_LANES_INTERSECTION = static_cast<EChunkDescriptors::Type>(EChunkDescriptors::Type::CD_BIOME_TYPE_TOWN |
-																		EChunkDescriptors::Type::CD_THREE_LANES | EChunkDescriptors::Type::CD_IS_INTERSECTION);
-const EChunkDescriptors::Type ALevelChunk::TOWN_TWO_LANES = static_cast<EChunkDescriptors::Type>(EChunkDescriptors::Type::CD_BIOME_TYPE_TOWN |
-																		EChunkDescriptors::Type::CD_TWO_LANES);
-const EChunkDescriptors::Type ALevelChunk::TOWN_THREE_TO_TWO_LANES_MERGER = static_cast<EChunkDescriptors::Type>(EChunkDescriptors::Type::CD_BIOME_TYPE_TOWN |
-																		EChunkDescriptors::Type::CD_TWO_LANES | EChunkDescriptors::Type::CD_IS_MERGER);
 
 // Sets default values
 ALevelChunk::ALevelChunk()
@@ -41,12 +35,38 @@ void ALevelChunk::BeginPlay()
 {
 	Super::BeginPlay();
 
+	
+	// Store all lanes in a TArray for easy access.
+	TInlineComponentArray<ULaneComponent*> laneComponents(this);
+	GetComponents(laneComponents);
+
+	_lanes.Reserve(laneComponents.Num());
+	_lanes = laneComponents;
 }
 
 // Called every frame
 void ALevelChunk::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+
+#if WITH_EDITOR
+	//if (!GWorld->HasBegunPlay())
+	//UWorld* world = GEngine->GetWorldFromContextObject(this);
+	UWorld* world = Cast<UObject>(this)->GetWorld();
+
+	if (IsValid(world))
+	{
+		if (world->WorldType == EWorldType::Type::EditorPreview)
+		{
+			return;
+		}
+	}
+	else
+	{
+		return;
+	}
+#endif
 
 
 	UChunkObjectPool* chunkObjectPool = UChunkObjectPool::getInstance();
@@ -86,9 +106,9 @@ void ALevelChunk::Tick(float DeltaTime)
 //	UE_LOG(LogLevelChunk, Error, TEXT("Chunk, %s, Howdy Called!"), *GetName());
 //}
 
-EChunkDescriptors::Type ALevelChunk::getChunkDescriptors() const
+EChunkDescriptors ALevelChunk::getChunkDescriptor() const
 {
-	return static_cast<EChunkDescriptors::Type>(_chunkDescriptors);
+	return _chunkDescriptor;
 }
 
 EChunkFeatures::Type ALevelChunk::getChunckFeatures() const
@@ -123,3 +143,7 @@ const TArray<USceneComponent*>& ALevelChunk::getPedestrianSpawnPoints() const
 	return _pedestrianSpawnPoints;
 }
 
+const TArray<ULaneComponent*>& ALevelChunk::getLanes() const
+{
+	return _lanes;
+}

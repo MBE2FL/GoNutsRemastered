@@ -9,7 +9,6 @@
 
 class ALevelGenerator;
 class ALevelChunk;
-//class ACharacter;
 class AFreeRoamCharacter;
 
 

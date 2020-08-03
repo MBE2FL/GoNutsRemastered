@@ -7,32 +7,45 @@
 #include "LevelChunk.generated.h"
 
 
+class ULaneComponent;
+
 
 DECLARE_LOG_CATEGORY_EXTERN(LogLevelChunk, Log, All);
 
 
-UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
-namespace EChunkDescriptors
+//UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
+//namespace EChunkDescriptors
+//{
+//	enum Type
+//	{
+//		CD_NONE = 0	UMETA(DisplayName = "None (DON'T USE THIS!)"),
+//
+//		CD_BIOME_TYPE_TOWN = 1	UMETA(DisplayName = "Biome Type Town"),
+//		CD_BIOME_TYPE_CITY = 2	UMETA(DisplayName = "Biome Type City"),
+//		CD_BIOME_TYPE_FOREST = 4	UMETA(DisplayName = "Biome Type Forest"),
+//
+//		CD_LANE_CONTAINS_ISLAND = 8	UMETA(DisplayName = "Lane Contains Island"),
+//
+//		CD_TWO_LANES = 16	UMETA(DisplayName = "2 Lanes"),
+//		CD_THREE_LANES = 32	UMETA(DisplayName = "3 Lanes"),
+//		CD_FOUR_LANES = 64	UMETA(DisplayName = "4 Lanes"),
+//
+//		CD_IS_INTERSECTION = 128	UMETA(DisplayName = "Is An Intersection"),
+//
+//		CD_IS_MERGER = 256	UMETA(DisplayName = "Is A Merger"),
+//	};
+//}
+
+UENUM(BlueprintType)
+enum class EChunkDescriptors : uint8
 {
-	enum Type
-	{
-		CD_NONE = 0	UMETA(DisplayName = "None (DON'T USE THIS!)"),
+	CD_NONE = 0	UMETA(DisplayName = "None (DON'T USE THIS!)"),
 
-		CD_BIOME_TYPE_TOWN = 1	UMETA(DisplayName = "Biome Type Town"),
-		CD_BIOME_TYPE_CITY = 2	UMETA(DisplayName = "Biome Type City"),
-		CD_BIOME_TYPE_FOREST = 4	UMETA(DisplayName = "Biome Type Forest"),
-
-		CD_LANE_CONTAINS_ISLAND = 8	UMETA(DisplayName = "Lane Contains Island"),
-
-		CD_TWO_LANES = 16	UMETA(DisplayName = "2 Lanes"),
-		CD_THREE_LANES = 32	UMETA(DisplayName = "3 Lanes"),
-		CD_FOUR_LANES = 64	UMETA(DisplayName = "4 Lanes"),
-
-		CD_IS_INTERSECTION = 128	UMETA(DisplayName = "Is An Intersection"),
-
-		CD_IS_MERGER = 256	UMETA(DisplayName = "Is A Merger")
-	};
-}
+	CD_TOWN_THREE_LANES_ISLAND			UMETA(DisplayName = "Town, Three Lanes With Island"),
+	CD_TOWN_THREE_LANES_INTERSECTION	UMETA(DisplayName = "Town, Three Lanes, Intersection"),
+	CD_TOWN_TWO_LANES					UMETA(DisplayName = "Town, Two Lanes"),
+	CD_TOWN_THREE_TO_TWO_LANES_MERGER	UMETA(DisplayName = "Town, Three To Two Lanes, Merger"),
+};
 
 
 UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
@@ -66,11 +79,6 @@ public:
 	// Sets default values for this actor's properties
 	ALevelChunk();
 
-	static const EChunkDescriptors::Type TOWN_THREE_LANES_ISLAND;
-	static const EChunkDescriptors::Type TOWN_THREE_LANES_INTERSECTION;
-	static const EChunkDescriptors::Type TOWN_TWO_LANES;
-	static const EChunkDescriptors::Type TOWN_THREE_TO_TWO_LANES_MERGER;
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -78,13 +86,17 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+#if WITH_EDITOR
+	virtual bool ShouldTickIfViewportsOnly() const override { return true; };
+#endif
 	
 	//UFUNCTION(BlueprintCallable)
 	//void refreshComponents();
 
 
 	UFUNCTION(BlueprintCallable, Category = "Chunk|Chunk Features")
-	EChunkDescriptors::Type getChunkDescriptors() const;
+	EChunkDescriptors getChunkDescriptor() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Chunk|Chunk Features")
 	EChunkFeatures::Type getChunckFeatures() const;
@@ -105,13 +117,16 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Chunk|Chunk Features")
 	const TArray<USceneComponent*>& getPedestrianSpawnPoints() const;
 
+	UFUNCTION(BlueprintCallable, Category = "Chunk|Lanes")
+	const TArray<ULaneComponent*>& getLanes() const;
+
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chunk|Connection Settings", meta = (AllowPrivateAccess = true))
 	UStaticMeshComponent* _mesh;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chunk", meta = (Bitmask, BitmaskEnum = "EChunkDescriptors"), meta = (AllowPrivateAccess = true))
-	int32 _chunkDescriptors = EChunkDescriptors::Type::CD_NONE;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chunk", meta = (AllowPrivateAccess = true))
+	EChunkDescriptors _chunkDescriptor = EChunkDescriptors::CD_NONE;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chunk", meta = (Bitmask, BitmaskEnum = "EChunkFeatures"), meta = (AllowPrivateAccess = true))
 	int32 _chunkFeatures = EChunkFeatures::Type::CF_NONE;
@@ -122,4 +137,8 @@ protected:
 	TArray<USceneComponent*> _obstacleSpawnPoints;
 	UPROPERTY()
 	TArray<USceneComponent*> _pedestrianSpawnPoints;
+
+
+	UPROPERTY()
+	TArray<ULaneComponent*> _lanes;
 };

@@ -4,9 +4,22 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "LevelGenerator.h"
 #include "ObstacleSpawner.generated.h"
 
+
+class ALevelGenerator;
+class AObstacle;
+enum class EObstacleType : uint8;
+
+
+USTRUCT(Blueprintable)
+struct FObstacleClassTypes
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Obstacle Spawner|Obstacle Types")
+	TArray<TSubclassOf<AObstacle>> _obstacleClassTypes;
+};
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -18,6 +31,9 @@ public:
 	// Sets default values for this component's properties
 	UObstacleSpawner();
 
+#if WITH_EDITOR
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+#endif
 
 
 protected:
@@ -31,15 +47,31 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
-
+	UPROPERTY()
 	ALevelGenerator *_levelGenerator;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Obstacle Spawner|Obstacle Types", meta = (AllowPrivateAccess = true))
-		TArray<TSubclassOf<AActor>> _RoadObstacleTypes;
+	TArray<TSubclassOf<AActor>> _RoadObstacleTypes;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Obstacle Spawner|Obstacle Types", meta = (AllowPrivateAccess = true))
-		TArray<TSubclassOf<AActor>> _GrassObstacleTypes;
+	TArray<TSubclassOf<AActor>> _GrassObstacleTypes;
 
 	UFUNCTION()
-		void spawnObstacle(ALevelChunk* road, const TArray<USceneComponent*>& ObstacleSpawnPoints);
+	void spawnObstacle(ALevelChunk* road, const TArray<USceneComponent*>& ObstacleSpawnPoints);
+
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Obstacle Spawner|Obstacle Types", meta = (AllowPrivateAccess = true))
+	TMap<EObstacleType, FObstacleClassTypes> _obstaclesTypes;
+
+
+#if WITH_EDITORONLY_DATA
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Obstacle Spawner|Obstacle Types", meta = (AllowPrivateAccess = true))
+	bool _refreshObstacleClassTypes = false;
+#endif
+
+#if WITH_EDITOR
+	UFUNCTION()
+	void getAllObstacleClassTypes();
+#endif
 };

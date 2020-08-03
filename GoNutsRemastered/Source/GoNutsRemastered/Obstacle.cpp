@@ -9,13 +9,6 @@ AObstacle::AObstacle()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-}
-
-// Called when the game starts or when spawned
-void AObstacle::BeginPlay()
-{
-	Super::BeginPlay();
-	
 	_mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Static Mesh"));
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> meshAsset(TEXT("StaticMesh'/Engine/BasicShapes/Sphere.Sphere'"));
 	_mesh->SetStaticMesh(meshAsset.Object);
@@ -25,6 +18,13 @@ void AObstacle::BeginPlay()
 	_mesh->SetCollisionObjectType(ECC_Pawn);
 	_mesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 	RootComponent = _mesh;
+
+}
+
+// Called when the game starts or when spawned
+void AObstacle::BeginPlay()
+{
+	Super::BeginPlay();
 }
 
 // Called every frame

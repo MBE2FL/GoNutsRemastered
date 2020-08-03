@@ -2,14 +2,14 @@
 
 
 #include "LevelGenUpState.h"
-
-#include "DrawDebugHelpers.h"
+#include "LevelGenerator.h"
 #include "LevelGenLeftState.h"
-
-//#include "GameFramework/Character.h"
-#include "FreeRoamCharacter.h"
 #include "LevelGenRightState.h"
 #include "IntersectionChunk.h"
+#include "FreeRoamCharacter.h"
+//#if WITH_EDITOR
+//#include "DrawDebugHelpers.h"
+//#endif
 
 DEFINE_LOG_CATEGORY(LogLevelGenUpState);
 

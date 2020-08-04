@@ -31,6 +31,7 @@ public:
 	void recycleObstacles();
 	void addObstacle(AObstacle* obstacle);
 	void addObstacles(const TArray<AObstacle*>& obstacles);
+	bool isAltLane() const;
 
 
 	static const uint8 MAX_OBSTACLES;
@@ -50,4 +51,7 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Lane", meta = (AllowPrivateAccess = true))
 	FVector2D _boundingBox;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Lane", meta = (AllowPrivateAccess = true))
+	bool _isAltLane = false;
 };

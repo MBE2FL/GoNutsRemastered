@@ -2,6 +2,7 @@
 
 
 #include "IntersectionChunk.h"
+#include "LaneComponent.h"
 
 AIntersectionChunk::AIntersectionChunk()
     : ALevelChunk()
@@ -35,5 +36,21 @@ void AIntersectionChunk::BeginPlay()
     if (_chunkFeatures & !EChunkFeatures::Type::CF_PLAYER_TURN_RIGHT)
     {
         _rightConnector->DestroyComponent();
+    }
+
+
+    // Store all alternate lanes in a TArray for easy access.
+    TInlineComponentArray<ULaneComponent*> laneComponents(this);
+    GetComponents(laneComponents);
+
+    _altLanes.Reserve(laneComponents.Num() - _lanes.Num());
+    //_lanes = laneComponents;
+
+    for (ULaneComponent* lane : laneComponents)
+    {
+        if (lane->isAltLane())
+        {
+            _altLanes.Emplace(lane);
+        }
     }
 }

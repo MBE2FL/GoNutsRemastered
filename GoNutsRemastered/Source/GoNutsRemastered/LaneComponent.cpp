@@ -107,3 +107,8 @@ void ULaneComponent::addObstacles(const TArray<AObstacle*>& obstacles)
 	_obstacles += obstacles;
 }
 
+bool ULaneComponent::isAltLane() const
+{
+	return _isAltLane;
+}
+

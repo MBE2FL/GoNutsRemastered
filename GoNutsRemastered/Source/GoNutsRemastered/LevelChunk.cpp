@@ -40,7 +40,17 @@ void ALevelChunk::BeginPlay()
 	GetComponents(laneComponents);
 
 	_lanes.Reserve(laneComponents.Num());
-	_lanes = laneComponents;
+	//_lanes = laneComponents;
+
+	for (ULaneComponent* lane : laneComponents)
+	{
+		if (!lane->isAltLane())
+		{
+			_lanes.Emplace(lane);
+		}
+	}
+
+	_lanes.Shrink();
 }
 
 // Called every frame

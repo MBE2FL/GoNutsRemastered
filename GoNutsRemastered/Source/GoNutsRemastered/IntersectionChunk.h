@@ -29,4 +29,7 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chunk|Intersection Settings", meta = (AllowPrivateAccess = true))
 	USceneComponent* _rightConnector;
+
+	UPROPERTY()
+	TArray<ULaneComponent*> _altLanes;
 };

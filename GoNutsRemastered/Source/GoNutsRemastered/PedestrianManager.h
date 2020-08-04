@@ -33,5 +33,5 @@ private:
 	TArray<ACharacter*> _pedestrianTypes;
 
 	UFUNCTION()
-	void spawnPedestrians(ALevelChunk* crosswalk, const TArray<USceneComponent*>& pedestrianSpawnPoints);
+	void spawnPedestrians(ALevelChunk* crosswalk);
 };

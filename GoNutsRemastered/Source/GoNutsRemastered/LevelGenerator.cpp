@@ -5,7 +5,6 @@
 #include <Runtime\Engine\Classes\Kismet\GameplayStatics.h>
 //#include "Engine/LevelStreaming.h"
 //#include "EngineUtils.h"
-//#include "LevelSegment.h"
 #include "LevelChunk.h"
 #include "LevelGenUpState.h"
 #include "LevelGenLeftState.h"
@@ -15,7 +14,6 @@
 #include "AssetRegistryModule.h"
 
 #include "ChunkObjectPool.h"
-//#include "GameFramework/Character.h"
 #include "FreeRoamCharacter.h"
 
 DEFINE_LOG_CATEGORY(LogLevelGen);

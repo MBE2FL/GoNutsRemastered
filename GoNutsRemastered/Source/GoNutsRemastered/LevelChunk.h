@@ -91,10 +91,6 @@ public:
 	virtual bool ShouldTickIfViewportsOnly() const override { return true; };
 #endif
 	
-	//UFUNCTION(BlueprintCallable)
-	//void refreshComponents();
-
-
 	UFUNCTION(BlueprintCallable, Category = "Chunk|Chunk Features")
 	EChunkDescriptors getChunkDescriptor() const;
 
@@ -103,19 +99,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Chunk|Chunk Features")
 	UStaticMeshComponent* getMesh() const;
-
-	UFUNCTION(BlueprintCallable, Category = "Chunk|Chunk Features")
-	void setSpawnPoints(UPARAM(ref) TArray<USceneComponent*> carSpawnPoints, UPARAM(ref) TArray<USceneComponent*> obstableSpawnPoints,
-			UPARAM(ref) TArray<USceneComponent*> pedestrianSpawnPoints);
-
-	UFUNCTION(BlueprintCallable, Category = "Chunk|Chunk Features")
-	const TArray<USceneComponent*>& getCarSpawnPoints() const;
-
-	UFUNCTION(BlueprintCallable, Category = "Chunk|Chunk Features")
-	const TArray<USceneComponent*>& getObstacleSpawnPoints() const;
-
-	UFUNCTION(BlueprintCallable, Category = "Chunk|Chunk Features")
-	const TArray<USceneComponent*>& getPedestrianSpawnPoints() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Chunk|Lanes")
 	const TArray<ULaneComponent*>& getLanes() const;
@@ -130,13 +113,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chunk", meta = (Bitmask, BitmaskEnum = "EChunkFeatures"), meta = (AllowPrivateAccess = true))
 	int32 _chunkFeatures = EChunkFeatures::Type::CF_NONE;
-
-	UPROPERTY()
-	TArray<USceneComponent*> _carSpawnPoints;
-	UPROPERTY()
-	TArray<USceneComponent*> _obstacleSpawnPoints;
-	UPROPERTY()
-	TArray<USceneComponent*> _pedestrianSpawnPoints;
 
 
 	UPROPERTY()

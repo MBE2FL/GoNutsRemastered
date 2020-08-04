@@ -33,7 +33,7 @@ ALevelChunk* ULevelGenState::getValidChunk()
 {
 	ALevelChunk* chunk = nullptr;
 	EChunkDescriptors nextChunkDescriptor = EChunkDescriptors::CD_TOWN_THREE_LANES_ISLAND;
-
+	
 	// Spawn a chunk based on the previous chunk.
 	//if (_prevChunk)
 	if (IsValid(_prevChunk))
@@ -103,6 +103,7 @@ ALevelChunk* ULevelGenState::getValidChunk()
 		UE_LOG(LogLevelGenState, Error, TEXT("Level Gen did not have any class types assigned to a chunk descriptor type: %d!"), static_cast<uint8>(nextChunkDescriptor));
 		return chunk;
 	}
+
 	const TArray<TSubclassOf<ALevelChunk>> classTypesArr = chunkClassTypes->_chunkClassTypes;
 
 	if (classTypesArr.Num() <= 0)

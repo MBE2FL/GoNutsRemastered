@@ -12,6 +12,9 @@ class AObstacle;
 enum class EObstacleType : uint8;
 
 
+DECLARE_LOG_CATEGORY_EXTERN(LogObstacleSpawner, Log, All);
+
+
 USTRUCT(Blueprintable)
 struct FObstacleClassTypes
 {
@@ -57,13 +60,12 @@ private:
 	TArray<TSubclassOf<AActor>> _GrassObstacleTypes;
 
 	UFUNCTION()
-	void spawnObstacle(ALevelChunk* road, const TArray<USceneComponent*>& ObstacleSpawnPoints);
+	void spawnObstacle(ALevelChunk* road);
 
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Obstacle Spawner|Obstacle Types", meta = (AllowPrivateAccess = true))
 	TMap<EObstacleType, FObstacleClassTypes> _obstaclesTypes;
-
 
 #if WITH_EDITORONLY_DATA
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Obstacle Spawner|Obstacle Types", meta = (AllowPrivateAccess = true))

@@ -47,8 +47,8 @@ struct FChunkClassTypes
 
 
 //DECLARE_EVENT_OneParam(ALevelGenerator, FOnCrosswalkSpawned, AActor*)
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnCrosswalkSpawned, ALevelChunk*, crosswalk, const TArray<USceneComponent*>&, pedestrianSpawnPoints);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnRoadSpawned, ALevelChunk*, road, const TArray<USceneComponent*>&, obstacleSpawnPoints);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCrosswalkSpawned, ALevelChunk*, crosswalk);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRoadSpawned, ALevelChunk*, road);
 
 UCLASS(Blueprintable)
 class GONUTSREMASTERED_API ALevelGenerator : public AActor

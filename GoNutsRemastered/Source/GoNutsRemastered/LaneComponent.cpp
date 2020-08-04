@@ -53,9 +53,17 @@ void ULaneComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 		if (world->WorldType == EWorldType::Type::EditorPreview)
 		{
 			FVector2D extends = _boundingBox * 0.5f;
-			DrawDebugBox(world, GetRelativeLocation() + FVector(extends, 0.0f), FVector(extends, 50.0f), FColor::Red, false, -1.0f, 0, 4.0f);
+			//DrawDebugBox(world, GetRelativeLocation() + FVector(extends, 25.0f), FVector(extends, 50.0f), FColor::Red, false, -1.0f, 0, 4.0f);
 
-			DrawDebugBox(world, GetRelativeLocation() + FVector(extends.X, 0.0f, 0.0f), FVector(extends, 50.0f), FColor::Green, false, -1.0f, 0, 4.0f);
+			DrawDebugBox(
+				world, 
+				GetRelativeLocation() + GetComponentRotation().RotateVector(FVector(extends.X, 0.0f, 50.0f)),
+				GetComponentRotation().RotateVector(FVector(extends, 50.0f)), 
+				FColor::Red, 
+				false, 
+				-1.0f, 
+				0, 
+				0.0f);
 
 			return;
 		}
@@ -63,8 +71,39 @@ void ULaneComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 #endif
 }
 
+const TArray<AObstacle*>& ULaneComponent::getObstacles() const
+{
+	return _obstacles;
+}
+
 uint8 ULaneComponent::getObstacleTypes() const
 {
 	return _obstacleTypes;
+}
+
+FVector2D ULaneComponent::getBoundingBox() const
+{
+	return _boundingBox;
+}
+
+void ULaneComponent::recycleObstacles()
+{
+	for (AObstacle* obstacle : _obstacles)
+	{
+		// TO-DO Recycle obstacle. For now just delete.
+		obstacle->Destroy();
+	}
+
+	_obstacles.Empty();
+}
+
+void ULaneComponent::addObstacle(AObstacle* obstacle)
+{
+	_obstacles.Emplace(obstacle);
+}
+
+void ULaneComponent::addObstacles(const TArray<AObstacle*>& obstacles)
+{
+	_obstacles += obstacles;
 }
 

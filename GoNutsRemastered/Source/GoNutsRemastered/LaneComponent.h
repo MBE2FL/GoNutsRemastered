@@ -25,7 +25,12 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	const TArray<AObstacle*>& getObstacles() const;
 	uint8 getObstacleTypes() const;
+	FVector2D getBoundingBox() const;
+	void recycleObstacles();
+	void addObstacle(AObstacle* obstacle);
+	void addObstacles(const TArray<AObstacle*>& obstacles);
 
 
 	static const uint8 MAX_OBSTACLES;

@@ -128,10 +128,10 @@ void ULevelGenLeftState::update()
 			case EChunkFeatures::CF_SPAWN_CARS:
 				break;
 			case EChunkFeatures::CF_SPAWN_OBSTACLES:
-				_levelGen->onRoadSpawned().Broadcast(chunk, chunk->getObstacleSpawnPoints());
+				_levelGen->onRoadSpawned().Broadcast(chunk);
 				break;
 			case EChunkFeatures::CF_SPAWN_PEDESTRIANS:
-				_levelGen->onCrosswalkSpawned().Broadcast(chunk, chunk->getPedestrianSpawnPoints());
+				_levelGen->onCrosswalkSpawned().Broadcast(chunk);
 				break;
 			default:
 				break;

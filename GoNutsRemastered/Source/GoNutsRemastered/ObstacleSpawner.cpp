@@ -5,10 +5,14 @@
 #include "Kismet/GameplayStatics.h"
 #include "LevelGenerator.h"
 #include "Obstacle.h"
+#include "LevelChunk.h"
+#include "LaneComponent.h"
 
 #if WITH_EDITOR
 #include "AssetRegistryModule.h"
 #endif
+
+DEFINE_LOG_CATEGORY(LogObstacleSpawner);
 
 // Sets default values for this component's properties
 UObstacleSpawner::UObstacleSpawner()
@@ -31,7 +35,7 @@ void UObstacleSpawner::PostEditChangeProperty(FPropertyChangedEvent& PropertyCha
 	{
 		if (_refreshObstacleClassTypes)
 		{
-			UE_LOG(LogLevelGen, Warning, TEXT("Refreshing obstacle class types..."));
+			UE_LOG(LogObstacleSpawner, Warning, TEXT("Refreshing obstacle class types..."));
 			getAllObstacleClassTypes();
 			_refreshObstacleClassTypes = false;
 		}
@@ -49,7 +53,7 @@ void UObstacleSpawner::BeginPlay()
 	// Destroy this component if the level generator could not be found.
 	if (!_levelGenerator)
 	{
-		UE_LOG(LogTemp, Error, TEXT("Pedestrian manager failed to find level generator!"));
+		UE_LOG(LogObstacleSpawner, Error, TEXT("Obstacle manager failed to find level generator!"));
 		DestroyComponent();
 	}
 	else
@@ -67,55 +71,84 @@ void UObstacleSpawner::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	// ...
 }
 
-void UObstacleSpawner::spawnObstacle(ALevelChunk* road, const TArray<USceneComponent*>& ObstacleSpawnPoints)
+void UObstacleSpawner::spawnObstacle(ALevelChunk* road)
 {
-	//UE_LOG(LogTemp, Warning, TEXT("Level gen notified obstacles manager about road."));
+	//UE_LOG(LogObstacleSpawner, Warning, TEXT("Level gen notified obstacles manager about road."));
 
 	uint32 ObstaclePicker;
 	uint32 SpawnChance;
-	uint32 SpawnPosPick;
-	uint32 SpawnPosPick2;//for if the extra obstacle spawns
-	AActor *tempActor;
+	//uint32 SpawnPosPick;
+	//uint32 SpawnPosPick2;//for if the extra obstacle spawns
+	AObstacle* obstacle;
 
 	ObstaclePicker = FMath::RandRange(0, _GrassObstacleTypes.Num() - 1);
 	SpawnChance = FMath::RandRange(0, 5);
-	SpawnPosPick = FMath::RandRange(0, ObstacleSpawnPoints.Num() - 1);
+	//SpawnPosPick = FMath::RandRange(0, ObstacleSpawnPoints.Num() - 1);
 
-	SpawnPosPick2 = SpawnPosPick + 2;
-	if (SpawnPosPick2 > static_cast<uint32>(ObstacleSpawnPoints.Num() - 1))
-	{
-		SpawnPosPick2 -= SpawnPosPick;
-	}
+	//SpawnPosPick2 = SpawnPosPick + 2;
+	//if (SpawnPosPick2 > static_cast<uint32>(ObstacleSpawnPoints.Num() - 1))
+	//{
+	//	SpawnPosPick2 -= SpawnPosPick;
+	//}
 		
 	if (SpawnChance >= 2)
 	{
+
+		const TArray<ULaneComponent*> lanes = road->getLanes();
+
+		if (lanes.Num() <= 0)
+		{
+			UE_LOG(LogObstacleSpawner, Error, TEXT("Obstacle spawner did not have any lanes to spawn an obstacle type on!"));
+			return;
+		}
+
+		FObstacleClassTypes* classTypes = _obstaclesTypes.Find(EObstacleType::OT_ALL_TERRAIN_OBSTACLE);
+
+		if (!classTypes)
+		{
+			UE_LOG(LogObstacleSpawner, Error, TEXT("Obstacle spawner did not have any class types assigned to an obstacle type: %d!"), static_cast<uint8>(EObstacleType::OT_ALL_TERRAIN_OBSTACLE));
+			return;
+		}
+
+		const TArray<TSubclassOf<AObstacle>> classTypesArr = classTypes->_obstacleClassTypes;
+
+		if (classTypesArr.Num() <= 0)
+		{
+			UE_LOG(LogObstacleSpawner, Error, TEXT("Obstacle spawner did not have any class types assigned to an obstacle type!"));
+			return;
+		}
+
+		obstacle = Cast<AObstacle>(GetWorld()->SpawnActor(classTypesArr[FMath::RandRange(0, classTypesArr.Num() - 1)]));
+		obstacle->SetActorTransform(lanes[0]->GetComponentTransform());
+
+
 		switch (ObstaclePicker)
 		{
 		case 0://case 0 is for the acorn
-			for (int i = 0; i < ObstacleSpawnPoints.Num(); i++)
-			{
-				tempActor = GetWorld()->SpawnActor(_GrassObstacleTypes[ObstaclePicker]);
-				tempActor->SetActorTransform(ObstacleSpawnPoints[i]->GetComponentTransform());
-			}
-			//UE_LOG(LogTemp, Warning, TEXT("It went in here"));
+			//for (int i = 0; i < ObstacleSpawnPoints.Num(); i++)
+			//{
+			//	obstacle = GetWorld()->SpawnActor(_GrassObstacleTypes[ObstaclePicker]);
+			//	obstacle->SetActorTransform(ObstacleSpawnPoints[i]->GetComponentTransform());
+			//}
+			//UE_LOG(LogObstacleSpawner, Warning, TEXT("It went in here"));
 			break;
 
 		default://so far for every other obstacle
 
-			//spawns first obstacle
-			tempActor = GetWorld()->SpawnActor(_GrassObstacleTypes[ObstaclePicker]);
-			tempActor->SetActorTransform(ObstacleSpawnPoints[SpawnPosPick]->GetComponentTransform());
+			////spawns first obstacle
+			//obstacle = GetWorld()->SpawnActor(_GrassObstacleTypes[ObstaclePicker]);
+			//obstacle->SetActorTransform(ObstacleSpawnPoints[SpawnPosPick]->GetComponentTransform());
 
-			//chance to spawn second
-			SpawnChance = FMath::RandRange(0, 5);
-			if (SpawnChance >= 4)
-			{
-				ObstaclePicker = FMath::RandRange(1, _GrassObstacleTypes.Num() - 1);//set at 1 - max so no acorn spawns
-				tempActor = GetWorld()->SpawnActor(_GrassObstacleTypes[ObstaclePicker]);
-				tempActor->SetActorTransform(ObstacleSpawnPoints[SpawnPosPick2]->GetComponentTransform());
-			}
+			////chance to spawn second
+			//SpawnChance = FMath::RandRange(0, 5);
+			//if (SpawnChance >= 4)
+			//{
+			//	ObstaclePicker = FMath::RandRange(1, _GrassObstacleTypes.Num() - 1);//set at 1 - max so no acorn spawns
+			//	obstacle = GetWorld()->SpawnActor(_GrassObstacleTypes[ObstaclePicker]);
+			//	obstacle->SetActorTransform(ObstacleSpawnPoints[SpawnPosPick2]->GetComponentTransform());
+			//}
 
-			//UE_LOG(LogTemp, Warning, TEXT("It did not go in here"));
+			//UE_LOG(LogObstacleSpawner, Warning, TEXT("It did not go in here"));
 			break;
 		}
 	}
@@ -155,7 +188,7 @@ void UObstacleSpawner::getAllObstacleClassTypes()
 
 	for (const FName& filterPath : filterPaths)
 	{
-		UE_LOG(LogLevelGen, Warning, TEXT("Searching for all obstacle types in %s."), *filterPath.ToString());
+		UE_LOG(LogObstacleSpawner, Warning, TEXT("Searching for all obstacle types in %s."), *filterPath.ToString());
 
 		// Filter each sub-folder in the root Obstacles folder.
 		FARFilter filter;
@@ -186,7 +219,7 @@ void UObstacleSpawner::getAllObstacleClassTypes()
 				// Store obstacle according to it's class type.
 				TAssetSubclassOf<AObstacle> test = TAssetSubclassOf<AObstacle>(FStringAssetReference(classObjectPath));
 				TSubclassOf<AObstacle> obstacleClassType = test.Get();
-				UE_LOG(LogLevelGen, Warning, TEXT("Found blueprint: %s"), *test.Get()->GetName());
+				UE_LOG(LogObstacleSpawner, Warning, TEXT("Found blueprint: %s"), *test.Get()->GetName());
 
 				obstacleClassTypes._obstacleClassTypes.Add(obstacleClassType);
 			}
@@ -195,19 +228,19 @@ void UObstacleSpawner::getAllObstacleClassTypes()
 		// Save list of class types according to it's sub-folder's designated obstacle type.
 		if (filterPath.ToString().Contains(TEXT("AllTerrain")))
 		{
-			UE_LOG(LogLevelGen, Warning, TEXT("Added blueprints to descriptor group: %u"), static_cast<uint8>(EObstacleType::OT_ALL_TERRAIN_OBSTACLE));
+			UE_LOG(LogObstacleSpawner, Warning, TEXT("Added blueprints to descriptor group: %u"), static_cast<uint8>(EObstacleType::OT_ALL_TERRAIN_OBSTACLE));
 			//_obstaclesTypes.Add(static_cast<uint8>(EObstacleType::OT_ALL_TERRAIN_OBSTACLE), obstacleClassTypes);
 			_obstaclesTypes.Add(EObstacleType::OT_ALL_TERRAIN_OBSTACLE, obstacleClassTypes);
 		}
 		else if (filterPath.ToString().Contains(TEXT("Road")))
 		{
-			UE_LOG(LogLevelGen, Warning, TEXT("Added blueprints to descriptor group: %u"), static_cast<uint8>(EObstacleType::OT_ROAD_OBSTACLE));
+			UE_LOG(LogObstacleSpawner, Warning, TEXT("Added blueprints to descriptor group: %u"), static_cast<uint8>(EObstacleType::OT_ROAD_OBSTACLE));
 			//_obstaclesTypes.Add(static_cast<uint8>(EObstacleType::OT_ROAD_OBSTACLE), obstacleClassTypes);
 			_obstaclesTypes.Add(EObstacleType::OT_ROAD_OBSTACLE, obstacleClassTypes);
 		}
 		else if (filterPath.ToString().Contains(TEXT("Grass")))
 		{
-			UE_LOG(LogLevelGen, Warning, TEXT("Added blueprints to descriptor group: %u"), static_cast<uint8>(EObstacleType::OT_GRASS_OBSTACLE));
+			UE_LOG(LogObstacleSpawner, Warning, TEXT("Added blueprints to descriptor group: %u"), static_cast<uint8>(EObstacleType::OT_GRASS_OBSTACLE));
 			//_obstaclesTypes.Add(static_cast<uint8>(EObstacleType::OT_GRASS_OBSTACLE), obstacleClassTypes);
 			_obstaclesTypes.Add(EObstacleType::OT_GRASS_OBSTACLE, obstacleClassTypes);
 		}

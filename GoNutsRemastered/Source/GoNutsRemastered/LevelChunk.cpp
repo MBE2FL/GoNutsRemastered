@@ -3,7 +3,6 @@
 
 #include "LevelChunk.h"
 #include "ChunkObjectPool.h"
-//#include "GameFramework/Character.h"
 #include "FreeRoamCharacter.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/SceneComponent.h"
@@ -85,6 +84,12 @@ void ALevelChunk::Tick(float DeltaTime)
 			if (FVector::DistSquaredXY(player->GetActorLocation(), GetActorLocation()) - offset >= FMath::Square(2000.0f))
 			{
 				chunkObjectPool->recycleLevelChunk(this);
+
+				// Recycle all obstacles on this chunk.
+				for (ULaneComponent* lane : _lanes)
+				{
+					lane->recycleObstacles();
+				}
 			}
 		}
 
@@ -94,17 +99,6 @@ void ALevelChunk::Tick(float DeltaTime)
 		UE_LOG(LogLevelChunk, Error, TEXT("Chunk, %s, does not have a reference to the player!"), *GetName());
 	}
 }
-
-//void ALevelChunk::refreshComponents()
-//{
-//	UActorComponent* comp = NewObject<UActorComponent>(this, USceneComponent::StaticClass(), "Howdy", RF_Transient);
-//	check(comp);
-//	comp->RegisterComponent();
-//
-//	AddComponent("HowdyScene", false, FTransform::Identity, this);
-//
-//	UE_LOG(LogLevelChunk, Error, TEXT("Chunk, %s, Howdy Called!"), *GetName());
-//}
 
 EChunkDescriptors ALevelChunk::getChunkDescriptor() const
 {
@@ -119,28 +113,6 @@ EChunkFeatures::Type ALevelChunk::getChunckFeatures() const
 UStaticMeshComponent* ALevelChunk::getMesh() const
 {
 	return _mesh;
-}
-
-void ALevelChunk::setSpawnPoints(UPARAM(ref)TArray<USceneComponent*> carSpawnPoints, UPARAM(ref)TArray<USceneComponent*> obstableSpawnPoints, UPARAM(ref)TArray<USceneComponent*> pedestrianSpawnPoints)
-{
-	_carSpawnPoints = carSpawnPoints;
-	_obstacleSpawnPoints = obstableSpawnPoints;
-	_pedestrianSpawnPoints = pedestrianSpawnPoints;
-}
-
-const TArray<USceneComponent*>& ALevelChunk::getCarSpawnPoints() const
-{
-	return _carSpawnPoints;
-}
-
-const TArray<USceneComponent*>& ALevelChunk::getObstacleSpawnPoints() const
-{
-	return _obstacleSpawnPoints;
-}
-
-const TArray<USceneComponent*>& ALevelChunk::getPedestrianSpawnPoints() const
-{
-	return _pedestrianSpawnPoints;
 }
 
 const TArray<ULaneComponent*>& ALevelChunk::getLanes() const

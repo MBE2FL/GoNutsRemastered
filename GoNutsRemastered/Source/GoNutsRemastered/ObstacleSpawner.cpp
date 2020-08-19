@@ -81,8 +81,8 @@ void UObstacleSpawner::spawnObstacle(ALevelChunk* road)
 	//uint32 SpawnPosPick2;//for if the extra obstacle spawns
 	AObstacle* obstacle;
 
-	ObstaclePicker = FMath::RandRange(0, _GrassObstacleTypes.Num() - 1);
-	SpawnChance = FMath::RandRange(0, 5);
+	//ObstaclePicker = FMath::RandRange(0, _GrassObstacleTypes.Num() - 1);
+	//SpawnChance = FMath::RandRange(0, 5);
 	//SpawnPosPick = FMath::RandRange(0, ObstacleSpawnPoints.Num() - 1);
 
 	//SpawnPosPick2 = SpawnPosPick + 2;

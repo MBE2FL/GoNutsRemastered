@@ -6,7 +6,7 @@
 #include "LevelGenUpState.h"
 #include "LevelGenDownState.h"
 #include "IntersectionChunk.h"
-#include "FreeRoamCharacter.h"
+#include "CustomCharacter.h"
 
 DEFINE_LOG_CATEGORY(LogLevelGenLeftState);
 
@@ -150,6 +150,7 @@ void ULevelGenLeftState::update()
 
 
 			_prevChunk = chunk;
+			chunk->SetActorLocation(FVector::ZeroVector);
 
 			UE_LOG(LogLevelGenLeftState, Warning, TEXT("Spawned chunk: %s"), *chunk->GetName());
 		}

@@ -9,26 +9,10 @@
 
 // Sets default values
 AFreeRoamCharacter::AFreeRoamCharacter()
+	: ACustomCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-}
-
-void AFreeRoamCharacter::init(ALevelGenerator* levelGen)
-{
-	if (IsValid(levelGen))
-	{
-		_levelGen = levelGen;
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("Invalid level generator reference passed to the player!"));
-	}
-}
-
-ALevelChunk* AFreeRoamCharacter::getChunk() const
-{
-	return _chunk;
 }
 
 // Called when the game starts or when spawned

@@ -4,13 +4,15 @@
 #include "ChunkObjectPool.h"
 #include "LevelGenerator.h"
 #include "LevelChunk.h"
-#include "FreeRoamCharacter.h"
+#include "CustomCharacter.h"
 
 DEFINE_LOG_CATEGORY(LogChunkObjectPool);
 
 UChunkObjectPool* UChunkObjectPool::_instance = nullptr;
 const uint8 UChunkObjectPool::BASE_OBJECT_POOL_SIZE = 5;
 const uint8 UChunkObjectPool::POOL_SIZE_INCREASE = 5;
+
+#define DEFAULT_SPAWN_POS FVector(0.0f, 0.0f, 2000.0f)
 
 
 UChunkObjectPool* UChunkObjectPool::getInstance()
@@ -32,7 +34,7 @@ void UChunkObjectPool::destroyInstance()
 	}
 }
 
-AFreeRoamCharacter* UChunkObjectPool::getPlayer() const
+ACustomCharacter* UChunkObjectPool::getPlayer() const
 {
 	if (IsValid(_levelGen))
 	{
@@ -156,6 +158,7 @@ void UChunkObjectPool::recycleLevelChunk(ALevelChunk* chunk)
 			{
 				deactivateChunk(chunk);
 				objectPool->_objectPool.Emplace(chunk);
+				//UE_LOG(LogChunkObjectPool, Warning, TEXT("Chunk, %s of class type %s, recycled!"), *chunk->GetName(), *chunk->GetClass()->GetName());
 				return;
 			}
 		}
@@ -175,6 +178,7 @@ void UChunkObjectPool::deactivateChunk(ALevelChunk* chunk)
 	chunk->SetActorHiddenInGame(true);
 	chunk->SetActorEnableCollision(false);
 	chunk->SetActorTickEnabled(false);
+	chunk->SetActorLocation(DEFAULT_SPAWN_POS);
 }
 
 void UChunkObjectPool::activateChunk(ALevelChunk* chunk)

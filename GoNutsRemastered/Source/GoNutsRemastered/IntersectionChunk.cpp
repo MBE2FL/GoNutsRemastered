@@ -24,6 +24,18 @@ USceneComponent* AIntersectionChunk::getRightConnector() const
     return _rightConnector;
 }
 
+void AIntersectionChunk::getAllLanes(UPARAM(Ref)TArray<ULaneComponent*>& allLanes) const
+{
+    allLanes.Reserve(_lanes.Num() + _altLanes.Num());
+    allLanes.Append(_lanes);
+    allLanes.Append(_altLanes);
+}
+
+const TArray<ULaneComponent*>& AIntersectionChunk::getAltLanes() const
+{
+    return _altLanes;
+}
+
 void AIntersectionChunk::BeginPlay()
 {
     Super::BeginPlay();
@@ -40,17 +52,17 @@ void AIntersectionChunk::BeginPlay()
 
 
     // Store all alternate lanes in a TArray for easy access.
-    TInlineComponentArray<ULaneComponent*> laneComponents(this);
-    GetComponents(laneComponents);
+    //TInlineComponentArray<ULaneComponent*> laneComponents(this);
+    //GetComponents(laneComponents);
 
-    _altLanes.Reserve(laneComponents.Num() - _lanes.Num());
-    //_lanes = laneComponents;
+    //_altLanes.Reserve(laneComponents.Num() - _lanes.Num());
+    ////_lanes = laneComponents;
 
-    for (ULaneComponent* lane : laneComponents)
-    {
-        if (lane->isAltLane())
-        {
-            _altLanes.Emplace(lane);
-        }
-    }
+    //for (ULaneComponent* lane : laneComponents)
+    //{
+    //    if (lane->isAltLane())
+    //    {
+    //        _altLanes.Emplace(lane);
+    //    }
+    //}
 }

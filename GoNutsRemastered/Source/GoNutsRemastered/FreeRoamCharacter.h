@@ -3,22 +3,18 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
+#include "CustomCharacter.h"
 #include "FreeRoamCharacter.generated.h"
 
-class ALevelChunk;
-class ALevelGenerator;
 
 UCLASS()
-class GONUTSREMASTERED_API AFreeRoamCharacter : public ACharacter
+class GONUTSREMASTERED_API AFreeRoamCharacter : public ACustomCharacter
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
 	AFreeRoamCharacter();
-	void init(ALevelGenerator* levelGen);
-	ALevelChunk* getChunk() const;
 
 protected:
 	// Called when the game starts or when spawned
@@ -33,10 +29,10 @@ public:
 
 
 private:
-	void startJump();
+	virtual void startJump() override;
 	void moveRight(float value);
-	void turnLeft();
-	void turnRight();
+	virtual void turnLeft() override;
+	virtual void turnRight() override;
 
 	UFUNCTION()
 	void OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse,
@@ -45,23 +41,4 @@ private:
 	UFUNCTION()
 	void OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
 		bool bFromSweep, const FHitResult& SweepResult);
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
-	ALevelChunk* _chunk = nullptr;
-
-	UPROPERTY()
-	ALevelGenerator* _levelGen = nullptr;
-
-
-	// TO-DO Change to timeline.
-	UPROPERTY()
-	bool _rotatePlayer = false;
-	UPROPERTY()
-	FRotator _targetRot;
-	UPROPERTY()
-	float _rotateTValue = 0.0f;
-	UPROPERTY()
-	float _prevYaw = 0.0f;
-	UPROPERTY()
-	float _newYaw = 0.0f;
 };

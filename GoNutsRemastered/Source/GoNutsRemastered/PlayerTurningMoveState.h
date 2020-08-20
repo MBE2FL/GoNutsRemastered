@@ -40,4 +40,6 @@ private:
 	FVector2D _b;
 	FVector2D _c;
 	FVector2D _d;
+
+	float _tValueForTValue = 0.0f;
 };

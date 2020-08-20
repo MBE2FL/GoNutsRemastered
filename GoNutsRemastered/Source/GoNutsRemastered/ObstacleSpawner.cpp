@@ -75,8 +75,8 @@ void UObstacleSpawner::spawnObstacle(ALevelChunk* road)
 {
 	//UE_LOG(LogObstacleSpawner, Warning, TEXT("Level gen notified obstacles manager about road."));
 
-	uint32 ObstaclePicker;
-	uint32 SpawnChance;
+	uint32 ObstaclePicker = 0;
+	uint32 SpawnChance = 0;
 	//uint32 SpawnPosPick;
 	//uint32 SpawnPosPick2;//for if the extra obstacle spawns
 	AObstacle* obstacle;

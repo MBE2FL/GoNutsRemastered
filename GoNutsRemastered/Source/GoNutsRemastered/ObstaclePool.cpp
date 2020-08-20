@@ -17,6 +17,8 @@ UObstaclePool* UObstaclePool::getInstance()
 		_instance = NewObject<UObstaclePool>();
 		_instance->AddToRoot();
 	}
+
+	return _instance;
 }
 
 void UObstaclePool::deleteInstance()
@@ -46,11 +48,11 @@ void UObstaclePool::Init(UObstacleSpawner* obstacleSpawner)
 
 void UObstaclePool::createObjectPools()
 {
-	const TMap<EObstacleType, FObstacleClassTypes> ObstacleClassType = _ObstacleSpawner->getObstacleClassType();
+	const TMap<EObstacleType, FObstacleClassTypes> ObstacleClassTypes = _ObstacleSpawner->getObstacleClassType();
 	TArray<TSubclassOf<AObstacle>> ObstacleClassTypesArr;
 	//const TArray<TSubclassOf<ALevelChunk>> chunkClassTypes = _levelGen->getChunkClassTypes();
 
-	for (const TPair<EObstacleType, FObstacleClassTypes>& ObstacleClassTypesInfo : ObstacleClassType)
+	for (const TPair<EObstacleType, FObstacleClassTypes>& ObstacleClassTypesInfo : ObstacleClassTypes)
 	{
 		ObstacleClassTypesArr = ObstacleClassTypesInfo.Value._obstacleClassTypes;
 
@@ -58,7 +60,7 @@ void UObstaclePool::createObjectPools()
 		for (const TSubclassOf<AObstacle>& ObstacleClassType : ObstacleClassTypesArr)
 		{
 			// Create objects for each chunk class type.
-			ObstacleTypePool objectTypePool{};
+			FObstacleTypePool objectTypePool{};
 			addObjectsToPool(BASE_OBJECT_POOL_SIZE, &objectTypePool, ObstacleClassType);
 
 			// Add object pool to the memory pool.
@@ -73,7 +75,7 @@ AObstacle* UObstaclePool::getObstacle(const TSubclassOf<AObstacle>& ObstacleClas
 {
 	if (_initialized)
 	{
-		ObstacleTypePool* objectTypePool = _objectTypePools.Find(ObstacleClassType);
+		FObstacleTypePool* objectTypePool = _objectTypePools.Find(ObstacleClassType);
 
 		if (objectTypePool)
 		{
@@ -117,7 +119,7 @@ void UObstaclePool::recycleObstacle(AObstacle* obstacle)
 	{
 		TSubclassOf<AObstacle> obstacleClassType = obstacle->GetClass();
 
-		ObstacleTypePool* objectPool = _objectTypePools.Find(obstacleClassType);
+		FObstacleTypePool* objectPool = _objectTypePools.Find(obstacleClassType);
 
 		// Level chunk type has a pool.
 		if (objectPool)
@@ -168,7 +170,7 @@ void UObstaclePool::activateChunk(AObstacle* obstacle)
 	obstacle->SetActorTickEnabled(true);
 }
 
-void UObstaclePool::addObjectsToPool(const uint8 numObjectsToAdd, ObstacleTypePool* objectTypePool, const TSubclassOf<AObstacle>& obstacleClassType)
+void UObstaclePool::addObjectsToPool(const uint8 numObjectsToAdd, FObstacleTypePool* objectTypePool, const TSubclassOf<AObstacle>& obstacleClassType)
 {
 	// Reserve space ahead of time.
 	//objectPool->_objectPool.Reserve(objectPool->_objectPool.Max() + BASE_OBJECT_POOL_SIZE);

@@ -138,12 +138,12 @@ void UPlayerTurningMoveState::transition()
 		switch (_transitionDirection)
 		{
 		case ETransitionDirection::TD_LEFT:
-			P0.Y += 500.0f;
+			//P0.Y += 500.0f;
 
 			P3.Y -= 500.0f;
 			break;
 		case ETransitionDirection::TD_RIGHT:
-			P0.Y -= 500.0f;
+			//P0.Y -= 500.0f;
 
 			P3.Y += 500.0f;
 			break;
@@ -208,7 +208,16 @@ void UPlayerTurningMoveState::update(float deltaTime)
 
 	// Smoothly rotate this player to line up with the middle alt lane.
 	// Move the character to the middle alt lane of the intersection.
-	_transitionTValue += 1.0f * deltaTime;
+	//_transitionTValue += 1.0f * deltaTime;
+	_tValueForTValue += 1.0f * deltaTime;
+	_transitionTValue = FMath::InterpSinIn(0.0f, 1.0f, _tValueForTValue);
+	//UE_LOG(LogPlayerTurningMoveState, Error, TEXT("_tValueForTValue: %f, _transitionTValue: %f"), _tValueForTValue, _transitionTValue);
+
+	if (1.0f - _tValueForTValue < 0.02f)
+	{
+		UE_LOG(LogPlayerTurningMoveState, Error, TEXT("_tValueForTValue: %f, _transitionTValue: %f"), _tValueForTValue,_transitionTValue);
+		_transitionTValue = 1.0f;
+	}
 
 	transitionRotatePlayer(deltaTime);
 	transitionMovePlayer(deltaTime);
@@ -255,6 +264,7 @@ void UPlayerTurningMoveState::transitionMovePlayer(float deltaTime)
 	{
 		// Reset transition interpolation value.
 		_transitionTValue = 0.0f;
+		_tValueForTValue = 0.0f;
 
 		_player->SetActorLocation(_transitionTargetPos);
 		_player->_rotatePlayer = false;

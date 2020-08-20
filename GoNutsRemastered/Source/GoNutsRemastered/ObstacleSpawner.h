@@ -34,9 +34,6 @@ public:
 	// Sets default values for this component's properties
 	UObstacleSpawner();
 
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
 	UFUNCTION()
 		const TMap<EObstacleType, FObstacleClassTypes>& getObstacleClassType() const { return _obstaclesTypes; };
 

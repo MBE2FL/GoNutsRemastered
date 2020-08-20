@@ -12,7 +12,7 @@ class AObstacle;
 class UObstacleSpawner;
 
 USTRUCT(NotBlueprintable)
-struct ObstacleTypePool
+struct FObstacleTypePool
 {
 	GENERATED_BODY()
 
@@ -44,7 +44,7 @@ public:
 private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Chunk Object Pool")
-		TMap<TSubclassOf<AObstacle>, ObstacleTypePool> _objectTypePools;
+		TMap<TSubclassOf<AObstacle>, FObstacleTypePool> _objectTypePools;
 
 	UPROPERTY()
 	UObstacleSpawner* _ObstacleSpawner = nullptr;
@@ -59,5 +59,5 @@ private:
 	UObstaclePool() {};
 	void deactivateChunk(AObstacle* obstacle);
 	void activateChunk(AObstacle* obstacle);
-	void addObjectsToPool(const uint8 numObjectsToAdd, ObstacleTypePool* objectTypePool, const TSubclassOf<AObstacle>& obstacleClassType);
+	void addObjectsToPool(const uint8 numObjectsToAdd, FObstacleTypePool* objectTypePool, const TSubclassOf<AObstacle>& obstacleClassType);
 };

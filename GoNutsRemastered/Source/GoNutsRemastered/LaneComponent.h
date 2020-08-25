@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/SceneComponent.h"
+#include "Components/BoxComponent.h"
 #include "LaneComponent.generated.h"
 
 
@@ -13,8 +13,11 @@ class AObstacle;
 DECLARE_LOG_CATEGORY_EXTERN(LogLane, Log, All);
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class GONUTSREMASTERED_API ULaneComponent : public USceneComponent
+#define ECC_LaneChannel ECollisionChannel::ECC_GameTraceChannel2
+
+
+UCLASS(ClassGroup = "Level Chunk", meta = (DisplayName = "Lane", BlueprintSpawnableComponent))
+class GONUTSREMASTERED_API ULaneComponent : public UBoxComponent
 {
 	GENERATED_BODY()
 
@@ -27,11 +30,12 @@ public:
 
 	const TArray<AObstacle*>& getObstacles() const;
 	uint8 getObstacleTypes() const;
-	FVector2D getBoundingBox() const;
 	void recycleObstacles();
 	void addObstacle(AObstacle* obstacle);
 	void addObstacles(const TArray<AObstacle*>& obstacles);
 	bool isAltLane() const;
+	ULaneComponent* getLeftLane() const;
+	ULaneComponent* getRightLane() const;
 
 
 	static const uint8 MAX_OBSTACLES;
@@ -50,8 +54,15 @@ private:
 	uint8 _obstacleTypes;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Lane", meta = (AllowPrivateAccess = true))
-	FVector2D _boundingBox;
+	bool _isAltLane = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Lane", meta = (AllowPrivateAccess = true))
-	bool _isAltLane = false;
+	ULaneComponent* _leftLane = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Lane", meta = (AllowPrivateAccess = true))
+	ULaneComponent* _rightLane = nullptr;
+
+
+
+	virtual FPrimitiveSceneProxy* CreateSceneProxy() override;
 };

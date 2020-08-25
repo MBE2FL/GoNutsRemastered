@@ -34,6 +34,9 @@ public:
 	// Sets default values for this component's properties
 	UObstacleSpawner();
 
+	UFUNCTION()
+		const TMap<EObstacleType, FObstacleClassTypes>& getObstacleClassType() const { return _obstaclesTypes; };
+
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 #endif

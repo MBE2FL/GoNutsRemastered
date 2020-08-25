@@ -4,7 +4,7 @@
 #include "LevelGenState.h"
 #include "LevelGenerator.h"
 #include "LevelChunk.h"
-#include "FreeRoamCharacter.h"
+#include "CustomCharacter.h"
 
 
 DEFINE_LOG_CATEGORY(LogLevelGenState);

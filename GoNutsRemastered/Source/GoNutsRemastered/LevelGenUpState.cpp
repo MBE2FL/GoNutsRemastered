@@ -6,7 +6,7 @@
 #include "LevelGenLeftState.h"
 #include "LevelGenRightState.h"
 #include "IntersectionChunk.h"
-#include "FreeRoamCharacter.h"
+#include "CustomCharacter.h"
 //#if WITH_EDITOR
 //#include "DrawDebugHelpers.h"
 //#endif
@@ -149,6 +149,7 @@ void ULevelGenUpState::update()
 
 
 			_prevChunk = chunk;
+			chunk->SetActorLocation(FVector::ZeroVector);
 
 			UE_LOG(LogLevelGenUpState, Warning, TEXT("Spawned chunk: %s"), *chunk->GetName());
 		}

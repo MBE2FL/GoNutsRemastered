@@ -14,7 +14,7 @@
 #include "AssetRegistryModule.h"
 
 #include "ChunkObjectPool.h"
-#include "FreeRoamCharacter.h"
+#include "CustomCharacter.h"
 
 DEFINE_LOG_CATEGORY(LogLevelGen);
 
@@ -122,11 +122,11 @@ void ALevelGenerator::recycleChunk(ALevelChunk* chunk)
 	_chunkObjectPool->recycleLevelChunk(chunk);
 }
 
-AFreeRoamCharacter* ALevelGenerator::getPlayer()
+ACustomCharacter* ALevelGenerator::getPlayer()
 {
 	if (!IsValid(_player))
 	{
-		_player = Cast<AFreeRoamCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+		_player = Cast<ACustomCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 
 		if (IsValid(_player))
 		{

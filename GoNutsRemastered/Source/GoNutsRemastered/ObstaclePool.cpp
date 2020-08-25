@@ -87,7 +87,7 @@ AObstacle* UObstaclePool::getObstacle(const TSubclassOf<AObstacle>& ObstacleClas
 				addObjectsToPool(POOL_SIZE_INCREASE, objectTypePool, ObstacleClassType);
 
 				AObstacle* obstacle = obstacles.Pop(false);
-				activateChunk(obstacle);
+				activateObstacle(obstacle);
 
 				UE_LOG(LogObstaclePool, Warning, TEXT("Pool resized!: %s"), *ObstacleClassType.Get()->GetPathName());
 
@@ -97,7 +97,7 @@ AObstacle* UObstaclePool::getObstacle(const TSubclassOf<AObstacle>& ObstacleClas
 			else
 			{
 				AObstacle* obstacle = obstacles.Pop(false);
-				activateChunk(obstacle);
+				activateObstacle(obstacle);
 				return obstacle;
 			}
 		}
@@ -140,7 +140,7 @@ void UObstaclePool::recycleObstacle(AObstacle* obstacle)
 			// Recycle chunk.
 			else
 			{
-				deactivateChunk(obstacle);
+				deactivateObstacle(obstacle);
 				objectPool->_objectPool.Emplace(obstacle);
 				return;
 			}
@@ -156,14 +156,14 @@ void UObstaclePool::recycleObstacle(AObstacle* obstacle)
 	}
 }
 
-void UObstaclePool::deactivateChunk(AObstacle* obstacle)
+void UObstaclePool::deactivateObstacle(AObstacle* obstacle)
 {
 	obstacle->SetActorHiddenInGame(true);
 	obstacle->SetActorEnableCollision(false);
 	obstacle->SetActorTickEnabled(false);
 }
 
-void UObstaclePool::activateChunk(AObstacle* obstacle)
+void UObstaclePool::activateObstacle(AObstacle* obstacle)
 {
 	obstacle->SetActorHiddenInGame(false);
 	obstacle->SetActorEnableCollision(true);
@@ -182,7 +182,7 @@ void UObstaclePool::addObjectsToPool(const uint8 numObjectsToAdd, FObstacleTypeP
 	{
 		// Spawn a chunk and add it to the appropriate object pool.
 		obstacle = Cast<AObstacle>(_ObstacleSpawner->GetWorld()->SpawnActor(obstacleClassType));
-		deactivateChunk(obstacle);
+		deactivateObstacle(obstacle);
 
 		objectTypePool->_objectPool.Emplace(obstacle);
 

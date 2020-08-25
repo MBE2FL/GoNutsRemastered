@@ -7,6 +7,7 @@
 #include "ObstacleSpawner.generated.h"
 
 
+class UObstaclePool;
 class ALevelGenerator;
 class AObstacle;
 enum class EObstacleType : uint8;
@@ -65,7 +66,8 @@ private:
 	UFUNCTION()
 	void spawnObstacle(ALevelChunk* road);
 
-
+	UPROPERTY()
+	UObstaclePool* _obstaclePool;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Obstacle Spawner|Obstacle Types", meta = (AllowPrivateAccess = true))
 	TMap<EObstacleType, FObstacleClassTypes> _obstaclesTypes;

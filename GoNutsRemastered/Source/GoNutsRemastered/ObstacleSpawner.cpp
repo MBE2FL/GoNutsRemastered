@@ -7,6 +7,7 @@
 #include "Obstacle.h"
 #include "LevelChunk.h"
 #include "LaneComponent.h"
+#include "ObstaclePool.h"
 
 #if WITH_EDITOR
 #include "AssetRegistryModule.h"
@@ -50,6 +51,9 @@ void UObstacleSpawner::BeginPlay()
 
 	_levelGenerator = Cast<ALevelGenerator>(UGameplayStatics::GetActorOfClass(GetWorld(), ALevelGenerator::StaticClass()));
 
+	_obstaclePool->getInstance();
+	_obstaclePool->Init(this);
+
 	// Destroy this component if the level generator could not be found.
 	if (!_levelGenerator)
 	{
@@ -82,7 +86,7 @@ void UObstacleSpawner::spawnObstacle(ALevelChunk* road)
 	AObstacle* obstacle;
 
 	//ObstaclePicker = FMath::RandRange(0, _GrassObstacleTypes.Num() - 1);
-	//SpawnChance = FMath::RandRange(0, 5);
+	SpawnChance = FMath::RandRange(0, 5);
 	//SpawnPosPick = FMath::RandRange(0, ObstacleSpawnPoints.Num() - 1);
 
 	//SpawnPosPick2 = SpawnPosPick + 2;

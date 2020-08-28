@@ -10,7 +10,7 @@
 class ALevelGenerator;
 enum class EMapOrientations : uint8;
 class ALevelChunk;
-class AFreeRoamCharacter;
+class ACustomCharacter;
 
 
 DECLARE_LOG_CATEGORY_EXTERN(LogLevelGenState, Log, All);
@@ -42,7 +42,7 @@ protected:
 	UPROPERTY()
 	ALevelChunk* _prevChunk = nullptr;
 	UPROPERTY()
-	AFreeRoamCharacter* _player = nullptr;
+	ACustomCharacter* _player = nullptr;
 
 	ULevelGenState() {};
 	virtual ALevelChunk* getValidChunk();

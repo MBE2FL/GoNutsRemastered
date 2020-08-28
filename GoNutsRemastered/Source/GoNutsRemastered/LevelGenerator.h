@@ -15,7 +15,8 @@ class ULevelGenLeftState;
 class ULevelGenRightState;
 class ULevelGenDownState;
 class UChunkObjectPool;
-class AFreeRoamCharacter;
+class ACustomCharacter;
+class UObstaclePool;
 
 
 #define ECC_LevelSegmentChannel ECollisionChannel::ECC_GameTraceChannel1
@@ -80,7 +81,7 @@ public:
 	void recycleChunk(ALevelChunk* chunk);
 
 
-	AFreeRoamCharacter* getPlayer();
+	ACustomCharacter* getPlayer();
 
 protected:
 	// Called when the game starts or when spawned
@@ -128,7 +129,7 @@ private:
 	UChunkObjectPool* _chunkObjectPool;
 
 	UPROPERTY()
-	AFreeRoamCharacter* _player;
+	ACustomCharacter* _player;
 
 	UFUNCTION()
 	void updateLevelGen();

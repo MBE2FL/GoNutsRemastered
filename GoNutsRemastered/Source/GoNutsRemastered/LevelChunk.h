@@ -87,9 +87,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-#if WITH_EDITOR
-	virtual bool ShouldTickIfViewportsOnly() const override { return true; };
-#endif
+//#if WITH_EDITOR
+//	virtual bool ShouldTickIfViewportsOnly() const override { return true; };
+//#endif
 	
 	UFUNCTION(BlueprintCallable, Category = "Chunk|Chunk Features")
 	EChunkDescriptors getChunkDescriptor() const;
@@ -101,7 +101,7 @@ public:
 	UStaticMeshComponent* getMesh() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Chunk|Lanes")
-	const TArray<ULaneComponent*>& getLanes() const;
+	virtual const TArray<ULaneComponent*>& getLanes() const;
 
 
 protected:
@@ -115,6 +115,6 @@ protected:
 	int32 _chunkFeatures = EChunkFeatures::Type::CF_NONE;
 
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chunk", meta = (AllowPrivateAccess = true))
 	TArray<ULaneComponent*> _lanes;
 };

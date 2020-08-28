@@ -4,10 +4,6 @@
 #include "LaneComponent.h"
 #include "Obstacle.h"
 
-#if WITH_EDITOR
-#include "DrawDebugHelpers.h"
-#endif
-
 DEFINE_LOG_CATEGORY(LogLane);
 
 const uint8 ULaneComponent::MAX_OBSTACLES = 5;
@@ -22,6 +18,18 @@ ULaneComponent::ULaneComponent()
 	// ...
 
 	_obstacleTypes = static_cast<uint8>(EObstacleType::OT_NONE);
+
+
+	BoxExtent = FVector(500.0f, 165.0f, 50.0f);
+
+	static const FName collisionProfileName(TEXT("Custom"));
+	SetCollisionProfileName(collisionProfileName);
+	SetCollisionEnabled(ECollisionEnabled::Type::QueryOnly);
+	SetCollisionObjectType(ECC_LaneChannel);
+	SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
+
+	ShapeColor = FColor(255, 0, 0, 255);
 }
 
 
@@ -34,6 +42,75 @@ void ULaneComponent::BeginPlay()
 	_obstacles.Reserve(MAX_OBSTACLES);
 }
 
+FPrimitiveSceneProxy* ULaneComponent::CreateSceneProxy()
+{
+	/** Represents a UBoxComponent to the scene manager. */
+	class FBoxSceneProxy final : public FPrimitiveSceneProxy
+	{
+	public:
+		SIZE_T GetTypeHash() const override
+		{
+			static size_t UniquePointer;
+			return reinterpret_cast<size_t>(&UniquePointer);
+		}
+
+		FBoxSceneProxy(const UBoxComponent* InComponent)
+			: FPrimitiveSceneProxy(InComponent)
+			, bDrawOnlyIfSelected(InComponent->bDrawOnlyIfSelected)
+			, BoxExtents(InComponent->GetUnscaledBoxExtent())
+			, BoxColor(InComponent->ShapeColor)
+			, LineThickness(0.0f)
+		{
+			bWillEverBeLit = true;
+		}
+
+		virtual void GetDynamicMeshElements(const TArray<const FSceneView*>& Views, const FSceneViewFamily& ViewFamily, uint32 VisibilityMap, FMeshElementCollector& Collector) const override
+		{
+			QUICK_SCOPE_CYCLE_COUNTER(STAT_BoxSceneProxy_GetDynamicMeshElements);
+
+			const FMatrix& LocalToWorld = GetLocalToWorld();
+
+			for (int32 ViewIndex = 0; ViewIndex < Views.Num(); ViewIndex++)
+			{
+				if (VisibilityMap & (1 << ViewIndex))
+				{
+					const FSceneView* View = Views[ViewIndex];
+
+					const FLinearColor DrawColor = GetViewSelectionColor(BoxColor, *View, IsSelected(), IsHovered(), false, IsIndividuallySelected());
+
+					FPrimitiveDrawInterface* PDI = Collector.GetPDI(ViewIndex);
+					DrawOrientedWireBox(PDI, LocalToWorld.GetOrigin(), LocalToWorld.GetScaledAxis(EAxis::X), LocalToWorld.GetScaledAxis(EAxis::Y), LocalToWorld.GetScaledAxis(EAxis::Z), BoxExtents, DrawColor, SDPG_World, LineThickness);
+				}
+			}
+		}
+
+		virtual FPrimitiveViewRelevance GetViewRelevance(const FSceneView* View) const override
+		{
+			const bool bProxyVisible = !bDrawOnlyIfSelected || IsSelected();
+
+			// Should we draw this because collision drawing is enabled, and we have collision
+			const bool bShowForCollision = View->Family->EngineShowFlags.Collision && IsCollisionEnabled();
+
+			FPrimitiveViewRelevance Result;
+			Result.bDrawRelevance = (IsShown(View) && bProxyVisible) || bShowForCollision;
+			Result.bDynamicRelevance = true;
+			Result.bShadowRelevance = IsShadowCast(View);
+			Result.bEditorPrimitiveRelevance = UseEditorCompositing(View);
+			return Result;
+		}
+		virtual uint32 GetMemoryFootprint(void) const override { return(sizeof(*this) + GetAllocatedSize()); }
+		uint32 GetAllocatedSize(void) const { return(FPrimitiveSceneProxy::GetAllocatedSize()); }
+
+	private:
+		const uint32	bDrawOnlyIfSelected : 1;
+		const FVector	BoxExtents;
+		const FColor	BoxColor;
+		const float LineThickness;
+	};
+
+	return new FBoxSceneProxy(this);
+}
+
 // Called every frame
 void ULaneComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
@@ -41,34 +118,6 @@ void ULaneComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 
 	// ...
 
-#if WITH_EDITOR
-	//UE_LOG(LogTemp, Error, TEXT("Component ticking."));
-
-	//if (!GWorld->HasBegunPlay())
-	//UWorld* world = GEngine->GetWorldFromContextObject(this);
-	UWorld* world = Cast<UObject>(this)->GetWorld();
-
-	if (IsValid(world))
-	{
-		if (world->WorldType == EWorldType::Type::EditorPreview)
-		{
-			FVector2D extends = _boundingBox * 0.5f;
-			//DrawDebugBox(world, GetRelativeLocation() + FVector(extends, 25.0f), FVector(extends, 50.0f), FColor::Red, false, -1.0f, 0, 4.0f);
-
-			DrawDebugBox(
-				world, 
-				GetRelativeLocation() + GetComponentRotation().RotateVector(FVector(extends.X, 0.0f, 50.0f)),
-				GetComponentRotation().RotateVector(FVector(extends, 50.0f)), 
-				FColor::Red, 
-				false, 
-				-1.0f, 
-				0, 
-				0.0f);
-
-			return;
-		}
-	}
-#endif
 }
 
 const TArray<AObstacle*>& ULaneComponent::getObstacles() const
@@ -79,11 +128,6 @@ const TArray<AObstacle*>& ULaneComponent::getObstacles() const
 uint8 ULaneComponent::getObstacleTypes() const
 {
 	return _obstacleTypes;
-}
-
-FVector2D ULaneComponent::getBoundingBox() const
-{
-	return _boundingBox;
 }
 
 void ULaneComponent::recycleObstacles()
@@ -110,5 +154,15 @@ void ULaneComponent::addObstacles(const TArray<AObstacle*>& obstacles)
 bool ULaneComponent::isAltLane() const
 {
 	return _isAltLane;
+}
+
+ULaneComponent* ULaneComponent::getLeftLane() const
+{
+	return _leftLane;
+}
+
+ULaneComponent* ULaneComponent::getRightLane() const
+{
+	return _rightLane;
 }
 

@@ -7,6 +7,7 @@
 #include "ObstacleSpawner.generated.h"
 
 
+class UObstaclePool;
 class ALevelGenerator;
 class AObstacle;
 enum class EObstacleType : uint8;
@@ -33,6 +34,9 @@ class GONUTSREMASTERED_API UObstacleSpawner : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	UObstacleSpawner();
+
+	UFUNCTION()
+		const TMap<EObstacleType, FObstacleClassTypes>& getObstacleClassType() const { return _obstaclesTypes; };
 
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
@@ -62,7 +66,8 @@ private:
 	UFUNCTION()
 	void spawnObstacle(ALevelChunk* road);
 
-
+	UPROPERTY()
+	UObstaclePool* _obstaclePool;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Obstacle Spawner|Obstacle Types", meta = (AllowPrivateAccess = true))
 	TMap<EObstacleType, FObstacleClassTypes> _obstaclesTypes;

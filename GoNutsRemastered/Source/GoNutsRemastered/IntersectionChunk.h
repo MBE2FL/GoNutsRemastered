@@ -18,6 +18,10 @@ public:
 	AIntersectionChunk();
 	USceneComponent* getLeftConnector() const;
 	USceneComponent* getRightConnector() const;
+	UFUNCTION(BlueprintCallable, Category = "Chunk|Lanes")
+	void getAllLanes(UPARAM(Ref)TArray<ULaneComponent*>& allLanes) const;
+	UFUNCTION(BlueprintCallable, Category = "Chunk|Lanes")
+	const TArray<ULaneComponent*>& getAltLanes() const;
 
 protected:
 	// Called when the game starts or when spawned
@@ -30,6 +34,6 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chunk|Intersection Settings", meta = (AllowPrivateAccess = true))
 	USceneComponent* _rightConnector;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chunk|Intersection Settings", meta = (AllowPrivateAccess = true))
 	TArray<ULaneComponent*> _altLanes;
 };

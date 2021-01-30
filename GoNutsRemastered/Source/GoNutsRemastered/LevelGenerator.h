@@ -16,6 +16,7 @@ class ULevelGenRightState;
 class ULevelGenDownState;
 class UChunkObjectPool;
 class ACustomCharacter;
+class UObstaclePool;
 
 
 #define ECC_LevelSegmentChannel ECollisionChannel::ECC_GameTraceChannel1

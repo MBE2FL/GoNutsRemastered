@@ -15,6 +15,7 @@
 
 #include "ChunkObjectPool.h"
 #include "CustomCharacter.h"
+#include "ObstaclePool.h"
 
 DEFINE_LOG_CATEGORY(LogLevelGen);
 
@@ -210,6 +211,7 @@ void ALevelGenerator::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 	// Cleanup the chunk memory pool.
 	UChunkObjectPool::destroyInstance();
+	UObstaclePool::deleteInstance();
 	//GetWorld()->ForceGarbageCollection(true);
 	GEngine->ForceGarbageCollection(true);
 

@@ -57,7 +57,7 @@ private:
 
 
 	UObstaclePool() {};
-	void deactivateChunk(AObstacle* obstacle);
-	void activateChunk(AObstacle* obstacle);
+	void deactivateObstacle(AObstacle* obstacle);
+	void activateObstacle(AObstacle* obstacle);
 	void addObjectsToPool(const uint8 numObjectsToAdd, FObstacleTypePool* objectTypePool, const TSubclassOf<AObstacle>& obstacleClassType);
 };

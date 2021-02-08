@@ -17,7 +17,7 @@ struct FHitResult;
 #endif
 #define GONUTSREMASTERED_Egg_generated_h
 
-#define GoNutsRemastered_GoNutsRemastered_4_25_Source_GoNutsRemastered_Egg_h_15_DELEGATE \
+#define GoNutsRemastered_GoNutsRemastered_Source_GoNutsRemastered_Egg_h_15_DELEGATE \
 struct _Script_GoNutsRemastered_eventEggEffectDelegate_Parms \
 { \
 	AEggEffect* eggEffect; \
@@ -30,20 +30,20 @@ static inline void FEggEffectDelegate_DelegateWrapper(const FMulticastScriptDele
 }
 
 
-#define GoNutsRemastered_GoNutsRemastered_4_25_Source_GoNutsRemastered_Egg_h_21_SPARSE_DATA
-#define GoNutsRemastered_GoNutsRemastered_4_25_Source_GoNutsRemastered_Egg_h_21_RPC_WRAPPERS \
+#define GoNutsRemastered_GoNutsRemastered_Source_GoNutsRemastered_Egg_h_21_SPARSE_DATA
+#define GoNutsRemastered_GoNutsRemastered_Source_GoNutsRemastered_Egg_h_21_RPC_WRAPPERS \
  \
 	DECLARE_FUNCTION(execOnOverlapEnd); \
 	DECLARE_FUNCTION(execOnOverlapBegin);
 
 
-#define GoNutsRemastered_GoNutsRemastered_4_25_Source_GoNutsRemastered_Egg_h_21_RPC_WRAPPERS_NO_PURE_DECLS \
+#define GoNutsRemastered_GoNutsRemastered_Source_GoNutsRemastered_Egg_h_21_RPC_WRAPPERS_NO_PURE_DECLS \
  \
 	DECLARE_FUNCTION(execOnOverlapEnd); \
 	DECLARE_FUNCTION(execOnOverlapBegin);
 
 
-#define GoNutsRemastered_GoNutsRemastered_4_25_Source_GoNutsRemastered_Egg_h_21_EVENT_PARMS \
+#define GoNutsRemastered_GoNutsRemastered_Source_GoNutsRemastered_Egg_h_21_EVENT_PARMS \
 	struct Egg_eventonEggImpact_Parms \
 	{ \
 		TSubclassOf<AEggEffect>  eggEffectType; \
@@ -51,8 +51,8 @@ static inline void FEggEffectDelegate_DelegateWrapper(const FMulticastScriptDele
 	};
 
 
-#define GoNutsRemastered_GoNutsRemastered_4_25_Source_GoNutsRemastered_Egg_h_21_CALLBACK_WRAPPERS
-#define GoNutsRemastered_GoNutsRemastered_4_25_Source_GoNutsRemastered_Egg_h_21_INCLASS_NO_PURE_DECLS \
+#define GoNutsRemastered_GoNutsRemastered_Source_GoNutsRemastered_Egg_h_21_CALLBACK_WRAPPERS
+#define GoNutsRemastered_GoNutsRemastered_Source_GoNutsRemastered_Egg_h_21_INCLASS_NO_PURE_DECLS \
 private: \
 	static void StaticRegisterNativesAEgg(); \
 	friend struct Z_Construct_UClass_AEgg_Statics; \
@@ -61,7 +61,7 @@ public: \
 	DECLARE_SERIALIZER(AEgg)
 
 
-#define GoNutsRemastered_GoNutsRemastered_4_25_Source_GoNutsRemastered_Egg_h_21_INCLASS \
+#define GoNutsRemastered_GoNutsRemastered_Source_GoNutsRemastered_Egg_h_21_INCLASS \
 private: \
 	static void StaticRegisterNativesAEgg(); \
 	friend struct Z_Construct_UClass_AEgg_Statics; \
@@ -70,7 +70,7 @@ public: \
 	DECLARE_SERIALIZER(AEgg)
 
 
-#define GoNutsRemastered_GoNutsRemastered_4_25_Source_GoNutsRemastered_Egg_h_21_STANDARD_CONSTRUCTORS \
+#define GoNutsRemastered_GoNutsRemastered_Source_GoNutsRemastered_Egg_h_21_STANDARD_CONSTRUCTORS \
 	/** Standard constructor, called after all reflected properties have been initialized */ \
 	NO_API AEgg(const FObjectInitializer& ObjectInitializer); \
 	DEFINE_DEFAULT_OBJECT_INITIALIZER_CONSTRUCTOR_CALL(AEgg) \
@@ -83,7 +83,7 @@ private: \
 public:
 
 
-#define GoNutsRemastered_GoNutsRemastered_4_25_Source_GoNutsRemastered_Egg_h_21_ENHANCED_CONSTRUCTORS \
+#define GoNutsRemastered_GoNutsRemastered_Source_GoNutsRemastered_Egg_h_21_ENHANCED_CONSTRUCTORS \
 private: \
 	/** Private move- and copy-constructors, should never be used */ \
 	NO_API AEgg(AEgg&&); \
@@ -94,7 +94,7 @@ DEFINE_VTABLE_PTR_HELPER_CTOR_CALLER(AEgg); \
 	DEFINE_DEFAULT_CONSTRUCTOR_CALL(AEgg)
 
 
-#define GoNutsRemastered_GoNutsRemastered_4_25_Source_GoNutsRemastered_Egg_h_21_PRIVATE_PROPERTY_OFFSET \
+#define GoNutsRemastered_GoNutsRemastered_Source_GoNutsRemastered_Egg_h_21_PRIVATE_PROPERTY_OFFSET \
 	FORCEINLINE static uint32 __PPO___debugColour() { return STRUCT_OFFSET(AEgg, _debugColour); } \
 	FORCEINLINE static uint32 __PPO___eggEffectDelegate() { return STRUCT_OFFSET(AEgg, _eggEffectDelegate); } \
 	FORCEINLINE static uint32 __PPO___eggMeshComp() { return STRUCT_OFFSET(AEgg, _eggMeshComp); } \
@@ -102,32 +102,32 @@ DEFINE_VTABLE_PTR_HELPER_CTOR_CALLER(AEgg); \
 	FORCEINLINE static uint32 __PPO___eggEffectType() { return STRUCT_OFFSET(AEgg, _eggEffectType); }
 
 
-#define GoNutsRemastered_GoNutsRemastered_4_25_Source_GoNutsRemastered_Egg_h_18_PROLOG \
-	GoNutsRemastered_GoNutsRemastered_4_25_Source_GoNutsRemastered_Egg_h_21_EVENT_PARMS
+#define GoNutsRemastered_GoNutsRemastered_Source_GoNutsRemastered_Egg_h_18_PROLOG \
+	GoNutsRemastered_GoNutsRemastered_Source_GoNutsRemastered_Egg_h_21_EVENT_PARMS
 
 
-#define GoNutsRemastered_GoNutsRemastered_4_25_Source_GoNutsRemastered_Egg_h_21_GENERATED_BODY_LEGACY \
+#define GoNutsRemastered_GoNutsRemastered_Source_GoNutsRemastered_Egg_h_21_GENERATED_BODY_LEGACY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	GoNutsRemastered_GoNutsRemastered_4_25_Source_GoNutsRemastered_Egg_h_21_PRIVATE_PROPERTY_OFFSET \
-	GoNutsRemastered_GoNutsRemastered_4_25_Source_GoNutsRemastered_Egg_h_21_SPARSE_DATA \
-	GoNutsRemastered_GoNutsRemastered_4_25_Source_GoNutsRemastered_Egg_h_21_RPC_WRAPPERS \
-	GoNutsRemastered_GoNutsRemastered_4_25_Source_GoNutsRemastered_Egg_h_21_CALLBACK_WRAPPERS \
-	GoNutsRemastered_GoNutsRemastered_4_25_Source_GoNutsRemastered_Egg_h_21_INCLASS \
-	GoNutsRemastered_GoNutsRemastered_4_25_Source_GoNutsRemastered_Egg_h_21_STANDARD_CONSTRUCTORS \
+	GoNutsRemastered_GoNutsRemastered_Source_GoNutsRemastered_Egg_h_21_PRIVATE_PROPERTY_OFFSET \
+	GoNutsRemastered_GoNutsRemastered_Source_GoNutsRemastered_Egg_h_21_SPARSE_DATA \
+	GoNutsRemastered_GoNutsRemastered_Source_GoNutsRemastered_Egg_h_21_RPC_WRAPPERS \
+	GoNutsRemastered_GoNutsRemastered_Source_GoNutsRemastered_Egg_h_21_CALLBACK_WRAPPERS \
+	GoNutsRemastered_GoNutsRemastered_Source_GoNutsRemastered_Egg_h_21_INCLASS \
+	GoNutsRemastered_GoNutsRemastered_Source_GoNutsRemastered_Egg_h_21_STANDARD_CONSTRUCTORS \
 public: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
 
-#define GoNutsRemastered_GoNutsRemastered_4_25_Source_GoNutsRemastered_Egg_h_21_GENERATED_BODY \
+#define GoNutsRemastered_GoNutsRemastered_Source_GoNutsRemastered_Egg_h_21_GENERATED_BODY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	GoNutsRemastered_GoNutsRemastered_4_25_Source_GoNutsRemastered_Egg_h_21_PRIVATE_PROPERTY_OFFSET \
-	GoNutsRemastered_GoNutsRemastered_4_25_Source_GoNutsRemastered_Egg_h_21_SPARSE_DATA \
-	GoNutsRemastered_GoNutsRemastered_4_25_Source_GoNutsRemastered_Egg_h_21_RPC_WRAPPERS_NO_PURE_DECLS \
-	GoNutsRemastered_GoNutsRemastered_4_25_Source_GoNutsRemastered_Egg_h_21_CALLBACK_WRAPPERS \
-	GoNutsRemastered_GoNutsRemastered_4_25_Source_GoNutsRemastered_Egg_h_21_INCLASS_NO_PURE_DECLS \
-	GoNutsRemastered_GoNutsRemastered_4_25_Source_GoNutsRemastered_Egg_h_21_ENHANCED_CONSTRUCTORS \
+	GoNutsRemastered_GoNutsRemastered_Source_GoNutsRemastered_Egg_h_21_PRIVATE_PROPERTY_OFFSET \
+	GoNutsRemastered_GoNutsRemastered_Source_GoNutsRemastered_Egg_h_21_SPARSE_DATA \
+	GoNutsRemastered_GoNutsRemastered_Source_GoNutsRemastered_Egg_h_21_RPC_WRAPPERS_NO_PURE_DECLS \
+	GoNutsRemastered_GoNutsRemastered_Source_GoNutsRemastered_Egg_h_21_CALLBACK_WRAPPERS \
+	GoNutsRemastered_GoNutsRemastered_Source_GoNutsRemastered_Egg_h_21_INCLASS_NO_PURE_DECLS \
+	GoNutsRemastered_GoNutsRemastered_Source_GoNutsRemastered_Egg_h_21_ENHANCED_CONSTRUCTORS \
 private: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
@@ -135,7 +135,7 @@ PRAGMA_ENABLE_DEPRECATION_WARNINGS
 template<> GONUTSREMASTERED_API UClass* StaticClass<class AEgg>();
 
 #undef CURRENT_FILE_ID
-#define CURRENT_FILE_ID GoNutsRemastered_GoNutsRemastered_4_25_Source_GoNutsRemastered_Egg_h
+#define CURRENT_FILE_ID GoNutsRemastered_GoNutsRemastered_Source_GoNutsRemastered_Egg_h
 
 
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

@@ -41,6 +41,9 @@ void AEmptyCharacter::BeginPlay()
 	{
 		_playerChar->_onUpdateWalkSpeed.AddDynamic(this, &AEmptyCharacter::updateWalkSpeed);
 	}
+
+
+	GetCharacterMovement()->Velocity = FVector(600.0f, 0.0f, 0.0f);
 }
 
 // Called every frame

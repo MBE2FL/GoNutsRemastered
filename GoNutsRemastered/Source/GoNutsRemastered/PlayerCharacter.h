@@ -7,6 +7,9 @@
 #include "PlayerCharacter.generated.h"
 
 
+class AEmptyCharacter;
+
+
 UDELEGATE(BlueprintCallable)
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnUpdateWalkSpeedDelegate, float, walkSpeed);
 
@@ -48,6 +51,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void unstun();
 
+	UFUNCTION(BlueprintCallable)
+	void addImpulse(const FVector& impulse);
+
 
 
 	UPROPERTY(BlueprintAssignable)
@@ -62,4 +68,7 @@ private:
 	float _stunTime = 1.0f;
 
 	FTimerHandle _stopMovingTimerHandle;
+
+
+	AEmptyCharacter* _parentChar;
 };

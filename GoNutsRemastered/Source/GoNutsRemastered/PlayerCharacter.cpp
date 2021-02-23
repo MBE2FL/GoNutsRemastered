@@ -3,6 +3,7 @@
 
 #include "PlayerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "EmptyCharacter.h"
 
 
 // Sets default values
@@ -18,7 +19,7 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	
+	_parentChar = Cast<AEmptyCharacter>(GetAttachParentActor());
 }
 
 void APlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -51,13 +52,13 @@ void APlayerCharacter::updateWalkSpeed(float walkSpeed)
 
 void APlayerCharacter::stun()
 {
-	ACharacter* parentChar = Cast<ACharacter>(GetRootComponent()->GetAttachParent()->GetOwner());
-	UCharacterMovementComponent* parentMovementComp = parentChar->GetCharacterMovement();
+	//ACharacter* parentChar = Cast<ACharacter>(GetRootComponent()->GetAttachParent()->GetOwner());
+	UCharacterMovementComponent* parentMovementComp = _parentChar->GetCharacterMovement();
 
 
 	parentMovementComp->Velocity = FVector::ZeroVector;
 	GetCharacterMovement()->Velocity = FVector::ZeroVector;
-	updateWalkSpeed(0.0f);
+	//updateWalkSpeed(0.0f);
 
 	_canMove = false;
 
@@ -68,10 +69,22 @@ void APlayerCharacter::stun()
 
 void APlayerCharacter::unstun()
 {
-	updateWalkSpeed(600.0f);
+	//updateWalkSpeed(600.0f);
 
 	_canMove = true;
 
 	// TO-DO: Stop stun animation.
+}
+
+void APlayerCharacter::addImpulse(const FVector& impulse)
+{
+	// Add X impluse to the parent character only.
+	UCharacterMovementComponent* parentMovementComp = _parentChar->GetCharacterMovement();
+	parentMovementComp->AddImpulse(FVector(impulse.X, 0.0f, 0.0f), true);
+	parentMovementComp->Velocity.X = FMath::Clamp(parentMovementComp->Velocity.X, 600.0f, 1600.0f);
+
+
+	// Add Y and Z impulse to the player character only.
+	Cast< UCharacterMovementComponent>(GetMovementComponent())->AddImpulse(FVector(0.0f, impulse.Y, impulse.Z), true);
 }
 

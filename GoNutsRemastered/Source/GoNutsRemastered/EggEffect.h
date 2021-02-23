@@ -54,7 +54,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Egg Effect|Effect Settings")
 	UParticleSystemComponent* _effectParticleComp;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Egg Effect|General Settings")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Egg Effect|General Settings")
 	APawn* _playerPawn;
 
 };

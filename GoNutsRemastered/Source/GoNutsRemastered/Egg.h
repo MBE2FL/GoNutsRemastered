@@ -11,6 +11,18 @@
 class AEggEffect;
 class UParticleSystemComponent;
 
+
+UENUM(BlueprintType)
+enum class EEggType : uint8
+{
+	FREEZE_EGG = 0,
+	ROLL_EGG = 1,
+	GAS_EGG = 2,
+	GOO_EGG = 3,
+	EXPLOSION_EGG = 4
+};
+
+
 UDELEGATE(BlueprintCallable)
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FEggEffectDelegate, AEggEffect*, eggEffect);
 
@@ -28,7 +40,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Egg|Effect Settings")
-	void onEggImpact(TSubclassOf<AEggEffect> eggEffectType, AEggEffect* eggEffectActor);
+	void onEggImpact(EEggType eggType, TSubclassOf<AEggEffect> eggEffectType, AEggEffect* eggEffectActor);
 
 
 protected:
@@ -36,11 +48,11 @@ protected:
 	virtual void BeginPlay() override;
 
 	UFUNCTION()
-	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, 
+	virtual void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, 
 		bool bFromSweep, const FHitResult& SweepResult);
 
 	UFUNCTION()
-	void OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	virtual void OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 
 	UPROPERTY(VisibleAnywhere)
@@ -50,16 +62,23 @@ protected:
 	FEggEffectDelegate _eggEffectDelegate;
 
 
-private:
-	UPROPERTY(EditAnywhere, Category = "Egg")
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Egg", meta = (AllowPrivateAccess = true))
 	UStaticMeshComponent* _eggMeshComp;
 
-	UPROPERTY(EditAnywhere, Category = "Egg|Impact Settings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Egg|Impact Settings", meta = (AllowPrivateAccess = true))
 	UParticleSystemComponent* _impactParticleComponent;
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Egg|Effect Settings", meta = (AllowPrivateAccess = true))
 	//AEggEffect* _eggEffect;
 
-	UPROPERTY(EditAnywhere, Category = "Egg|Effect Settings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Egg|Effect Settings", meta = (AllowPrivateAccess = true))
 	TSubclassOf<AEggEffect> _eggEffectType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Egg", meta = (AllowPrivateAccess = true))
+	EEggType _eggType;
+
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Egg")
+	APawn* _playerPawn;
 };

@@ -56,7 +56,7 @@ bool AEggEffect::isPlayerWithinRange(const float range, float& dist, bool calcRe
 	{
 		if (calcRealDist)
 		{
-			dist =FVector::Dist(_playerPawn->GetActorLocation(), GetActorLocation());
+			dist = FVector::Dist(_playerPawn->GetActorLocation(), GetActorLocation());
 			return  dist <= range;
 		}
 		else

@@ -41,21 +41,19 @@ void AEgg::BeginPlay()
 	Super::BeginPlay();
 
 	
+	_playerPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
 
-	//_sphereComp = Cast<USphereComponent>(GetComponentByClass(USphereComponent::StaticClass()));
-	//_sphereComp = Cast<UStaticMeshComponent>(GetComponentByClass(UStaticMeshComponent::StaticClass()));
-	//_eggMeshComp = Cast<UStaticMeshComponent>(RootComponent);
 
-	if (!_eggMeshComp)
-	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to get Egg sphere component!"));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Got Egg sphere component!"));
-		_eggMeshComp->OnComponentBeginOverlap.AddDynamic(this, &AEgg::OnOverlapBegin);
-		_eggMeshComp->OnComponentEndOverlap.AddDynamic(this, &AEgg::OnOverlapEnd);
-	}
+	//if (!_eggMeshComp)
+	//{
+	//	UE_LOG(LogTemp, Error, TEXT("Failed to get Egg sphere component!"));
+	//}
+	//else
+	//{
+	//	UE_LOG(LogTemp, Warning, TEXT("Got Egg sphere component!"));
+	//	_eggMeshComp->OnComponentBeginOverlap.AddDynamic(this, &AEgg::OnOverlapBegin);
+	//	_eggMeshComp->OnComponentEndOverlap.AddDynamic(this, &AEgg::OnOverlapEnd);
+	//}
 
 }
 
@@ -75,7 +73,7 @@ void AEgg::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActo
 	AEggEffect* eggEffect = Cast<AEggEffect>(GetWorld()->SpawnActor(_eggEffectType.Get(), &pos, &rot));
 
 	_impactParticleComponent->ActivateSystem();
-	onEggImpact(_eggEffectType, eggEffect);
+	onEggImpact(_eggType, _eggEffectType, eggEffect);
 }
 
 void AEgg::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
@@ -89,7 +87,14 @@ void AEgg::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	DrawDebugSphere(GetWorld(), GetActorLocation(), 80.0f, 20, _debugColour, false, -1.0f, 0, 1.0f);
+	//DrawDebugSphere(GetWorld(), GetActorLocation(), 80.0f, 20, _debugColour, false, -1.0f, 0, 1.0f);
+
+
+	// Check if this egg has moved far enough behind the player to be destroyed.
+	if ((GetActorLocation().X + 500.0f) < _playerPawn->GetActorLocation().X)
+	{
+		Destroy();
+	}
 }
 
 //void AEgg::eggEffect_Implementation()

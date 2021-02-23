@@ -85,29 +85,29 @@ void ALevelChunk::Tick(float DeltaTime)
 	if (IsValid(player))
 	{
 		// Only check for recycling if the player is not rotating.
-		if (!player->getIsRotating())
-		{
-			FVector nonNormDir = GetActorLocation() - player->GetActorLocation();
-			nonNormDir.Normalize();
-			// Check if this chunk is behind the player.
-			if (FVector::DotProduct(player->GetActorForwardVector(), nonNormDir) < 0.0f)
-			{
-				// Check if this chunk is far enough away from the player to be recycled.
-				// Distance is calculated from the player's position to this chunks's position, minus this chunks's static local vertical(X) size.
-				float offset = FMath::Square(getMesh()->GetStaticMesh()->GetBounds().BoxExtent.X * 2.0f);
-				if (FVector::DistSquaredXY(player->GetActorLocation(), GetActorLocation()) - offset >= FMath::Square(2000.0f))
-				{
-					chunkObjectPool->recycleLevelChunk(this);
-					//UE_LOG(LogLevelChunk, Log, TEXT("Chunk, %s, recycled!"), *GetName());
+		//if (!player->getIsRotating())
+		//{
+		//	FVector nonNormDir = GetActorLocation() - player->GetActorLocation();
+		//	nonNormDir.Normalize();
+		//	// Check if this chunk is behind the player.
+		//	if (FVector::DotProduct(player->GetActorForwardVector(), nonNormDir) < 0.0f)
+		//	{
+		//		// Check if this chunk is far enough away from the player to be recycled.
+		//		// Distance is calculated from the player's position to this chunks's position, minus this chunks's static local vertical(X) size.
+		//		float offset = FMath::Square(getMesh()->GetStaticMesh()->GetBounds().BoxExtent.X * 2.0f);
+		//		if (FVector::DistSquaredXY(player->GetActorLocation(), GetActorLocation()) - offset >= FMath::Square(2000.0f))
+		//		{
+		//			chunkObjectPool->recycleLevelChunk(this);
+		//			//UE_LOG(LogLevelChunk, Log, TEXT("Chunk, %s, recycled!"), *GetName());
 
-					// Recycle all obstacles on this chunk.
-					for (ULaneComponent* lane : _lanes)
-					{
-						lane->recycleObstacles();
-					}
-				}
-			}
-		}
+		//			// Recycle all obstacles on this chunk.
+		//			for (ULaneComponent* lane : _lanes)
+		//			{
+		//				lane->recycleObstacles();
+		//			}
+		//		}
+		//	}
+		//}
 
 	}
 	else

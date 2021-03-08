@@ -20,6 +20,24 @@ void ABirdmanCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+
+	GetWorld()->GetTimerManager().SetTimer(
+		_pursuitCooldownTimerHandle, [&]() 
+		{ 
+		_canPursue = true; 
+		onPursuitCooldownOver();
+		//GetWorld()->GetTimerManager().PauseTimer(_pursuitCooldownTimerHandle);
+		UE_LOG(LogTemp, Warning, TEXT("Timer!"));
+		}, 
+		_pursuitCooldown,
+		false);
+}
+
+void ABirdmanCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	GetWorld()->GetTimerManager().ClearTimer(_pursuitCooldownTimerHandle);
 }
 
 // Called every frame
@@ -65,7 +83,7 @@ void ABirdmanCharacter::dropEgg()
 	case EEggType::ROLL_EGG:
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Dropped Roll Egg!"));
-		const FVector pos = GetActorLocation();
+		const FVector pos = GetActorLocation() - FVector(0.0f, 0.0f, 200.0f);
 		const FRotator rot = GetActorRotation();
 		AEgg* egg = Cast<AEgg>(GetWorld()->SpawnActor(_eggTypes[EEggType::ROLL_EGG].Get(), &pos, &rot));
 	}
@@ -92,7 +110,50 @@ void ABirdmanCharacter::dropEgg()
 
 		_currentLane = 1;
 		_currentLaneY = 0.0f;
+
+
+		//FTimerDelegate timerCallback;
+		//timerCallback.BindLambda([&]() { _canPursue = true; });
+		//GetWorld()->GetTimerManager().SetTimer(_pursuitCooldownTimerHandle, timerCallback, _pursuitCooldown, false);
+		//GetWorld()->GetTimerManager().SetTimer(
+		//	_pursuitCooldownTimerHandle, 
+		//	[&]() { _canPursue = true; onPursuitCooldownOver(); }, 
+		//	_pursuitCooldown, 
+		//	false);
+
+		//UE_LOG(LogTemp, Warning, TEXT("Time Remaining: %f"), GetWorld()->GetTimerManager().GetTimerRemaining(_pursuitCooldownTimerHandle));
+		//GetWorld()->GetTimerManager().UnPauseTimer(_pursuitCooldownTimerHandle);
+
+
+		GetWorld()->GetTimerManager().ClearTimer(_pursuitCooldownTimerHandle);
+		GetWorld()->GetTimerManager().SetTimer(
+			_pursuitCooldownTimerHandle, [&]()
+			{
+				_canPursue = true;
+				onPursuitCooldownOver();
+				UE_LOG(LogTemp, Warning, TEXT("Timer!"));
+			},
+			_pursuitCooldown,
+			false);
 	}
+}
+
+bool ABirdmanCharacter::decideToPursue()
+{
+	float chance = FMath::FRandRange(0.0f, 100.0f);
+
+	if (chance <= _engagePursuitChance)
+	{
+		_isInPursuit = true;
+		_prevTemp = _isInPursuit;
+		onEngagePursuit();
+
+		UE_LOG(LogTemp, Warning, TEXT("Chance %f <= %f PChance"), chance, _engagePursuitChance);
+
+		return true;
+	}
+
+	return false;
 }
 
 //void ABirdmanCharacter::pickNextLane()

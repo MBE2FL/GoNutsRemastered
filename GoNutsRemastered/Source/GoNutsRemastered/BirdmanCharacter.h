@@ -22,6 +22,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -45,8 +47,14 @@ public:
 	//UFUNCTION(BlueprintCallable)
 	//void moveToTargetLane();
 
+	UFUNCTION(BlueprintCallable)
+	bool decideToPursue();
+
 	UFUNCTION(BlueprintImplementableEvent)
 	void onEngagePursuit();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void onPursuitCooldownOver();
 
 private:
 	UPROPERTY()
@@ -64,6 +72,14 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
 	bool _isInPursuit = false;
 	bool _prevTemp = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+	float _pursuitCooldown = 2.0f;
+	FTimerHandle _pursuitCooldownTimerHandle;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+	bool _canPursue = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true, ClampMin = 0.0f, ClampMax = 100.0f))
+	float _engagePursuitChance = 25.0f;
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))

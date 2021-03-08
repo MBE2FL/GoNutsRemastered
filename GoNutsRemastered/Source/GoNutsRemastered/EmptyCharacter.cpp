@@ -50,7 +50,7 @@ void AEmptyCharacter::BeginPlay()
 void AEmptyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	
 	if (_playerChar->canPlayerMove())
 	{
 		// Zero out pitch and roll.

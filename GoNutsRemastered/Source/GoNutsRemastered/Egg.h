@@ -12,6 +12,10 @@ class AEggEffect;
 class UParticleSystemComponent;
 
 
+#define ECC_TileChannel ECollisionChannel::ECC_GameTraceChannel3
+#define ECC_PlayerChannel ECollisionChannel::ECC_GameTraceChannel4
+
+
 UENUM(BlueprintType)
 enum class EEggType : uint8
 {

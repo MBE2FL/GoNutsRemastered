@@ -16,15 +16,18 @@ AEgg::AEgg()
 
 
 	_eggMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh Test"));
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> meshAsset(TEXT("StaticMesh'/Engine/BasicShapes/Sphere.Sphere'"));
+	//static ConstructorHelpers::FObjectFinder<UStaticMesh> meshAsset(TEXT("StaticMesh'/Engine/BasicShapes/Sphere.Sphere'"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> meshAsset(TEXT("StaticMesh'/Game/Birdman/Eggs/Meshes/egg.egg'"));
 	_eggMeshComp->SetStaticMesh(meshAsset.Object);
-	static ConstructorHelpers::FObjectFinder<UMaterial> matAsset(TEXT("Material'/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial'"));
+	//static ConstructorHelpers::FObjectFinder<UMaterial> matAsset(TEXT("Material'/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial'"));
+	static ConstructorHelpers::FObjectFinder<UMaterial> matAsset(TEXT("Material'/Game/Birdman/Eggs/Meshes/Egg_Texture.Egg_Texture'"));
 	_eggMeshComp->SetMaterial(0, matAsset.Object);
 	_eggMeshComp->SetCollisionProfileName(TEXT("Custom"));
 	_eggMeshComp->SetCollisionObjectType(ECC_PhysicsBody);
-	_eggMeshComp->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
-	_eggMeshComp->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECR_Overlap);
-	_eggMeshComp->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap);
+	_eggMeshComp->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	_eggMeshComp->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
+	_eggMeshComp->SetCollisionResponseToChannel(ECC_TileChannel, ECR_Overlap);
+	_eggMeshComp->SetCollisionResponseToChannel(ECC_PlayerChannel, ECR_Overlap);
 	_eggMeshComp->SetupAttachment(nullptr);
 	RootComponent = _eggMeshComp;
 

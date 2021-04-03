@@ -43,7 +43,7 @@ void AEmptyCharacter::BeginPlay()
 	}
 
 
-	GetCharacterMovement()->Velocity = FVector(600.0f, 0.0f, 0.0f);
+	//GetCharacterMovement()->Velocity = FVector(600.0f, 0.0f, 0.0f);
 }
 
 // Called every frame
@@ -59,7 +59,7 @@ void AEmptyCharacter::Tick(float DeltaTime)
 		rot.Pitch = 0.0f;
 		UKismetMathLibrary::GetForwardVector(rot);
 
-		AddMovementInput(UKismetMathLibrary::GetForwardVector(rot));
+		//AddMovementInput(UKismetMathLibrary::GetForwardVector(rot));
 	}
 }
 

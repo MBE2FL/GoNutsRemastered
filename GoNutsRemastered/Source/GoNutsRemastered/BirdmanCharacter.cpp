@@ -69,9 +69,18 @@ void ABirdmanCharacter::updateWalkSpeed(float walkSpeed)
 
 EEggType ABirdmanCharacter::pickNextEgg()
 {
-	_currentEggType = EEggType::ROLL_EGG;
+	int32 randomNum = FMath::RandRange(0, 100);
 
-	return EEggType::ROLL_EGG;
+	if (randomNum >= 0 && randomNum < 0)
+	{
+		_currentEggType = EEggType::ROLL_EGG;
+	}
+	else
+	{
+		_currentEggType = EEggType::EXPLOSION_EGG;
+	}
+
+	return _currentEggType;
 }
 
 void ABirdmanCharacter::dropEgg()
@@ -93,6 +102,13 @@ void ABirdmanCharacter::dropEgg()
 	case EEggType::GOO_EGG:
 		break;
 	case EEggType::EXPLOSION_EGG:
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Dropped Explosion Egg!"));
+		const FVector pos = GetActorLocation() - FVector(0.0f, 0.0f, 200.0f);
+		const FRotator rot = GetActorRotation();
+		AEgg* egg = Cast<AEgg>(GetWorld()->SpawnActor(_eggTypes[EEggType::EXPLOSION_EGG].Get(), &pos, &rot));
+		egg->AttachToActor(GetAttachParentActor(), FAttachmentTransformRules::KeepWorldTransform);
+	}
 		break;
 	default:
 		break;

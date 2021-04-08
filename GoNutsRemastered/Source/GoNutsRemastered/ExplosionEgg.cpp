@@ -43,6 +43,8 @@ void AExplosionEgg::BeginPlay()
 
 void AExplosionEgg::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	Super::EndPlay(EndPlayReason);
+
 	if (!IsValid(_impactParticleComponent))
 	{
 		UE_LOG(LogTemp, Error, TEXT("Failed to get impact particle system component!"));
@@ -112,12 +114,6 @@ AEggTarget::AEggTarget()
 	static ConstructorHelpers::FObjectFinder<UMaterial> matAsset(TEXT("Material'/Game/Birdman/Eggs/Target_Mat.Target_Mat'"));
 	_targetMeshComp->SetMaterial(0, matAsset.Object);
 
-	//static ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> matInstanceAsset(TEXT("MaterialInstanceConstant'/Game/Birdman/Eggs/Target_Mat_Inst.Target_Mat_Inst'"));
-	UMaterialInstanceDynamic* targetMeshMat = UMaterialInstanceDynamic::Create(matAsset.Object, _targetMeshComp);
-	//_targetMeshMat = matInstanceAsset.Object;
-	targetMeshMat->SetVectorParameterValue(TEXT("TargetColour"), FLinearColor::Black);
-	//_targetMeshMat->setVector
-	_targetMeshComp->SetMaterial(0, targetMeshMat);
 
 	_targetMeshComp->SetCollisionProfileName(TEXT("NoCollision"));
 	//_targetMeshComp->SetCollisionObjectType(ECC_WorldDynamic);
@@ -126,8 +122,32 @@ AEggTarget::AEggTarget()
 	RootComponent = _targetMeshComp;
 }
 
+void AEggTarget::BeginPlay()
+{
+	Super::BeginPlay();
+
+	//static ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> matInstanceAsset(TEXT("MaterialInstanceConstant'/Game/Birdman/Eggs/Target_Mat_Inst.Target_Mat_Inst'"));
+	UMaterialInstanceDynamic* targetMeshMat = UMaterialInstanceDynamic::Create(_targetMeshComp->GetMaterial(0), _targetMeshComp);
+	//_targetMeshMat = matInstanceAsset.Object;
+	targetMeshMat->SetVectorParameterValue(TEXT("TargetColour"), FLinearColor::Black);
+	//_targetMeshMat->setVector
+	_targetMeshComp->SetMaterial(0, targetMeshMat);
+}
+
+void AEggTarget::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	setTargetColour(FLinearColor::Black);
+}
+
 void AEggTarget::Tick(float DeltaTime)
 {
+	Super::Tick(DeltaTime);
+
+	//UE_LOG(LogTemp, Error, TEXT("JLKSDJLFK"));
+
+
 	if (_isActive)
 	{
 		//// Find out which chunk is underneath this player.

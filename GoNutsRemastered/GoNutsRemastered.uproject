@@ -13,5 +13,10 @@
 				"CoreUObject"
 			]
 		}
+	],
+	"TargetPlatforms": [
+		"Android",
+		"AllDesktop",
+		"WindowsNoEditor"
 	]
 }

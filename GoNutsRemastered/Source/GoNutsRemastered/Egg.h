@@ -14,6 +14,7 @@ class UParticleSystemComponent;
 
 #define ECC_TileChannel ECollisionChannel::ECC_GameTraceChannel3
 #define ECC_PlayerChannel ECollisionChannel::ECC_GameTraceChannel4
+#define ECC_EggChannel ECollisionChannel::ECC_GameTraceChannel5
 
 
 UENUM(BlueprintType)

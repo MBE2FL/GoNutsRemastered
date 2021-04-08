@@ -6,6 +6,10 @@
 #include "Egg.h"
 #include "ExplosionEgg.generated.h"
 
+
+//class UMaterialInstanceConstant;
+
+
 /**
  * 
  */
@@ -37,5 +41,42 @@ private:
 		const FHitResult& SweepResult) override;
 
 
+	UFUNCTION()
 	void onExplosionFinished(UParticleSystemComponent* system);
+};
+
+
+
+UCLASS()
+class GONUTSREMASTERED_API AEggTarget : public AActor
+{
+	GENERATED_BODY()
+
+public:
+	// Sets default values for this actor's properties
+	AEggTarget();
+
+	// Called when the game starts or when spawned
+	//virtual void BeginPlay() override;
+
+	//virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION(BlueprintCallable)
+	void setTargetColour(FLinearColor colour);
+
+	UFUNCTION(BlueprintCallable)
+	void setIsActive(bool isActive);
+
+
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	//UMaterialInstanceDynamic* _targetMeshMat;
+
+private:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+	UStaticMeshComponent* _targetMeshComp;
+
+	bool _isActive = false;
 };

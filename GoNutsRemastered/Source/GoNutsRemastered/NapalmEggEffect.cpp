@@ -8,8 +8,8 @@
 ANapalmEggEffect::ANapalmEggEffect()
 {
 	// Set default values.
-	static ConstructorHelpers::FObjectFinder<UParticleSystem> fireParticleSystem(TEXT("ParticleSystem'/Game/MobileStarterContent/Particles/P_Fire.P_Fire'"));
-	_effectParticleComp->Template = fireParticleSystem.Object;
+	//static ConstructorHelpers::FObjectFinder<UParticleSystem> fireParticleSystem(TEXT("ParticleSystem'/Game/MobileStarterContent/Particles/P_Fire.P_Fire'"));
+	_effectParticleComp->Template = NULL/*fireParticleSystem.Object*/;
 
 	_damagePerSecond = 10.0f;
 	_areaOfEffect = 400.0f;

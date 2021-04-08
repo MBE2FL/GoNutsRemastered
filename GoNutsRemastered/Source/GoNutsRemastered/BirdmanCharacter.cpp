@@ -5,6 +5,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 
 #include "Egg.h"
+#include "ExplosionEgg.h"
+
 
 // Sets default values
 ABirdmanCharacter::ABirdmanCharacter()
@@ -31,6 +33,10 @@ void ABirdmanCharacter::BeginPlay()
 		}, 
 		_pursuitCooldown,
 		false);
+
+
+
+	_eggTarget->setIsActive(false);
 }
 
 void ABirdmanCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -53,6 +59,11 @@ void ABirdmanCharacter::Tick(float DeltaTime)
 
 		onEngagePursuit();
 	}
+
+
+	FVector pos = _eggTarget->GetActorLocation();
+	pos.Y = GetActorLocation().Y;
+	_eggTarget->SetActorLocation(pos);
 }
 
 // Called to bind functionality to input
@@ -78,6 +89,8 @@ EEggType ABirdmanCharacter::pickNextEgg()
 	else
 	{
 		_currentEggType = EEggType::EXPLOSION_EGG;
+		_eggTarget->setIsActive(true);
+		_eggTarget->setTargetColour(FLinearColor::Black);
 	}
 
 	return _currentEggType;
@@ -108,6 +121,8 @@ void ABirdmanCharacter::dropEgg()
 		const FRotator rot = GetActorRotation();
 		AEgg* egg = Cast<AEgg>(GetWorld()->SpawnActor(_eggTypes[EEggType::EXPLOSION_EGG].Get(), &pos, &rot));
 		egg->AttachToActor(GetAttachParentActor(), FAttachmentTransformRules::KeepWorldTransform);
+
+		//_eggTarget->setTargetColour(FLinearColor::Red);
 	}
 		break;
 	default:

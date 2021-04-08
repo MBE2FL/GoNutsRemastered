@@ -8,6 +8,7 @@
 #include "BirdmanCharacter.generated.h"
 
 class UCharacterMovementComponent;
+class AEggTarget;
 
 UCLASS()
 class GONUTSREMASTERED_API ABirdmanCharacter : public ACharacter
@@ -93,4 +94,7 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
 	float _targetLaneY;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+	AEggTarget* _eggTarget;
 };

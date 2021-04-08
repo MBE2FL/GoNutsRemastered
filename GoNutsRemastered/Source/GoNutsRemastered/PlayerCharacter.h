@@ -56,6 +56,11 @@ public:
 
 
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void onKillPlayer();
+
+
+
 	UPROPERTY(BlueprintAssignable)
 	FOnUpdateWalkSpeedDelegate _onUpdateWalkSpeed;
 

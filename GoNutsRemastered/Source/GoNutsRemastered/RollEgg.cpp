@@ -43,12 +43,25 @@ void ARollEgg::Tick(float DeltaTime)
 		// Set the velocity of this egg according to the given curve and multipliers.
 		_xVelTimer += DeltaTime;
 
+		// Rotate around the world Y-axis.
+		FRotator rot = GetActorRotation();
+		//rot.Pitch += _xVelocity->GetFloatValue(_xVelTimer) * 5.0f;
+		//rot.Pitch += (DeltaTime * 0.02f);
+		UE_LOG(LogTemp, Warning, TEXT("Pitch: %f, ADDED: %f"), rot.Pitch, (DeltaTime * 360.0f));
+
+		//SetActorRotation(rot);
+		AddActorLocalRotation(FRotator(DeltaTime * 360.0f, 0.0f, 0.0f));
+
 		_xVelTimer = FMath::Clamp(_xVelTimer, 0.0f, _xVelMaxTime) / _xVelMaxTime;
 
 		FVector pos = GetActorLocation();
 		pos.X -= _xVelocity->GetFloatValue(_xVelTimer) * 20.0f;
 
 		SetActorLocation(pos);
+
+
+
+
 	}
 }
 

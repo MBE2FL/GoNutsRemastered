@@ -196,7 +196,7 @@ void AEggTarget::Tick(float DeltaTime)
 			setTargetColour(FLinearColor::Black);
 		}
 
-		//DrawDebugLine(GetWorld(), startPos, endPos, colour, false, 0.1f, 0, 3.0f);
+		DrawDebugLine(GetWorld(), startPos, endPos, colour, false, 0.1f, 0, 3.0f);
 	}
 }
 

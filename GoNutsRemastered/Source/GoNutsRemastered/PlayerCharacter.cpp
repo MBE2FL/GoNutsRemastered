@@ -20,6 +20,7 @@ void APlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 	
 	_parentChar = Cast<AEmptyCharacter>(GetAttachParentActor());
+	_parentMovementComp = _parentChar->GetCharacterMovement();
 }
 
 void APlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -34,6 +35,22 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+
+	// Regain velocity after getting hit by a rolling egg.
+	if (_regainVelocity)
+	{
+		_regainVelTimer += DeltaTime;
+		float tValue = _regainVelTimer / _regainVelTime;
+
+		if (tValue >= 1.0f)
+		{
+			tValue = 1.0f;
+			_regainVelocity = false;
+			_regainVelTimer = 0.0f;
+		}
+
+		_parentMovementComp->Velocity.X = FMath::Lerp(_parentMovementComp->Velocity.X, _originalVelocity, tValue);
+	}
 }
 
 // Called to bind functionality to input
@@ -50,13 +67,23 @@ void APlayerCharacter::updateWalkSpeed(float walkSpeed)
 	_onUpdateWalkSpeed.Broadcast(walkSpeed);
 }
 
+void APlayerCharacter::slowDown()
+{
+	onAdjustNutCount(-5);
+	_originalVelocity = _parentMovementComp->Velocity.X;
+	_parentMovementComp->Velocity.X *= _loseVelMultiplier;
+	_regainVelocity = true;
+
+	_regainVelTimer = 0.0f;
+}
+
 void APlayerCharacter::stun()
 {
 	//ACharacter* parentChar = Cast<ACharacter>(GetRootComponent()->GetAttachParent()->GetOwner());
-	UCharacterMovementComponent* parentMovementComp = _parentChar->GetCharacterMovement();
+	//UCharacterMovementComponent* parentMovementComp = _parentChar->GetCharacterMovement();
 
 
-	parentMovementComp->Velocity = FVector::ZeroVector;
+	_parentMovementComp->Velocity = FVector::ZeroVector;
 	GetCharacterMovement()->Velocity = FVector::ZeroVector;
 	//updateWalkSpeed(0.0f);
 

@@ -8,6 +8,7 @@
 //#include "Materials/MaterialInstanceConstant.h"
 #include "DrawDebugHelpers.h"
 #include "PlayerCharacter.h"
+#include "Kismet/GameplayStatics.h"
 
 
 
@@ -53,6 +54,15 @@ void AExplosionEgg::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	{
 		_impactParticleComponent->OnSystemFinished.RemoveDynamic(this, &AExplosionEgg::onExplosionFinished);
 	}
+}
+
+void AExplosionEgg::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	FVector pos = GetActorLocation();
+	pos.X = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)->GetActorLocation().X;
+	SetActorLocation(pos);
 }
 
 void AExplosionEgg::OnOverlapBegin(
@@ -196,7 +206,7 @@ void AEggTarget::Tick(float DeltaTime)
 			setTargetColour(FLinearColor::Black);
 		}
 
-		DrawDebugLine(GetWorld(), startPos, endPos, colour, false, 0.1f, 0, 3.0f);
+		//DrawDebugLine(GetWorld(), startPos, endPos, colour, false, 0.1f, 0, 3.0f);
 	}
 }
 

@@ -82,7 +82,7 @@ EEggType ABirdmanCharacter::pickNextEgg()
 {
 	int32 randomNum = FMath::RandRange(0, 100);
 
-	if (randomNum >= 0 && randomNum < 0)
+	if (randomNum >= 0 && randomNum < 50)
 	{
 		_currentEggType = EEggType::ROLL_EGG;
 	}
@@ -121,6 +121,8 @@ void ABirdmanCharacter::dropEgg()
 		const FRotator rot = GetActorRotation();
 		AEgg* egg = Cast<AEgg>(GetWorld()->SpawnActor(_eggTypes[EEggType::EXPLOSION_EGG].Get(), &pos, &rot));
 		egg->AttachToActor(GetAttachParentActor(), FAttachmentTransformRules::KeepWorldTransform);
+		//egg->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
+		//egg->GetRootComponent()->AttachToComponent(GetAttachParentActor()->GetRootComponent(), FAttachmentTransformRules::KeepWorldTransform);
 
 		//_eggTarget->setTargetColour(FLinearColor::Red);
 	}
@@ -166,6 +168,9 @@ void ABirdmanCharacter::dropEgg()
 			},
 			_pursuitCooldown,
 			false);
+
+
+		_eggTarget->setIsActive(false);
 	}
 }
 

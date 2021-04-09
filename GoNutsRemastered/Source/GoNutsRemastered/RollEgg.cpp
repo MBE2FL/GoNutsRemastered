@@ -43,6 +43,8 @@ void ARollEgg::Tick(float DeltaTime)
 		// Set the velocity of this egg according to the given curve and multipliers.
 		_xVelTimer += DeltaTime;
 
+
+
 		// Rotate around the world Y-axis.
 		FRotator rot = GetActorRotation();
 		//rot.Pitch += _xVelocity->GetFloatValue(_xVelTimer) * 5.0f;
@@ -52,16 +54,15 @@ void ARollEgg::Tick(float DeltaTime)
 		//SetActorRotation(rot);
 		AddActorLocalRotation(FRotator(DeltaTime * 360.0f, 0.0f, 0.0f));
 
+
+
+
 		_xVelTimer = FMath::Clamp(_xVelTimer, 0.0f, _xVelMaxTime) / _xVelMaxTime;
 
 		FVector pos = GetActorLocation();
 		pos.X -= _xVelocity->GetFloatValue(_xVelTimer) * 20.0f;
 
 		SetActorLocation(pos);
-
-
-
-
 	}
 }
 
@@ -89,7 +90,8 @@ void ARollEgg::OnOverlapBegin(
 	// Overlapped with the player.
 	else if (OtherComp->GetCollisionObjectType() == ECC_PlayerChannel)
 	{
-		Cast<APlayerCharacter>(OtherActor)->stun();
+		//Cast<APlayerCharacter>(OtherActor)->stun();
+		Cast<APlayerCharacter>(OtherActor)->slowDown();
 
 
 		// Play death stuff.

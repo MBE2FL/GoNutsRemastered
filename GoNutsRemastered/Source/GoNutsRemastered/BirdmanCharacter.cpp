@@ -5,6 +5,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 
 #include "Egg.h"
+#include "ExplosionEgg.h"
+
 
 // Sets default values
 ABirdmanCharacter::ABirdmanCharacter()
@@ -31,6 +33,10 @@ void ABirdmanCharacter::BeginPlay()
 		}, 
 		_pursuitCooldown,
 		false);
+
+
+
+	_eggTarget->setIsActive(false);
 }
 
 void ABirdmanCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -53,6 +59,11 @@ void ABirdmanCharacter::Tick(float DeltaTime)
 
 		onEngagePursuit();
 	}
+
+
+	FVector pos = _eggTarget->GetActorLocation();
+	pos.Y = GetActorLocation().Y;
+	_eggTarget->SetActorLocation(pos);
 }
 
 // Called to bind functionality to input
@@ -69,9 +80,20 @@ void ABirdmanCharacter::updateWalkSpeed(float walkSpeed)
 
 EEggType ABirdmanCharacter::pickNextEgg()
 {
-	_currentEggType = EEggType::ROLL_EGG;
+	int32 randomNum = FMath::RandRange(0, 100);
 
-	return EEggType::ROLL_EGG;
+	if (randomNum >= 0 && randomNum < 50)
+	{
+		_currentEggType = EEggType::ROLL_EGG;
+	}
+	else
+	{
+		_currentEggType = EEggType::EXPLOSION_EGG;
+		_eggTarget->setIsActive(true);
+		_eggTarget->setTargetColour(FLinearColor::Black);
+	}
+
+	return _currentEggType;
 }
 
 void ABirdmanCharacter::dropEgg()
@@ -93,6 +115,17 @@ void ABirdmanCharacter::dropEgg()
 	case EEggType::GOO_EGG:
 		break;
 	case EEggType::EXPLOSION_EGG:
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Dropped Explosion Egg!"));
+		const FVector pos = GetActorLocation() - FVector(0.0f, 0.0f, 200.0f);
+		const FRotator rot = GetActorRotation();
+		AEgg* egg = Cast<AEgg>(GetWorld()->SpawnActor(_eggTypes[EEggType::EXPLOSION_EGG].Get(), &pos, &rot));
+		egg->AttachToActor(GetAttachParentActor(), FAttachmentTransformRules::KeepWorldTransform);
+		//egg->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
+		//egg->GetRootComponent()->AttachToComponent(GetAttachParentActor()->GetRootComponent(), FAttachmentTransformRules::KeepWorldTransform);
+
+		//_eggTarget->setTargetColour(FLinearColor::Red);
+	}
 		break;
 	default:
 		break;
@@ -135,6 +168,9 @@ void ABirdmanCharacter::dropEgg()
 			},
 			_pursuitCooldown,
 			false);
+
+
+		_eggTarget->setIsActive(false);
 	}
 }
 

@@ -13,6 +13,7 @@ AEmptyCharacter::AEmptyCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	//RootComponent = GetCapsuleComponent();
 }
 
 // Called when the game starts or when spawned
@@ -57,9 +58,8 @@ void AEmptyCharacter::Tick(float DeltaTime)
 		FRotator rot = GetControlRotation();
 		rot.Roll = 0.0f;
 		rot.Pitch = 0.0f;
-		UKismetMathLibrary::GetForwardVector(rot);
 
-		AddMovementInput(UKismetMathLibrary::GetForwardVector(rot));
+		AddMovementInput(UKismetMathLibrary::GetForwardVector(rot), _speedMultiplier);
 	}
 }
 

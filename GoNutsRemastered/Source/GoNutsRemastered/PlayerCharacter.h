@@ -46,6 +46,9 @@ public:
 	void updateWalkSpeed(float walkSpeed);
 
 	UFUNCTION(BlueprintCallable)
+	void slowDown();
+
+	UFUNCTION(BlueprintCallable)
 	void stun();
 
 	UFUNCTION(BlueprintCallable)
@@ -53,6 +56,14 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void addImpulse(const FVector& impulse);
+
+
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void onKillPlayer();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void onAdjustNutCount(int32 deltaNuts);
 
 
 
@@ -69,6 +80,17 @@ private:
 
 	FTimerHandle _stopMovingTimerHandle;
 
+	bool _regainVelocity = false;
+	float _originalVelocity;
 
+
+	UPROPERTY()
 	AEmptyCharacter* _parentChar;
+	UPROPERTY()
+	UCharacterMovementComponent* _parentMovementComp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+	float _regainVelTime = 1.0f;
+	float _regainVelTimer = 0.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+	float _loseVelMultiplier = 0.6f;
 };

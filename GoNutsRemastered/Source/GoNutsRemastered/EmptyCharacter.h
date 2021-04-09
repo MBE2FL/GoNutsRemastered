@@ -35,6 +35,9 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
 	APlayerCharacter* _playerChar;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+	float _speedMultiplier = 1.0f;
+
 
 	UFUNCTION()
 	void updateWalkSpeed(float walkSpeed);
